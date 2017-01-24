@@ -12,11 +12,17 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     public Button createBut;
     public Button joinBut;
     public Button showCardBut;
+    public Button profilBut;
+    public ArrayList arrayList;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -29,8 +35,10 @@ public class MainActivity extends AppCompatActivity {
         createBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] item = new String[]{};
+                ArrayList<String> my_list = new ArrayList<String>(Arrays.asList(item));
                 Intent goToCreateLobby = new Intent(MainActivity.this, CreateLobby.class);
-
+                goToCreateLobby.putStringArrayListExtra("com.philip.EXTRA_GAMEDATA", my_list);
                 startActivities(new Intent[]{goToCreateLobby});
             }
 
@@ -44,14 +52,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivities(new Intent[]{goToJoinLobby});
             }
         });
-    showCardBut = (Button) findViewById(R.id.joinBut);
-    showCardBut.setOnClickListener(new View.OnClickListener() {
+        showCardBut = (Button) findViewById(R.id.profilBut);
+        showCardBut.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent goToJoinLobby = new Intent(MainActivity.this, JoinLobby.class);
-            startActivities(new Intent[]{goToJoinLobby});
-        }
+            Intent goToProfil = new Intent(MainActivity.this, EditProfil.class);
+            startActivities(new Intent[]{goToProfil});
+            }
     });
+
+        showCardBut = (Button) findViewById(R.id.showCards);
+        showCardBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToJoinLobby = new Intent(MainActivity.this, ShowCards.class);
+                startActivities(new Intent[]{goToJoinLobby});
+            }
+        });
     }
 
 
