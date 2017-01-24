@@ -68,7 +68,8 @@ public class CreateLobby extends AppCompatActivity {
                 preferenceEditor.putString(newItem, "name");
                 preferenceEditor.commit();
 
-                nameTxt.setText("");
+                nameTxt.setText("Penis!");
+
 
 
             }
