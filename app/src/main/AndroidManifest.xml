@@ -28,7 +28,8 @@
         <activity
             android:name=".ShowCards"
             android:label="@string/title_activity_show_cards"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".EditProfil"></activity>
     </application>
 
 </manifest>
