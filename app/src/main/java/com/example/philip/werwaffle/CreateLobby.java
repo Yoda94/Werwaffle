@@ -26,15 +26,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CreateLobby extends AppCompatActivity {
-
-    private SharedPreferences preferenceSettings;
-    private SharedPreferences.Editor preferenceEditor;
-    private static final int PREFERENCE_MODE_PRIVATE = 0;
-
     public EditText nameTxt;
     public Button addPlayer;
     public ListView listView1;
-    public ScrollView scrollView1;
     public ArrayList arrayList;
     public ArrayAdapter<String> adapter;
 
@@ -46,14 +40,11 @@ public class CreateLobby extends AppCompatActivity {
 
 
     public void init() {
-        preferenceSettings = getPreferences(PREFERENCE_MODE_PRIVATE);
-        preferenceEditor = preferenceSettings.edit();
         final String name = "Test";
-        String aName = preferenceSettings.getString("name", "No Name");
         nameTxt = (EditText) findViewById(R.id.editName);
         addPlayer = (Button) findViewById(R.id.createPlayerBut);
         listView1 = (ListView) findViewById(R.id.listView1);
-        String[] item = new String[]{aName};
+        String[] item = new String[]{};
         final List<String> my_list = new ArrayList<String>(Arrays.asList(item));
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
                 (this, android.R.layout.simple_list_item_1, my_list);
@@ -64,11 +55,8 @@ public class CreateLobby extends AppCompatActivity {
                 String newItem = nameTxt.getText().toString();
                 my_list.add(newItem);
                 arrayAdapter.notifyDataSetChanged();
+                nameTxt.setText("Penis!");
 
-                preferenceEditor.putString(newItem, "name");
-                preferenceEditor.commit();
-
-                nameTxt.setText("VaginaBrüste");
 
 
             }
