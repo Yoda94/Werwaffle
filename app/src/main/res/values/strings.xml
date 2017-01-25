@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Werwaffle</string>
     <string name="title_activity_show_cards">ShowCards</string>
+    <string name="profileBut">Profile</string>
+    <string name="showCardBut">Show all owned cards</string>
+    <string name="joinBut">Join Game</string>
+    <string name="hostBut">Create Game</string>
+    <string name="createPlayerBut">Create Player</string>
+    <string name="hintName">Name</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
