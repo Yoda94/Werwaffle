@@ -5,6 +5,8 @@
     <string name="showCardBut">Show all owned cards</string>
     <string name="joinBut">Join Game</string>
     <string name="hostBut">Create Game</string>
+    <string name="createPlayerBut">Create Player</string>
+    <string name="hintName">Name</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

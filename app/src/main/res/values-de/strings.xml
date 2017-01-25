@@ -6,4 +6,6 @@
     <string name="showCardBut">Karten im Besitz anzeigen</string>
     <string name="hostBut">Spiel starten</string>
     <string name="joinBut">Spiel beitreten</string>
+    <string name="createPlayerBut">Spieler erstellen</string>
+    <string name="hintName">Name</string>
 </resources>
