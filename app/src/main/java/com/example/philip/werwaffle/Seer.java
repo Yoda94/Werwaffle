@@ -5,4 +5,8 @@ package com.example.philip.werwaffle;
  */
 
 public class Seer extends Villager {
+    private static String rolePicture = "@drawable/seer";
+    public Seer(){
+        super(rolePicture);
+    }
 }

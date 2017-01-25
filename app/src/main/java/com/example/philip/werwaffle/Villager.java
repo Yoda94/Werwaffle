@@ -7,9 +7,16 @@ import android.graphics.drawable.BitmapDrawable;
  */
 
 public class Villager {
-    private BitmapDrawable rolePicture;
+    private String rolePicture;
     private boolean voteRight = true;
     private boolean alive = true;
+    public Villager(){
+        this.rolePicture = "@drawable/villager";
+    }
+
+    public Villager(String rolePicture){
+        this.rolePicture = rolePicture;
+    }
 
     public void voteExecution(){
         if(voteRight) {
