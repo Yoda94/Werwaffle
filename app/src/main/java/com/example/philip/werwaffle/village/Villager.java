@@ -2,6 +2,8 @@ package com.example.philip.werwaffle.village;
 
 import android.graphics.drawable.BitmapDrawable;
 
+import com.example.philip.werwaffle.state.Vote;
+
 /**
  * Created by Jonas on 2501.
  */
@@ -16,10 +18,9 @@ class Villager {
 
     public Villager(String rolePicture){
         this.rolePicture = rolePicture;
-        this.voteRight = true;
     }
 
-    public void voteExecution(){
+    public void onVote(Vote vote){
         if(voteRight) {
             //display Choice
         }
