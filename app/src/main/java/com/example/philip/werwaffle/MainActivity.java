@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> my_list = new ArrayList<String>(Arrays.asList(item));
                 Intent goToCreateLobby = new Intent(MainActivity.this, CreateLobby.class);
                 goToCreateLobby.putStringArrayListExtra("com.philip.EXTRA_GAMEDATA", my_list);
-                startActivities(new Intent[]{goToCreateLobby});
+                startActivity(goToCreateLobby);
             }
 
 
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent goToJoinLobby = new Intent(MainActivity.this, JoinLobby.class);
-                startActivities(new Intent[]{goToJoinLobby});
+                startActivity(goToJoinLobby);
             }
         });
         showCardBut = (Button) findViewById(R.id.profilBut);
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Intent goToProfil = new Intent(MainActivity.this, EditProfil.class);
-            startActivities(new Intent[]{goToProfil});
+            startActivity(goToProfil);
             }
     });
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent goToJoinLobby = new Intent(MainActivity.this, ShowCards.class);
-                startActivities(new Intent[]{goToJoinLobby});
+                startActivity(goToJoinLobby);
             }
         });
     }
