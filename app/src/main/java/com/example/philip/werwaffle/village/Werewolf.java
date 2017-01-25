@@ -1,5 +1,8 @@
 package com.example.philip.werwaffle.village;
 
+import android.content.res.Resources;
+
+import com.example.philip.werwaffle.R;
 import com.example.philip.werwaffle.state.Vote;
 import com.example.philip.werwaffle.state.VoteEnum;
 
@@ -8,12 +11,18 @@ import com.example.philip.werwaffle.state.VoteEnum;
  */
 
 class Werewolf extends Villager {
-    private static String rolePicture = "@drawable/werewolf";
-    public Werewolf(){
-        super(rolePicture);
+
+    public Werewolf(Resources strData){
+        super(strData, "@drawable/werewolf");
+        this.name = strData.getString(R.id.string_werewolf_role);
+        this.desc = strData.getString(R.id.string_werewolf_desc);
     }
-    public Werewolf(String rolePicture){
-        super(rolePicture);
+
+    protected Werewolf(Resources strData, String rolePicture){
+        super(strData, rolePicture);
+        this.rolePicture = rolePicture;
+        this.name = strData.getString(R.id.string_werewolf_role);
+        this.desc = strData.getString(R.id.string_werewolf_desc);
     }
 
     @Override
