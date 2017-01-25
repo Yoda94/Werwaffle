@@ -6,7 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
  * Created by Jonas on 2501.
  */
 
-public class Citizen {
+public class Villager {
     private BitmapDrawable rolePicture;
     private boolean voteRight = true;
     private boolean alive = true;
