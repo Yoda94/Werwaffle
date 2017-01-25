@@ -11,11 +11,13 @@
     <string name="string_villager_role">Villager</string>
     <string name="string_doctor_role">Doctor</string>
     <string name="string_witch_role">Witch</string>
+    <string name="string_seer_role">Seer</string>
     <string name="string_white_werewolf_role">White Werewolf</string>
-    <string name="string_werewolf_desc"></string>
-    <string name="string_villager_desc"></string>
-    <string name="string_doctor_desc"></string>
-    <string name="string_witch_desc"></string>
-    <string name="string_white_werewolf_desc">White </string>
-    <string name="action_settings"></string>
+    <string name="string_werewolf_desc">A ferocious beast. Will hunt each night with his pack and kill a villager. Wins if no more villagers are alive.</string>
+    <string name="string_villager_desc">A normal Citizen. Werewolves have been sighted and each day the Village will vote to execute one suspected werewolf till no more werewolves are around&#8230; or no more villagers.</string>
+    <string name="string_doctor_desc">A wandering healer that will visit a villager of his choice each night to keep him alive, or himself. Wins together with the village if no more werewolves are alive.</string>
+    <string name="string_witch_desc">An old hag that has a healing potion and a poison she can use to heal a werewolf victim or kill a villager of her choosing. Wins together with the Village if no more werewolves are alive.</string>
+    <string name="string_seer_desc">A wise man who can see into the hearts of the villagers and see their true intent, be they murderous or innocent. Wins together with the Village if no more werewolves are alive.</string>
+    <string name="string_white_werewolf_desc">A cold blooded killer. Strives to kill all villagers AND and wolves. Can only win alone.</string>
+    <string name="action_settings">Settings</string>
 </resources>
