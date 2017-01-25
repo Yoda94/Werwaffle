@@ -1,5 +1,8 @@
 package com.example.philip.werwaffle.village;
 
+import android.content.res.Resources;
+
+import com.example.philip.werwaffle.R;
 import com.example.philip.werwaffle.state.Vote;
 import com.example.philip.werwaffle.state.VoteEnum;
 
@@ -11,12 +14,17 @@ class Villager {
     protected String rolePicture;
     protected String name;
     protected String desc;
-    public Villager(){
+
+    public Villager(Resources strData){
         this.rolePicture = "@drawable/villager";
+        this.name = strData.getString(R.id.string_villager_role);
+        this.desc = strData.getString(R.id.string_villager_desc);
     }
 
-    public Villager(String rolePicture){
+    protected Villager(Resources strData, String rolePicture){
         this.rolePicture = rolePicture;
+        this.name = strData.getString(R.id.string_villager_role);
+        this.desc = strData.getString(R.id.string_villager_desc);
     }
 
     public void onVote(Vote vote){
