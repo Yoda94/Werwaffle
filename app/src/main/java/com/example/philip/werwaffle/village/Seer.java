@@ -1,10 +1,10 @@
-package com.example.philip.werwaffle;
+package com.example.philip.werwaffle.village;
 
 /**
  * Created by Jonas on 2501.
  */
 
-public class Seer extends Villager {
+class Seer extends Villager {
     private static String rolePicture = "@drawable/seer";
     public Seer(){
         super(rolePicture);

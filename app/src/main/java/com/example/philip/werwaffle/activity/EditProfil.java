@@ -1,4 +1,4 @@
-package com.example.philip.werwaffle;
+package com.example.philip.werwaffle.activity;
 
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.philip.werwaffle.R;
 
 public class EditProfil extends AppCompatActivity {
 
@@ -25,7 +27,7 @@ public class EditProfil extends AppCompatActivity {
         outPutTxt = (TextView) findViewById(R.id.textViewSave);
 
         prefSettings = getPreferences(PREFERENCE_MODE_PRIVATE);
-        prefEditor = prefSettings.edit();
+        //prefEditor = prefSettings.edit();
         String aName = prefSettings.getString("key1", "Empty");
 
         outPutTxt.setText(aName);
@@ -42,7 +44,7 @@ public class EditProfil extends AppCompatActivity {
                 outPutTxt.setText(aName);
             }
         });
-    };
+    }
 
 
 

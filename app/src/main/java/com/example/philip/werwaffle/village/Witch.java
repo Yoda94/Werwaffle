@@ -1,4 +1,4 @@
-package com.example.philip.werwaffle;
+package com.example.philip.werwaffle.village;
 
 /**
  * Created by Jonas on 2501.
