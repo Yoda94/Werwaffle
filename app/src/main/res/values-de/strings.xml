@@ -8,4 +8,9 @@
     <string name="joinBut">Spiel beitreten</string>
     <string name="createPlayerBut">Spieler erstellen</string>
     <string name="hintName">Name</string>
+    <string name="string_doctor_role">Heiler</string>
+    <string name="string_villager_role">Dorfbewohner</string>
+    <string name="string_werewolf_role">Werwolf</string>
+    <string name="string_white_werewolf_role">Weißer Wolf</string>
+    <string name="string_witch_role">Hexe</string>
 </resources>
