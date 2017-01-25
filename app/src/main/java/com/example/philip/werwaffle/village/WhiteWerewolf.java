@@ -14,15 +14,15 @@ class WhiteWerewolf extends Werewolf {
 
     public WhiteWerewolf(Resources strData){
         super(strData, "@drawable/werewolf");
-        this.name = strData.getString(R.id.string_white_werewolf_role);
-        this.desc = strData.getString(R.id.string_white_werewolf_desc);
+        this.name = strData.getString(R.string.string_white_werewolf_role);
+        this.desc = strData.getString(R.string.string_white_werewolf_desc);
     }
 
     protected WhiteWerewolf(Resources strData, String rolePicture){
         super(strData, rolePicture);
         this.rolePicture = rolePicture;
-        this.name = strData.getString(R.id.string_white_werewolf_role);
-        this.desc = strData.getString(R.id.string_white_werewolf_desc);
+        this.name = strData.getString(R.string.string_white_werewolf_role);
+        this.desc = strData.getString(R.string.string_white_werewolf_desc);
     }
 
     @Override
