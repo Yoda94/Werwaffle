@@ -14,15 +14,15 @@ class Werewolf extends Villager {
 
     public Werewolf(Resources strData){
         super(strData, "@drawable/werewolf");
-        this.name = strData.getString(R.id.string_werewolf_role);
-        this.desc = strData.getString(R.id.string_werewolf_desc);
+        this.name = strData.getString(R.string.string_werewolf_role);
+        this.desc = strData.getString(R.string.string_werewolf_desc);
     }
 
     protected Werewolf(Resources strData, String rolePicture){
         super(strData, rolePicture);
         this.rolePicture = rolePicture;
-        this.name = strData.getString(R.id.string_werewolf_role);
-        this.desc = strData.getString(R.id.string_werewolf_desc);
+        this.name = strData.getString(R.string.string_werewolf_role);
+        this.desc = strData.getString(R.string.string_werewolf_desc);
     }
 
     @Override
