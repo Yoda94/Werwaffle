@@ -1,17 +1,16 @@
 package com.example.philip.werwaffle.village;
 
-import android.graphics.drawable.BitmapDrawable;
-
 import com.example.philip.werwaffle.state.Vote;
+import com.example.philip.werwaffle.state.VoteEnum;
 
 /**
  * Created by Jonas on 2501.
  */
 
 class Villager {
-    private String rolePicture;
-    private boolean voteRight = true;
-    private boolean alive = true;
+    protected String rolePicture;
+    protected String name;
+    protected String desc;
     public Villager(){
         this.rolePicture = "@drawable/villager";
     }
@@ -21,8 +20,11 @@ class Villager {
     }
 
     public void onVote(Vote vote){
-        if(voteRight) {
+        if(vote.getVoteType() == VoteEnum.VillageVote) {
             //display Choice
+        } else if (vote.getVoteType() == VoteEnum.DummyVote)
+        {
+            //generate Fun Stuffs
         }
     }
 }
