@@ -1,10 +1,10 @@
-package com.example.philip.werwaffle;
+package com.example.philip.werwaffle.village;
 
 /**
  * Created by Jonas on 2501.
  */
 
-public class Werewolf extends Villager {
+class Werewolf extends Villager {
     private static String rolePicture = "@drawable/werewolf";
     public Werewolf(){
         super(rolePicture);
