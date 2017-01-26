@@ -1,9 +1,7 @@
-package com.example.philip.werwaffle.activity;
+package com.example.philip.werwaffle;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import com.example.philip.werwaffle.R;
 
 public class JoinLobby extends AppCompatActivity {
 

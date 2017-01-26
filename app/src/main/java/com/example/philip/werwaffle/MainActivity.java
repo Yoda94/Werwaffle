@@ -1,4 +1,4 @@
-package com.example.philip.werwaffle.activity;
+package com.example.philip.werwaffle;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.philip.werwaffle.R;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -21,6 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 
@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String[] item = new String[]{};
-                ArrayList<String> my_list = new ArrayList<>(Arrays.asList(item));
+                ArrayList<String> my_list = new ArrayList<String>(Arrays.asList(item));
                 Intent goToCreateLobby = new Intent(MainActivity.this, CreateLobby.class);
                 goToCreateLobby.putStringArrayListExtra("com.philip.EXTRA_GAMEDATA", my_list);
                 startActivity(goToCreateLobby);

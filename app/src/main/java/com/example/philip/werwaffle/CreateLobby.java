@@ -1,4 +1,4 @@
-package com.example.philip.werwaffle.activity;
+package com.example.philip.werwaffle;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
-import com.example.philip.werwaffle.R;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -44,7 +43,7 @@ public class CreateLobby extends AppCompatActivity {
         addPlayer = (Button) findViewById(R.id.createPlayerBut);
         listView1 = (ListView) findViewById(R.id.listView1);
         final ArrayList<String> my_list = getIntent().getStringArrayListExtra("com.philip.EXTRA_GAMEDATA");
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
                 (this, android.R.layout.simple_list_item_1, my_list);
         listView1.setAdapter(arrayAdapter);
         addPlayer.setOnClickListener(new View.OnClickListener() {
