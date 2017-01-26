@@ -1,5 +1,7 @@
 package com.example.philip.werwaffle.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,6 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.net.wifi.WifiManager;
+import android.content.BroadcastReceiver;
+import android.net.wifi.ScanResult;
+
+
+
 
 import com.example.philip.werwaffle.R;
 import com.google.android.gms.appindexing.Action;
@@ -22,15 +30,20 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONStringer;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CreateLobby extends AppCompatActivity {
+
+
+public class CreateLobby extends Activity {
     public EditText nameTxt;
     public Button addPlayer;
     public ListView listView1;
     public ArrayAdapter<String> adapter;
+
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -60,8 +73,8 @@ public class CreateLobby extends AppCompatActivity {
 
 
 
-    }
 
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +84,18 @@ public class CreateLobby extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+
+        //if Wifi Hotspot is disabled
+        if (ApManager.isApOn(CreateLobby.this)) {
+        } else{
+            //Disable Wifi
+            WifiManager wifiManager = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(false);
+            //Enable Wifi Hotspot
+            ApManager.configApState(CreateLobby.this);
+        }
+
     }
 
     /**

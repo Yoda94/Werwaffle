@@ -49,10 +49,12 @@ public class EditProfil extends AppCompatActivity {
         String aimgDecodableString = prefSettings.getString("img", "None");
         //imgView.setImageBitmap(BitmapFactory
         //        .decodeFile(aimgDecodableString));
-        if(aimgDecodableString != "None") {
+
+        if (aimgDecodableString != "None") {
             imgView.setImageBitmap(com.example.philip.werwaffle.activity.RoundedImageView.getCroppedBitmap(
                     BitmapFactory.decodeFile(aimgDecodableString), 2000));
-        }
+        };
+
 
 
 
