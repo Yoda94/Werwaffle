@@ -34,6 +34,4 @@
     <string name="nameLable">Name</string>
     <string name="wifi">Habe dein Wifi gestartet</string>
     <string name="wifiHotspot">Wifi Hotsport gestartet</string>
-    <string name="wifi">Dein WLAN wurde angeschaltet</string>
-    <string name="wifiHotspot">Dein Hotspot wurde angeschaltet</string>
 </resources>
