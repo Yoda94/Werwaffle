@@ -10,12 +10,12 @@ import com.example.philip.werwaffle.R;
 
 public class Doctor extends Villager {
     public Doctor(Resources strData){
-        super(strData, "@drawable/doctor");
+        super(strData, R.drawable.drawable_doctor);
         this.name = strData.getString(R.string.string_villager_role);
         this.desc = strData.getString(R.string.string_villager_desc);
     }
 
-    protected Doctor(Resources strData, String rolePicture){
+    protected Doctor(Resources strData, int rolePicture){
         super(strData, rolePicture);
         this.rolePicture = rolePicture;
         this.name = strData.getString(R.string.string_villager_role);
