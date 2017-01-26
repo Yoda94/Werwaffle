@@ -14,11 +14,21 @@
     <string name="string_white_werewolf_role">Weißer Wolf</string>
     <string name="string_witch_role">Hexe</string>
     <string name="title_activity_show_cards">Rollenkarten</string>
-    <string name="string_witch_desc">Eine alte Hexe die einen Heiltrank und einen Gifttrank hat, mit denen sie das Opfer der Werwölfe retten oder einen Dorfbewohner ihrer Wahl töten kann. Gewinnt zusammen mit dem Dorf wenn alle Werwölfe tot sind.</string>
+    <string name="string_witch_desc">Eine alte Hexe die einen Heiltrank
+        und einen Gifttrank hat, mit denen sie das Opfer der Werwölfe retten
+        oder einen Dorfbewohner ihrer Wahl töten kann. Gewinnt zusammen mit dem
+        Dorf wenn alle Werwölfe tot sind.</string>
     <string name="string_seer_role">Seher</string>
-    <string name="string_villager_desc">Ein normaler Dorfbewohner. Werwölfe wurden gesichtet und jeden Tag wird das Dorf einen Bewohner hinrichten bis alle Werwölfe tot sind&#8230; oder alle Dorfbewohner.</string>
-    <string name="string_doctor_desc">Ein wandernder Heiler, der jede Nacht einen Bewohner des Dorfes besucht und beschützt, auch sich selbst. Gewinnt zusammen mit dem Dorf wenn alle Werwölfe tot sind.</string>
-    <string name="string_seer_desc">Ein weiser Mann der in die Herzen der Menschen blicken kann und ihre Gesinnung sieht. Gewinnt zusammen mit dem Dorf wenn alle Werwölfe tot sind.</string>
-    <string name="string_werewolf_desc">Ein wildes Biest. Geht jede Nacht mit dem Rudel auf die Jagd und tötet einen Dorfbewohner. gewinnt wenn keine Dorfbewohner mehr am Leben sind.</string>
-    <string name="string_white_werewolf_desc">Ein kaltblütiger Mörder. Will alle Dorfbewohner UND alle Werwölfe töten. Gewinnt alleine.</string>
+    <string name="string_villager_desc">Ein normaler Dorfbewohner. Werwölfe wurden gesichtet und
+        jeden Tag wird das Dorf einen Bewohner hinrichten bis alle Werwölfe tot sind&#8230; oder
+        alle Dorfbewohner.</string>
+    <string name="string_doctor_desc">Ein wandernder Heiler, der jede Nacht einen Bewohner des Dorfes
+        besucht und beschützt, auch sich selbst. Er darf die selber Person nicht zweimal hintereinander Schützen.
+        Gewinnt zusammen mit dem Dorf wenn alle Werwölfe tot sind.</string>
+    <string name="string_seer_desc">Ein weiser Mann der in die Herzen der Bewohner blicken kann und ihre
+        Gesinnung sieht. Gewinnt zusammen mit dem Dorf wenn alle Werwölfe tot sind.</string>
+    <string name="string_werewolf_desc">Ein wildes Biest. Geht jede Nacht mit dem Rudel auf die Jagd
+        und tötet einen Dorfbewohner. Gewinnt wenn keine Dorfbewohner mehr am Leben sind.</string>
+    <string name="string_white_werewolf_desc">Ein kaltblütiger Mörder. Will alle Dorfbewohner UND
+        alle Werwölfe töten. Gewinnt alleine.</string>
 </resources>
