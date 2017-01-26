@@ -13,12 +13,12 @@ import com.example.philip.werwaffle.state.VoteEnum;
 class Werewolf extends Villager {
 
     public Werewolf(Resources strData){
-        super(strData, "@drawable/werewolf");
+        super(strData, R.drawable.drawable_werewolf);
         this.name = strData.getString(R.string.string_werewolf_role);
         this.desc = strData.getString(R.string.string_werewolf_desc);
     }
 
-    protected Werewolf(Resources strData, String rolePicture){
+    protected Werewolf(Resources strData, int rolePicture){
         super(strData, rolePicture);
         this.rolePicture = rolePicture;
         this.name = strData.getString(R.string.string_werewolf_role);
