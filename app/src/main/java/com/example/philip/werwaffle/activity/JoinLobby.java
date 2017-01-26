@@ -10,6 +10,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -45,7 +46,36 @@ public class JoinLobby extends AppCompatActivity {
 
 
     public void init2(){
-        Button scan = (Button) findViewById(R.id.button);
+        Button scan = (Button) findViewById(R.id.button2);
+        scan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+
+                    @Override
+                    public void onSuccess() {
+
+                        if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+
+                            // request available peers from the wifi p2p manager. This is an
+                            // asynchronous call and the calling activity is notified with a
+                            // callback on PeerListListener.onPeersAvailable()
+                            if (mManager != null) {
+                                mManager.requestPeers(mChannel, myPeerListListener);
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(int reasonCode) {
+
+                    }
+                });
+            }
+        });
+
     }
 
 
