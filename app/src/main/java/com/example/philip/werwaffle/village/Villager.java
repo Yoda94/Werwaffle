@@ -11,7 +11,7 @@ import com.example.philip.werwaffle.state.VoteEnum;
  * Created by Jonas on 2501.
  */
 
-class Villager {
+public class Villager {
     protected int rolePicture;
     protected String name;
     protected String desc;

@@ -10,7 +10,7 @@ import com.example.philip.werwaffle.state.VoteEnum;
  * Created by Jonas on 2501.
  */
 
-class WhiteWerewolf extends Werewolf {
+public class WhiteWerewolf extends Werewolf {
 
     public WhiteWerewolf(Resources strData){
         super(strData, R.drawable.drawable_white_werewolf);

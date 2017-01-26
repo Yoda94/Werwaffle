@@ -8,7 +8,7 @@ import com.example.philip.werwaffle.R;
  * Created by Jonas on 2501.
  */
 
-class Seer extends Villager {
+public class Seer extends Villager {
     public Seer(Resources strData){
         super(strData, R.drawable.drawable_seer);
         this.name = strData.getString(R.string.string_villager_role);
