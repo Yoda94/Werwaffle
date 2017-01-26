@@ -1,11 +1,15 @@
 package com.example.philip.werwaffle.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.StrictMode;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,8 +21,7 @@ import android.widget.ScrollView;
 import android.net.wifi.WifiManager;
 import android.content.BroadcastReceiver;
 import android.net.wifi.ScanResult;
-
-
+import android.widget.TextView;
 
 
 import com.example.philip.werwaffle.R;
@@ -55,21 +58,20 @@ public class CreateLobby extends Activity {
     public void init() {
         nameTxt = (EditText) findViewById(R.id.editName);
         addPlayer = (Button) findViewById(R.id.createPlayerBut);
-        listView1 = (ListView) findViewById(R.id.listView1);
-        final ArrayList<String> my_list = getIntent().getStringArrayListExtra("com.philip.EXTRA_GAMEDATA");
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>
-                (this, android.R.layout.simple_list_item_1, my_list);
-        listView1.setAdapter(arrayAdapter);
-        addPlayer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                String newItem = nameTxt.getText().toString();
-                my_list.add(newItem);
-                arrayAdapter.notifyDataSetChanged();
-                nameTxt.setText("");
+        //final ArrayList<String> my_list = getIntent().getStringArrayListExtra("com.philip.EXTRA_GAMEDATA");
+        //final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>
+        //        (this, android.R.layout.simple_list_item_1, my_list);
+        //listView1.setAdapter(arrayAdapter);
+        //addPlayer.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View v){
+        //        String newItem = nameTxt.getText().toString();
+        //        my_list.add(newItem);
+        //        arrayAdapter.notifyDataSetChanged();
+        //        nameTxt.setText("");
 
-            }
-        });
+        //    }
+        //});
 
 
 
@@ -94,6 +96,25 @@ public class CreateLobby extends Activity {
             wifiManager.setWifiEnabled(false);
             //Enable Wifi Hotspot
             ApManager.configApState(CreateLobby.this);
+
+            //Popup start
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CreateLobby.this);
+            final TextView et = new TextView(CreateLobby.this);
+            et.setText(getString(R.string.wifiHotspot));
+            et.setTextSize(20);
+            et.setTextColor(Color.parseColor("#000000"));
+            // set prompts.xml to alertdialog builder
+            alertDialogBuilder.setView(et);
+            // set dialog message
+            alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            // show it
+            alertDialog.show();
+            //Popup end
         }
 
     }
