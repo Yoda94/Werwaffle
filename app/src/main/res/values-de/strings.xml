@@ -7,7 +7,6 @@
     <string name="hostBut">Spiel starten</string>
     <string name="joinBut">Spiel beitreten</string>
     <string name="createPlayerBut">Spieler erstellen</string>
-    <string name="hintName">Name</string>
     <string name="string_doctor_role">Heiler</string>
     <string name="string_villager_role">Dorfbewohner</string>
     <string name="string_werewolf_role">Werwolf</string>
@@ -31,7 +30,8 @@
         und tötet einen Dorfbewohner. Gewinnt wenn keine Dorfbewohner mehr am Leben sind.</string>
     <string name="string_white_werewolf_desc">Ein kaltblütiger Mörder. Will alle Dorfbewohner UND
         alle Werwölfe töten. Gewinnt alleine.</string>
-    <string name="nameLable">Name</string>
-    <string name="wifi">Habe dein Wifi gestartet</string>
+    <string name="wifi">Wifi gestartet</string>
     <string name="wifiHotspot">Wifi Hotsport gestartet</string>
+    <string name="string_name_label">Name</string>
+    <string name="string_create_lobby">Lobby Erstellen</string>
 </resources>

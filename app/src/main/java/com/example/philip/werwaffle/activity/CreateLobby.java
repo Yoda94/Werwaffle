@@ -1,26 +1,17 @@
 package com.example.philip.werwaffle.activity;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.net.wifi.WifiManager;
-import android.content.BroadcastReceiver;
-import android.net.wifi.ScanResult;
 import android.widget.TextView;
 
 
@@ -29,15 +20,6 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-
-import org.json.JSONStringer;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 
 
 public class CreateLobby extends Activity {
@@ -89,13 +71,13 @@ public class CreateLobby extends Activity {
 
 
         //if Wifi Hotspot is disabled
-        if (ApManager.isApOn(CreateLobby.this)) {
+        if (APManager.isApOn(CreateLobby.this)) {
         } else{
             //Disable Wifi
             WifiManager wifiManager = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
             wifiManager.setWifiEnabled(false);
             //Enable Wifi Hotspot
-            ApManager.configApState(CreateLobby.this);
+            APManager.configApState(CreateLobby.this);
 
             //Popup start
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CreateLobby.this);
