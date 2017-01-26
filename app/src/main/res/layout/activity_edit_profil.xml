@@ -15,10 +15,9 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="12dp">
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:orientation="vertical"
@@ -28,7 +27,7 @@
             android:weightSum="1">
 
             <TextView
-                android:text="@string/nameLable"
+                android:text="@string/string_name_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView2"
@@ -83,7 +82,8 @@
                     android:layout_marginRight="92dp"
                     android:layout_marginEnd="92dp"
                     android:paddingBottom="10dp"
-                    android:paddingEnd="10dp" />
+                    android:paddingEnd="10dp"
+                    android:paddingRight="10dp" />
             </FrameLayout>
 
         </LinearLayout>
