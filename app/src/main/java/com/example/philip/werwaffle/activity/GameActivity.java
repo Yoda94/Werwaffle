@@ -19,16 +19,24 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         //generate list
         ArrayList<String> list = new ArrayList<String>();
         list.add("item1");
         list.add("item2");
         list.add("item3");
-
+        list.add("item4");
+        list.add("item5");
+        list.add("item6");
+        list.add("item7");
+        list.add("item8");
+        list.add("item9");
+        list.add("item10");
+        list.add("item11");
+        list.add("item12");
+        list.add("item13");
+        list.add("item14");
         //instantiate custom adapter
-        GamePlayerListAdapter adapter = new GamePlayerListAdapter(list, this);
+        GamePlayerListAdapter adapter = new GamePlayerListAdapter(list, GameActivity.this);
 
         //handle listview and assign adapter
         ListView lView = (ListView)findViewById(R.id.player_list);
