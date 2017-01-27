@@ -8,7 +8,7 @@ import android.content.*;
 import android.net.wifi.*;
 import java.lang.reflect.*;
 
-public class APManager {
+public class ApManager {
 
     //check whether wifi hotspot on or off
     public static boolean isApOn(Context context) {

@@ -7,7 +7,7 @@
     <string name="joinBut">Join Game</string>
     <string name="hostBut">Create Game</string>
     <string name="createPlayerBut">Create Player</string>
-    <string name="hintName" translatable="false">Name</string>
+    <string name="hintName">Name</string>
     <string name="string_werewolf_role">Werewolf</string>
     <string name="string_villager_role">Villager</string>
     <string name="string_doctor_role">Doctor</string>
@@ -23,6 +23,8 @@
     <string name="action_settings">Settings</string>
     <string name="wifiHotspot">Wifi Hotsport enabled</string>
     <string name="wifi">Wifi enabled</string>
+    <string name="no">No!</string>
+    <string name="yes">Yes!</string>
     <string name="string_create_lobby">Create Lobby</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="large_text">

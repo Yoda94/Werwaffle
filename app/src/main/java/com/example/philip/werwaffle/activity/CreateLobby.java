@@ -1,10 +1,12 @@
 package com.example.philip.werwaffle.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -27,6 +29,7 @@ public class CreateLobby extends Activity {
     public Button addPlayer;
     public ListView listView1;
     public ArrayAdapter<String> adapter;
+
 
 
 
@@ -71,13 +74,13 @@ public class CreateLobby extends Activity {
 
 
         //if Wifi Hotspot is disabled
-        if (APManager.isApOn(CreateLobby.this)) {
+        if (ApManager.isApOn(CreateLobby.this)) {
         } else{
             //Disable Wifi
             WifiManager wifiManager = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
             wifiManager.setWifiEnabled(false);
             //Enable Wifi Hotspot
-            APManager.configApState(CreateLobby.this);
+            ApManager.configApState(CreateLobby.this);
 
             //Popup start
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CreateLobby.this);
@@ -97,6 +100,8 @@ public class CreateLobby extends Activity {
             // show it
             alertDialog.show();
             //Popup end
+
+
         }
 
     }

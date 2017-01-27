@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
         joinBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToJoinLobby = new Intent(MainActivity.this, JoinLobby.class);
+                Intent goToJoinLobby = new Intent(MainActivity.this, Join_lobby4.class);
                 startActivity(goToJoinLobby);
             }
         });

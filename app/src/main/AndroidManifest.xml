@@ -39,7 +39,8 @@
         <activity
             android:name=".activity.GameActivity"
             android:label="@string/title_activity_game"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.Join_lobby4"></activity>
     </application>
 
 </manifest>
