@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
     public Button joinBut;
     public Button showCardBut;
     public Button profilBut;
+    public Button button_test_game;
     public ArrayList arrayList;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
@@ -55,6 +56,14 @@ public class MainActivity extends Activity {
             }
 
 
+        });
+        button_test_game = (Button) findViewById(R.id.button_test_game);
+        button_test_game.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent goToGameActivity = new Intent(MainActivity.this, GameActivity.class);
+                startActivity(goToGameActivity);
+            }
         });
         joinBut = (Button) findViewById(R.id.joinBut);
         joinBut.setOnClickListener(new View.OnClickListener() {

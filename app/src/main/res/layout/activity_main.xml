@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.philip.werwaffle.MainActivity">
+    tools:context="com.example.philip.werwaffle.activity.MainActivity">
 
     <Button
         android:text="@string/hostBut"
@@ -55,5 +55,17 @@
         android:layout_marginTop="24dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="@string/string_button_test_game"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profilBut"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="17dp"
+        android:id="@+id/button_test_game" />
 
 </RelativeLayout>
