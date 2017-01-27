@@ -25,6 +25,7 @@ public class GameActivity extends AppCompatActivity {
         ArrayList<String> list = new ArrayList<String>();
         list.add("item1");
         list.add("item2");
+        list.add("item3");
 
         //instantiate custom adapter
         GamePlayerListAdapter adapter = new GamePlayerListAdapter(list, this);
@@ -32,14 +33,5 @@ public class GameActivity extends AppCompatActivity {
         //handle listview and assign adapter
         ListView lView = (ListView)findViewById(R.id.player_list);
         lView.setAdapter(adapter);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 }

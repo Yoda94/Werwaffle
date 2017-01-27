@@ -1,6 +1,7 @@
 package com.example.philip.werwaffle.guiHelper;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ import java.util.Objects;
  */
 
 public class GamePlayerListAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<String> list = new ArrayList<String>();
+    private ArrayList<String> list = new ArrayList<>();
     private Context context;
 
     public GamePlayerListAdapter(ArrayList<String> list, Context context ){
