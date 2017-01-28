@@ -1,8 +1,10 @@
 package com.example.philip.werwaffle.state;
 
-import java.util.ArrayList;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,7 +13,7 @@ import java.util.Map;
  * alternate name. Village
  */
 
-public class Session {
+public abstract class Session {
     static Session currentSession;
 
     public interface OnReadyStateChanged
@@ -30,12 +32,6 @@ public class Session {
         players.put( name, false);
     }
 
-    public static Session createNewSession() //TODO throw Exception when old Session is still running
-    {
-        currentSession = new Session();
-        return currentSession;
-    }
-
     public static Session getSession() //TODO: Throw exception when there is no session
     {
         return currentSession;
@@ -46,6 +42,9 @@ public class Session {
         return currentSession != null;
     }
 
+
+    public abstract void startGame();
+
     public void setReadinessCallback(OnReadyStateChanged callback)
     {
         readinessCallback = callback;
@@ -54,6 +53,10 @@ public class Session {
     public String[] getPlayers()
     {
         return (String[])players.keySet().toArray();
+    }
+    public Map<String, Boolean> getReadinessList()
+    {
+        return players;
     }
     public boolean isPlayer(String name)
     {
@@ -76,7 +79,14 @@ public class Session {
     {
         players.remove(name);
         players.put(name, state);
-        readinessCallback.onReadyStateChanged(name);
+
+        final String tmp = name;
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                readinessCallback.onReadyStateChanged(tmp);
+            }
+        });
     }
 
     public void toggleReadyToStart(boolean b) {

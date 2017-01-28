@@ -21,6 +21,11 @@ public class ClientSession extends Session implements NetClient.OnDataCallback, 
     }
 
     @Override
+    public void startGame() {
+        System.out.println("[ClientSession] Game should start, expecting Game Data.");
+    }
+
+    @Override
     public void onData( String packet) {
         if (packet.contains("Lobby")) {
             String sender = packet.substring(packet.indexOf(':'), packet.lastIndexOf(':'));

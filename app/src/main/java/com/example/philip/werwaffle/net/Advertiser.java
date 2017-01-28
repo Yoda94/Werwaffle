@@ -49,8 +49,12 @@ public class Advertiser extends Thread {
         }
     }
 
-    public void stopAdvertise()
-    {
+    public void stopAdvertise() {
         running = false;
+        try {
+            join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

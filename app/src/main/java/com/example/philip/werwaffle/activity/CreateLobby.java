@@ -3,6 +3,7 @@ package com.example.philip.werwaffle.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
@@ -24,6 +25,8 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.util.Map;
 
 
 public class CreateLobby extends Activity implements CompoundButton.OnCheckedChangeListener, Session.OnReadyStateChanged {
@@ -132,7 +135,6 @@ public class CreateLobby extends Activity implements CompoundButton.OnCheckedCha
 
         ((ToggleButton)this.findViewById(R.id.button_host_is_ready)).setOnCheckedChangeListener(this);
 
-        advertiser = new Advertiser();
     }
 
     private void startAdvertising()
@@ -157,6 +159,16 @@ public class CreateLobby extends Activity implements CompoundButton.OnCheckedCha
     public void onReadyStateChanged(String name)
     {
         System.out.println("[Lobby] Updating Readiness");
+        Map<String, Boolean> players = session.getReadinessList();
+        int peopleReady = 0;
+        for(Boolean rdy : players.values())
+            if(rdy)
+                peopleReady++;
+        if (peopleReady - players.size() >= 0) {
+            System.out.println("[Session] Everybody ready, Game can start.");
+            Intent gameStart = new Intent(); //TODO start gameGUI
+            startActivity(gameStart);
+        }
     }
 
     /**
@@ -186,12 +198,14 @@ public class CreateLobby extends Activity implements CompoundButton.OnCheckedCha
 
         session = (ServerSession) ServerSession.createNewSession();
         session.setReadinessCallback(this);
+        advertiser = new Advertiser();
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
+        advertiser.stopAdvertise();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());

@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class NetServer extends Thread {
 
+
     public interface OnDataCallback {
         void onData(String sender, String packet);
     }
@@ -177,6 +178,11 @@ public class NetServer extends Thread {
         tx.close();
     }
 
+    public void stopListen() {
+        if (state == ServerState.LISTEN)
+            state = ServerState.RUNNING;
+        //TODO throw State Exception
+    }
     public void broadcastData( Serializable data) throws Exception {
         sendData("ALL", data);
     }

@@ -26,6 +26,11 @@ public class ServerSession extends Session implements NetServer.OnClientDroppedC
     }
 
     @Override
+    public void startGame() {
+        server.stopListen();
+    }
+
+    @Override
     public void OnClientDropped(String client) {
 
     }
