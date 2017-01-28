@@ -32,11 +32,34 @@ public class ServerSession extends Session implements NetServer.OnClientDroppedC
 
     @Override
     public void onData(String sender, String packet) {
-
+        if (packet.contains("Lobby"))
+            if (packet.charAt(packet.length() - 1) == '1') {
+                if (!isPlayer(sender))
+                    addPlayer(sender);
+                updatePlayerReady(sender, true);
+            }
+            else
+            {
+                if (!isPlayer(sender))
+                    addPlayer(sender);
+                updatePlayerReady(sender, false);
+            }
+        else
+            System.err.println("[SessionServer] unrecognized packet from" + sender);
     }
 
     @Override
     public void OnNewClient(String client) {
 
+    }
+
+    @Override
+    public void toggleReadyToStart(boolean b) {
+        super.toggleReadyToStart(b);
+        try {
+            server.broadcastData("Lobby:" + (b ? 1 : 0)); //provisional Identification System
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

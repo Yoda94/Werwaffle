@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -19,18 +18,20 @@ import android.widget.ToggleButton;
 import com.example.philip.werwaffle.R;
 import com.example.philip.werwaffle.net.APManager;
 import com.example.philip.werwaffle.net.Advertiser;
+import com.example.philip.werwaffle.state.Session;
+import com.example.philip.werwaffle.state.ServerSession;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 
-public class CreateLobby extends Activity implements CompoundButton.OnCheckedChangeListener {
+public class CreateLobby extends Activity implements CompoundButton.OnCheckedChangeListener, Session.OnReadyStateChanged {
     public EditText nameTxt;
     public Button addPlayer;
 
     private Advertiser advertiser;
-
+    private ServerSession session;
 
     //public ListView listView1;
     //public ArrayAdapter<String> adapter;
@@ -145,13 +146,15 @@ public class CreateLobby extends Activity implements CompoundButton.OnCheckedCha
         if (isChecked)
         {
             System.out.println("Activated");
+            session.toggleReadyToStart(true);
         } else {
             System.out.println("Deactivated");
+            session.toggleReadyToStart(false);
         }
-        onReadyStateChanged();
     }
 
-    private void onReadyStateChanged() //TODO: check Readiness and launch Session / Game
+    @Override
+    public void onReadyStateChanged(String name)
     {
         System.out.println("[Lobby] Updating Readiness");
     }
@@ -180,6 +183,9 @@ public class CreateLobby extends Activity implements CompoundButton.OnCheckedCha
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+
+        session = (ServerSession) ServerSession.createNewSession();
+        session.setReadinessCallback(this);
     }
 
     @Override
@@ -190,6 +196,5 @@ public class CreateLobby extends Activity implements CompoundButton.OnCheckedCha
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
-
     }
 }
