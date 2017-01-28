@@ -54,10 +54,11 @@ public class ServerSession extends Session implements NetServer.OnClientDroppedC
     }
 
     @Override
-    public void toggleReadyToStart(boolean b) {
-        super.toggleReadyToStart(b);
+    protected void updatePlayerReady(String name, boolean state)
+    {
+        super.updatePlayerReady(name, state);
         try {
-            server.broadcastData("Lobby:" + (b ? 1 : 0)); //provisional Identification System
+            server.broadcastData("Lobby:" + name + (state ? 1 : 0)); //provisional Identification System
         } catch (Exception e) {
             e.printStackTrace();
         }
