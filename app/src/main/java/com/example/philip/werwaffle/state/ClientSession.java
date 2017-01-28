@@ -1,5 +1,6 @@
 package com.example.philip.werwaffle.state;
 
+import com.example.philip.werwaffle.net.Listener;
 import com.example.philip.werwaffle.net.NetClient;
 
 import java.net.InetAddress;
@@ -8,15 +9,15 @@ import java.net.InetAddress;
  * Created by Deathlymad on 26.01.2017.
  */
 
-public class ClientSession extends Session implements NetClient.OnDataCallback{
+public class ClientSession extends Session implements NetClient.OnDataCallback, Listener.ListenCallback{
 
     private NetClient client;
+    private Listener listener;
 
-    private ClientSession(InetAddress server)
+    private ClientSession()
     {
         super();
-        client = new NetClient(server);
-        client.setDataCallback(this);
+        listener = new Listener(this);
     }
 
     @Override
@@ -36,9 +37,15 @@ public class ClientSession extends Session implements NetClient.OnDataCallback{
         else
             System.err.println("[SessionServer] unrecognized packet from server");
     }
-    public static Session createNewSession(InetAddress serverAddr) //TODO throw Exception when old Session is still running
+    public static Session createNewSession() //TODO throw Exception when old Session is still running
     {
-        currentSession = new ClientSession( serverAddr);
+        currentSession = new ClientSession();
         return currentSession;
+    }
+
+    @Override
+    public void onAddressFound(InetAddress address) {
+        client = new NetClient(address);
+        client.setDataCallback(this);
     }
 }
