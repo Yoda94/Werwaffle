@@ -8,18 +8,32 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Deathlymad on 26.01.2017.
+ * TODO allow Reconnection
+ * TODO allow concurrent traffic
+ * both will probably require a secondary thread :/
  */
 
 public class NetServer extends Thread {
 
     public interface OnDataCallback {
         void onData(String sender, String packet);
+    }
+    public interface OnNewClientCallback {
+        void OnNewClient(String client);
+    }
+    public interface OnClientDroppedCallback {
+        void OnClientDropped(String client);
     }
 
     private enum ServerState
@@ -35,7 +49,9 @@ public class NetServer extends Thread {
         }
     }
 
-    private OnDataCallback callback;
+    private OnDataCallback dataCallback;
+    private OnNewClientCallback newClientCallback;
+    private OnClientDroppedCallback clientDroppedCallback;
     private Map<String, Socket> socketNameMap;
     private Queue<Pair< String, Serializable>> toSend;
     private ServerState state;
@@ -43,6 +59,7 @@ public class NetServer extends Thread {
     public NetServer()
     {
         toSend = new ConcurrentLinkedQueue<>();
+        socketNameMap = new HashMap<>();
         state = ServerState.DOWN;
         start();
     }
@@ -50,44 +67,89 @@ public class NetServer extends Thread {
     @Override
     public void run()
     {
+        ServerSocket sock;
         try {
-            ServerSocket sock = new ServerSocket( Constants.NetPort);
+            sock = new ServerSocket( Constants.NetPort);
             sock.setSoTimeout(3); //TODO should be adaptable?
             state = ServerState.LISTEN;
             while ( ServerState.isRunning(state))
             {
-                if ( state == ServerState.LISTEN) //Lobby Mode new Connections can be accepted
-                {
-                    Socket client = sock.accept();
-                    //TODO ask Client for Name (DeviceID or the Ingame name for all i care, sth unique) then add to socket List
-                }
-                //TODO enable Ready Synchronization over clients
-                else if (state == ServerState.RUNNING) //Ingame mode, Data can be received, but no new Connections can be established
-                {
-                    if (!toSend.isEmpty())
+                try {
+                    if ( state == ServerState.LISTEN) //Lobby Mode new Connections can be accepted
                     {
-                        Pair<String, Serializable> msg = toSend.poll();
-                        if (msg.first == "ALL")
+                        Socket client;
+                        try{
+                            client = sock.accept();
+                        } catch (SocketTimeoutException tmp)
                         {
-                            for ( Socket client: socketNameMap.values()) {
-                                sendTo( client, msg.second);
-                            }
+                            continue;
+                        }
+                        TimeUnit.MILLISECONDS.sleep(200L);
+                        DataInputStream rx = new DataInputStream(client.getInputStream());
+                        int dataSize = rx.available();
+                        String name = "Unknown";
+                        if (dataSize > 0)
+                        {
+                            byte[] data = new byte[dataSize];
+                            int res = rx.read(data);
+                            if (res != dataSize)
+                                System.err.println("[NetServer] CRITICAL ERROR!! Data has been lost.");
+                            name = new String(data);
                         } else
                         {
-                            sendTo(socketNameMap.get(msg.first), msg.second);
+                            System.err.println("[NetServer] Did not receive Name.");
+                        }
+                        rx.close();
+                        socketNameMap.put( name, client);
+                        newClientCallback.OnNewClient(name);
+                    }
+                    //TODO enable Ready Synchronization over clients
+                    else if (state == ServerState.RUNNING) //Ingame mode, Data can be received, but no new Connections can be established
+                    {
+                        if (!toSend.isEmpty())
+                        {
+                            Pair<String, Serializable> msg = toSend.poll();
+                            if (msg.first == "ALL")
+                            {
+                                for ( Socket client: socketNameMap.values()) {
+                                    sendTo( client, msg.second);
+                                }
+                            } else
+                            {
+                                sendTo(socketNameMap.get(msg.first), msg.second);
+                            }
+                        }
+                        for ( Socket client: socketNameMap.values()) {
+                            readSocket(client);
                         }
                     }
-                    for ( Socket client: socketNameMap.values()) {
-                        readSocket(client);
+                } catch (SocketException e) { //should handle Socket Timeout too
+                    if (e.getMessage().contains("Broken Pipe"))//TODO super ugly code, but I can't come up with a better way to check for DCs ~Deathly
+                    {
+                        e.printStackTrace(); //for debug only. maybe there is identifying Data
+                        ArrayList<String> badEntry = new ArrayList<>();
+                        for (Map.Entry<String, Socket> entry : socketNameMap.entrySet()) {
+                            try{
+
+                                DataOutputStream tx = new DataOutputStream(entry.getValue().getOutputStream());
+                                tx.close();
+                            } catch (IOException ignored) {
+                                badEntry.add(entry.getKey());
+                            }
+                        }
+                        for (String name : badEntry)
+                        {
+                            socketNameMap.remove(name);
+                            clientDroppedCallback.OnClientDropped(name);
+                        }
                     }
                 }
-
             }
-        } catch (IOException e) {
+            sock.close();
+        } catch (IOException | InterruptedException e) {
             state = ServerState.ERROR;
             e.printStackTrace();
         }
-
     }
 
     private void readSocket(Socket sock) throws IOException
@@ -100,7 +162,11 @@ public class NetServer extends Thread {
             int res = rx.read(data);
             if (res != dataSize)
                 System.err.println("[NetServer] CRITICAL ERROR!! Data has been lost.");
-            //callback.onData(new String(data)); //TODO needs to run over Handler Invokation to ensure being on Main Thread?
+            for (Map.Entry<String, Socket> entry : socketNameMap.entrySet())
+            {
+                if ( entry.getValue().equals(sock)) //TODO should it use BiMap? would need library for that tho.
+                    dataCallback.onData( entry.getKey(), new String(data)); //TODO needs to run over Handler Invokation to ensure being on Main Thread?
+            }
         }
         rx.close();
     }
@@ -111,7 +177,6 @@ public class NetServer extends Thread {
         tx.close();
     }
 
-
     public void broadcastData( Serializable data) throws Exception {
         sendData("ALL", data);
     }
@@ -120,7 +185,13 @@ public class NetServer extends Thread {
             throw new Exception("[NetServer] Failed to schedule Data"); //TODO custom Exceptioon
     }
     public void setDataCallback (OnDataCallback dataCallback) {
-        callback = dataCallback;
+        this.dataCallback = dataCallback;
+    }
+    public void setNewClientCallback (OnNewClientCallback newClientCallback) {
+        this.newClientCallback = newClientCallback;
+    }
+    public void setClientDroppedCallback (OnClientDroppedCallback clientDroppedCallback) {
+        this.clientDroppedCallback = clientDroppedCallback;
     }
 
     public void shutdown() throws InterruptedException {

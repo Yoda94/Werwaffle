@@ -56,6 +56,11 @@ public class NetClient extends Thread {
                     callback.onData(new String(data)); //TODO needs to run over Handler Invokation to ensure being on Main Thread?
                 }
             }
+            rx.close();
+            tx.close();
+            sock.shutdownOutput();
+            sock.shutdownInput();
+            sock.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
