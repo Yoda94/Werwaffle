@@ -7,5 +7,26 @@ package com.example.philip.werwaffle.state;
  */
 
 public class Session {
+    protected static Session currentSession;
 
+    protected Session()
+    {
+
+    }
+
+    public static Session createNewSession() //TODO throw Exception when old Session is still running
+    {
+        currentSession = new Session();
+        return currentSession;
+    }
+
+    public static Session getSession()
+    {
+        return currentSession;
+    }
+
+    public boolean isSessionRunning()
+    {
+        return false;
+    }
 }

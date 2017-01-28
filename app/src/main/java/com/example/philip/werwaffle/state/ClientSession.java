@@ -5,4 +5,15 @@ package com.example.philip.werwaffle.state;
  */
 
 public class ClientSession extends Session {
+
+    public ClientSession()
+    {
+        super();
+    }
+
+    public static Session createNewSession() //TODO throw Exception when old Session is still running
+    {
+        currentSession = new ClientSession();
+        return currentSession;
+    }
 }
