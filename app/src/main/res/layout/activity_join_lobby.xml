@@ -8,6 +8,18 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.philip.werwaffle.JoinLobby">
+    tools:context="com.example.philip.werwaffle.activity.JoinLobby">
 
+    <ToggleButton
+        android:text="ToggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/button_client_is_ready"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textOn="@string/string_is_ready_true"
+        android:textOff="@string/string_is_ready_false" />
 </RelativeLayout>

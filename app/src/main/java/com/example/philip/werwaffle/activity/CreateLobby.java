@@ -7,28 +7,71 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.net.wifi.WifiManager;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 
 import com.example.philip.werwaffle.R;
+import com.example.philip.werwaffle.net.APManager;
+import com.example.philip.werwaffle.net.Advertiser;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 
-public class CreateLobby extends Activity {
+public class CreateLobby extends Activity implements CompoundButton.OnCheckedChangeListener {
     public EditText nameTxt;
     public Button addPlayer;
-    public ListView listView1;
-    public ArrayAdapter<String> adapter;
+
+    private Advertiser advertiser;
 
 
+    //public ListView listView1;
+    //public ArrayAdapter<String> adapter;
+
+    class CreateNetworkHandler implements DialogInterface.OnClickListener //Helper class to contain context
+    {
+        private CreateLobby context;
+        CreateNetworkHandler(CreateLobby con)
+        {
+            context = con;
+        }
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (!APManager.isAPOn(context))
+            {
+                //Disable Wifi
+                WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                if (wifiManager.isWifiEnabled())
+                    wifiManager.setWifiEnabled(false);
+                //Enable Wifi Hotspot
+                APManager.configAPState(CreateLobby.this);
+            }
+            context.startAdvertising();
+        }
+    }
+    class UseWifiHandler implements DialogInterface.OnClickListener //Helper class to contain context
+    {
+        private CreateLobby context;
+        UseWifiHandler(CreateLobby con)
+        {
+            context = con;
+        }
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            //Disable Wifi
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            if (!wifiManager.isWifiEnabled())
+                wifiManager.setWifiEnabled(true);
+            context.startAdvertising();
+        }
+    }
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -69,37 +112,51 @@ public class CreateLobby extends Activity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+        //Popup start
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        final TextView et = new TextView(this);
+        et.setText(getString(R.string.string_network_type));
+        et.setTextSize(14);
+        et.setTextColor(Color.parseColor("#000000"));
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(et);
+        // set dialog message
+        alertDialogBuilder.setCancelable(false).setPositiveButton("Yes", new UseWifiHandler(this));
+        alertDialogBuilder.setCancelable(false).setNegativeButton("No", new CreateNetworkHandler(this));
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
+        //Popup end
 
-        //if Wifi Hotspot is disabled
-        if (APManager.isApOn(CreateLobby.this)) {
-        } else{
-            //Disable Wifi
-            WifiManager wifiManager = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
-            wifiManager.setWifiEnabled(false);
-            //Enable Wifi Hotspot
-            APManager.configApState(CreateLobby.this);
+        ((ToggleButton)this.findViewById(R.id.button_host_is_ready)).setOnCheckedChangeListener(this);
 
-            //Popup start
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CreateLobby.this);
-            final TextView et = new TextView(CreateLobby.this);
-            et.setText(getString(R.string.wifiHotspot));
-            et.setTextSize(20);
-            et.setTextColor(Color.parseColor("#000000"));
-            // set prompts.xml to alertdialog builder
-            alertDialogBuilder.setView(et);
-            // set dialog message
-            alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                }
-            });
-            // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            // show it
-            alertDialog.show();
-            //Popup end
-        }
-
+        advertiser = new Advertiser();
     }
+
+    private void startAdvertising()
+    {
+        advertiser.start();
+        System.out.println("[Lobby] started Advertising");
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) { //TODO: update list
+        if (isChecked)
+        {
+            System.out.println("Activated");
+        } else {
+            System.out.println("Deactivated");
+        }
+        onReadyStateChanged();
+    }
+
+    private void onReadyStateChanged() //TODO: check Readiness and launch Session / Game
+    {
+        System.out.println("[Lobby] Updating Readiness");
+    }
+
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.

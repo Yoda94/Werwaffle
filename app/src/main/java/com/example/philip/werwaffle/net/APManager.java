@@ -1,4 +1,4 @@
-package com.example.philip.werwaffle.activity;
+package com.example.philip.werwaffle.net;
 
 /**
  * Created by philip on 1/26/17.
@@ -11,7 +11,7 @@ import java.lang.reflect.*;
 public class APManager {
 
     //check whether wifi hotspot on or off
-    public static boolean isApOn(Context context) {
+    public static boolean isAPOn(Context context) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         try {
             Method method = wifimanager.getClass().getDeclaredMethod("isWifiApEnabled");
@@ -23,16 +23,18 @@ public class APManager {
     }
 
     // toggle wifi hotspot on or off
-    public static boolean configApState(Context context) {
+    public static boolean configAPState(Context context) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiConfiguration wificonfiguration = null;
+        WifiConfiguration wificonfiguration = new WifiConfiguration();
+        wificonfiguration.SSID = "Werwaffle";
+        wificonfiguration.preSharedKey = "Werwaffle&123"; // TODO: Really insecure, needs better method than hardcode
         try {
             // if WiFi is on, turn it off
-            if(isApOn(context)) {
+            if(isAPOn(context)) {
                 wifimanager.setWifiEnabled(false);
             }
             Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-            method.invoke(wifimanager, wificonfiguration, !isApOn(context));
+            method.invoke(wifimanager, wificonfiguration, !isAPOn(context));
             return true;
         }
         catch (Exception e) {

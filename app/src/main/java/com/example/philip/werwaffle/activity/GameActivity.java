@@ -10,17 +10,23 @@ import android.widget.ListView;
 
 import com.example.philip.werwaffle.R;
 import com.example.philip.werwaffle.guiHelper.GamePlayerListAdapter;
+import com.example.philip.werwaffle.state.Session;
 
 import java.util.ArrayList;
 
 public class GameActivity extends AppCompatActivity {
 
+    private Session gameSession;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        ArrayList<String> players = getIntent().getStringArrayListExtra("players");
+
         //generate list
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.add("item1");
         list.add("item2");
         list.add("item3");
