@@ -1,19 +1,33 @@
 package com.example.philip.werwaffle.state;
 
+import com.example.philip.werwaffle.net.NetClient;
+
+import java.net.InetAddress;
+
 /**
  * Created by Deathlymad on 26.01.2017.
  */
 
-public class ClientSession extends Session {
+public class ClientSession extends Session implements NetClient.OnDataCallback {
 
-    public ClientSession()
+    private NetClient client;
+
+    private ClientSession(InetAddress server)
     {
         super();
+        client = new NetClient(server);
+        client.setDataCallback(this);
     }
 
-    public static Session createNewSession() //TODO throw Exception when old Session is still running
+    @Override
+    public void onData(String packet)
     {
-        currentSession = new ClientSession();
+
+    }
+
+    public static Session createNewSession(InetAddress serverAddr) //TODO throw Exception when old Session is still running
+    {
+        currentSession = new ClientSession( serverAddr);
         return currentSession;
     }
 }
