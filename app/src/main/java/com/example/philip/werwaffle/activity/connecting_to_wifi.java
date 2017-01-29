@@ -1,8 +1,10 @@
 package com.example.philip.werwaffle.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -54,24 +56,44 @@ public class connecting_to_wifi extends Activity {
         test();
     }
 
+    public void askToDisconnectCurrentWifi(){
+        //Popup start
+        AlertDialog.Builder alert = new AlertDialog.Builder(connecting_to_wifi.this);
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        String connectedSSID = wifiInfo.getSSID();
+        alert.setTitle("Connected to Wifi");
+        alert.setMessage("Succesfully connected to "+connectedSSID);
+
+
+        alert.setPositiveButton("Disconnect", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+                wifiManager.disconnect();
+                Intent switchlobby = new Intent(connecting_to_wifi.this, Join_lobby4.class);
+                finish();
+                startActivity(switchlobby);
+            }
+        });
+
+        alert.setNegativeButton("Join this Room", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                Intent switchlobby = new Intent(connecting_to_wifi.this, partyRooom.class);
+                finish();
+                startActivity(switchlobby);
+            }
+        });
+        alert.show();
+        //Popup end
+    }
+
     public void test(){
     new Handler().postDelayed(new Runnable(){
         @Override
         public void run(){
 
-            TextView tex2 = (TextView) findViewById(R.id.textView12);
-            String myssid = getIntent().getStringExtra("ssid");
-            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             if (IsWiFiConnected()){
-                    String connectedSSID = wifiInfo.getSSID();
-                    if (connectedSSID == myssid){
-                        tex1.setText("Is connected to "+myssid);
-                    } else {
-                        tex1.setText("Is connected to "+ connectedSSID);
-                    }
+                askToDisconnectCurrentWifi();
             } else {
                 if (times < 5) {
                     test();

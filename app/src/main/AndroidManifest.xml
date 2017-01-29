@@ -41,7 +41,8 @@
             android:name=".activity.GameActivity"
             android:label="@string/title_activity_game"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.connecting_to_wifi"></activity>
+        <activity android:name=".activity.connecting_to_wifi" />
+        <activity android:name=".activity.partyRooom"></activity>
     </application>
 
 </manifest>

@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
         showCardBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToJoinLobby = new Intent(MainActivity.this, connecting_to_wifi.class);
+                Intent goToJoinLobby = new Intent(MainActivity.this, ShowCards.class);
                 startActivity(goToJoinLobby);
             }
         });

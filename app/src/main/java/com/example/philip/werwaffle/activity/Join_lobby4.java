@@ -62,6 +62,10 @@ public class Join_lobby4 extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_lobby4);
+        if(ApManager.isApOn(Join_lobby4.this)){
+            ApManager.configApState(Join_lobby4.this);
+        }
+
         mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         lv = (ListView) findViewById(R.id.listV4);
         tx = (TextView) findViewById(R.id.joinLobbytex1);
@@ -175,8 +179,8 @@ public class Join_lobby4 extends Activity {
         WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         String connectedSSID = wifiInfo.getSSID();
-        alert.setTitle("Already Connected");
-        alert.setMessage("You are already connected to "+connectedSSID);
+        alert.setTitle("Connected");
+        alert.setMessage("You are connected to "+connectedSSID);
 
 
         alert.setPositiveButton("Disconnect", new DialogInterface.OnClickListener() {
@@ -186,9 +190,11 @@ public class Join_lobby4 extends Activity {
             }
         });
 
-        alert.setNegativeButton("Stay", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("Join this Room", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
+                Intent switchlobby = new Intent(Join_lobby4.this, partyRooom.class);
+                finish();
+                startActivity(switchlobby);
             }
         });
         alert.show();
