@@ -7,7 +7,7 @@
     <string name="joinBut">Join Game</string>
     <string name="hostBut">Create Game</string>
     <string name="createPlayerBut">Create Player</string>
-    <string name="hintName">Name</string>
+    <string name="hintName">Lobby Name</string>
     <string name="string_werewolf_role">Werewolf</string>
     <string name="string_villager_role">Villager</string>
     <string name="string_doctor_role">Doctor</string>

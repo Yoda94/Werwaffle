@@ -3,24 +3,18 @@ package com.example.philip.werwaffle.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
-import com.google.android.gms.appindexing.AppIndex;
-
-import static android.R.attr.data;
 
 public class EditProfil extends AppCompatActivity {
 
@@ -34,7 +28,7 @@ public class EditProfil extends AppCompatActivity {
 
 
     public void init(){
-        inputTxt = (EditText) findViewById(R.id.editName);
+        inputTxt = (EditText) findViewById(R.id.creatlobname);
         selectBut = (ImageButton) findViewById(R.id.imageBut);
 
         prefSettings = getPreferences(PREFERENCE_MODE_PRIVATE);

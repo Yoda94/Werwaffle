@@ -1,12 +1,10 @@
 package com.example.philip.werwaffle.activity;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -25,10 +23,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 
 public class CreateLobby extends Activity {
-    public EditText nameTxt;
-    public Button addPlayer;
-    public ListView listView1;
-    public ArrayAdapter<String> adapter;
+    public EditText lobyName;
+    public EditText lobyPassword;
+    public Button createLobBut;
+
 
 
 
@@ -41,22 +39,10 @@ public class CreateLobby extends Activity {
 
 
     public void init() {
-        nameTxt = (EditText) findViewById(R.id.editName);
-        addPlayer = (Button) findViewById(R.id.createPlayerBut);
-        //final ArrayList<String> my_list = getIntent().getStringArrayListExtra("com.philip.EXTRA_GAMEDATA");
-        //final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>
-        //        (this, android.R.layout.simple_list_item_1, my_list);
-        //listView1.setAdapter(arrayAdapter);
-        //addPlayer.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v){
-        //        String newItem = nameTxt.getText().toString();
-        //        my_list.add(newItem);
-        //        arrayAdapter.notifyDataSetChanged();
-        //        nameTxt.setText("");
+        lobyName = (EditText) findViewById(R.id.creatlobname);
+        createLobBut = (Button) findViewById(R.id.createPlayerBut);
+        lobyPassword = (EditText) findViewById(R.id.creatlobpassword);
 
-        //    }
-        //});
 
 
 

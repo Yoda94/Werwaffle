@@ -1,6 +1,7 @@
 package com.example.philip.werwaffle.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -48,8 +49,11 @@ public class Join_lobby4 extends Activity {
     WifiReceiver receiverWifi;
     ListView lv;
     TextView tx;
-    EditText password;
     StringBuilder sb = new StringBuilder();
+    public Context context;
+    public String myssid;
+    public String connectedSSID;
+
 
     private final Handler handler = new Handler();
 
@@ -58,13 +62,10 @@ public class Join_lobby4 extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_lobby4);
-
-        Toast.makeText(Join_lobby4.this, "Scaning...",
-                Toast.LENGTH_LONG).show();
         mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         lv = (ListView) findViewById(R.id.listV4);
-        tx = (TextView) findViewById(R.id.tex1);
-        password = (EditText) findViewById(R.id.password);
+        tx = (TextView) findViewById(R.id.joinLobbytex1);
+        tx.setText("Scanning...");
 
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,16 +75,40 @@ public class Join_lobby4 extends Activity {
                 // TODO Auto-generated method stub
                 String myssid = arrayAdapter.getItemAtPosition(position).toString();
 
-                password.getText();
-                WifiConfiguration wifiConfig = new WifiConfiguration();
-                wifiConfig.SSID = String.format("\"%s\"", myssid);
-                wifiConfig.preSharedKey = String.format("\"%s\"", password);
+                WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                if (IsWiFiConnected()){
+                    String connectedSSID = wifiInfo.getSSID();
+                    askToDisconnectCurrentWifi();
+                } else {
+                    //if not connected to a wifi
+                    WifiManager wifiManager14 = (WifiManager) getSystemService(WIFI_SERVICE);
+                    int netId = -1;
+                    boolean isNotAllreadyThere = true;
+                    for (WifiConfiguration tmp : wifiManager14.getConfiguredNetworks())
+                        if (tmp.SSID.equals("\"" + myssid + "\"")) {
+                            //if selected wifi is saved on phone
+                            Toast.makeText(Join_lobby4.this, "Exists!",
+                                    Toast.LENGTH_LONG).show();
+                            netId = tmp.networkId;
+                            wifiManager14.disconnect();
+                            wifiManager14.enableNetwork(netId, true);
+                            wifiManager14.reconnect();
+                            isNotAllreadyThere = false;
+                        }
+                    if (isNotAllreadyThere) {
+                        //if not saved on phone
+                        connectToNewWifi();
+                    } else {
+                        //if wifi saved on phone
+                        //Switch Activety
+                        Intent switchlobby = new Intent(Join_lobby4.this, connecting_to_wifi.class);
+                        switchlobby.putExtra("ssid", myssid.toString());
+                        finish();
+                        startActivity(switchlobby);
+                    }
+                }
 
-                WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-                int netId = wifiManager.addNetwork(wifiConfig);
-                wifiManager.disconnect();
-                wifiManager.enableNetwork(netId, true);
-                wifiManager.reconnect();
 
 
             }
@@ -99,6 +124,75 @@ public class Join_lobby4 extends Activity {
 
 
         doInback();
+    }
+
+    public void connectToNewWifi(){
+        //Popup start
+        AlertDialog.Builder alert = new AlertDialog.Builder(Join_lobby4.this);
+
+        alert.setTitle("Password");
+        alert.setMessage("Enter Password:");
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(Join_lobby4.this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                String password = input.getText().toString();
+                WifiConfiguration wifiConfig = new WifiConfiguration();
+                wifiConfig.SSID = String.format("\"%s\"", myssid);
+                wifiConfig.preSharedKey = String.format("\"%s\"", password);
+
+                WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+                int netId = wifiManager.addNetwork(wifiConfig);
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(netId, true);
+                wifiManager.reconnect();
+
+                //Switch Activety
+                Intent switchlobby = new Intent(Join_lobby4.this, connecting_to_wifi.class);
+                switchlobby.putExtra("ssid", myssid.toString());
+                finish();
+                startActivity(switchlobby);
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+        //Popup end
+    }
+
+    public void askToDisconnectCurrentWifi(){
+        //Popup start
+        AlertDialog.Builder alert = new AlertDialog.Builder(Join_lobby4.this);
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        String connectedSSID = wifiInfo.getSSID();
+        alert.setTitle("Already Connected");
+        alert.setMessage("You are already connected to "+connectedSSID);
+
+
+        alert.setPositiveButton("Disconnect", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+                wifiManager.disconnect();
+            }
+        });
+
+        alert.setNegativeButton("Stay", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        alert.show();
+        //Popup end
     }
 
 
@@ -145,14 +239,15 @@ public class Join_lobby4 extends Activity {
         super.onResume();
     }
 
-    class WifiReceiver extends BroadcastReceiver {
+    private class WifiReceiver extends BroadcastReceiver {
         public void onReceive(Context c, Intent intent) {
-            WifiManager wifiManager3 = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            WifiInfo info = wifiManager3.getConnectionInfo();
-            tx.setText(info.getSSID());
+                //WifiManager wifiManager3 = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                //WifiInfo info = wifiManager3.getConnectionInfo();
+
 
             ArrayList<String> connections = new ArrayList<String>();
             ArrayList<Float> Signal_Strenth = new ArrayList<Float>();
+            tx.setText("");
 
 
             sb = new StringBuilder();
@@ -176,6 +271,26 @@ public class Join_lobby4 extends Activity {
 
         }
 
+    }
+
+
+    public boolean IsWiFiConnected() {
+        ConnectivityManager connectivity = (ConnectivityManager)
+                getApplication().getSystemService(
+                        Context.CONNECTIVITY_SERVICE);
+
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null) {
+                for (int i = 0; i < info.length; i++) {
+                    if (info[i].getTypeName().equals("WIFI")
+                            && info[i].isConnected())
+                        return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
 
