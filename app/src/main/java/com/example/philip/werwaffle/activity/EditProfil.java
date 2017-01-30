@@ -1,10 +1,13 @@
 package com.example.philip.werwaffle.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,22 +28,33 @@ public class EditProfil extends AppCompatActivity {
     private SharedPreferences prefSettings;
     private SharedPreferences.Editor prefEditor;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
+    public String macAddressName;
+    public String macAddressIMG;
+    public String macAddress;
+
 
 
     public void init(){
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wInfo = wifiManager.getConnectionInfo();
+        macAddress = wInfo.getMacAddress();
+
+        macAddressName = macAddress+"Name";
+        macAddressIMG = macAddress+"IMG";
+
         inputTxt = (EditText) findViewById(R.id.creatlobname);
         selectBut = (ImageButton) findViewById(R.id.imageBut);
 
-        prefSettings = getPreferences(PREFERENCE_MODE_PRIVATE);
+        prefSettings = getSharedPreferences("profil", MODE_PRIVATE);
         prefEditor = prefSettings.edit();
-        String aName = prefSettings.getString("key1", "Empty");
+        String aName = prefSettings.getString(macAddressName, "Empty");
 
         inputTxt.setText(aName);
 
         ImageView imgView = (ImageView) findViewById(R.id.imageProfile);
-        prefSettings = getPreferences(PREFERENCE_MODE_PRIVATE);
+        prefSettings = getSharedPreferences("profil", MODE_PRIVATE);
         prefEditor = prefSettings.edit();
-        String aimgDecodableString = prefSettings.getString("img", "None");
+        String aimgDecodableString = prefSettings.getString(macAddressIMG, "None");
         //imgView.setImageBitmap(BitmapFactory
         //        .decodeFile(aimgDecodableString));
 
@@ -89,7 +103,7 @@ public class EditProfil extends AppCompatActivity {
                 cursor.close();
                 ImageView imgView = (ImageView) findViewById(R.id.imageProfile);
 
-                prefEditor.putString("img", imgDecodableString);
+                prefEditor.putString(macAddressIMG, imgDecodableString);
                 prefEditor.commit();
 
                 // Set the Image in ImageView after decoding the String
@@ -123,10 +137,10 @@ public class EditProfil extends AppCompatActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         String name = inputTxt.getText().toString();
-        prefEditor.putString("key1", name);
+        prefEditor.putString(macAddressName, name);
         prefEditor.commit();
 
-        String aName = prefSettings.getString("key1", "No Name");
+        String aName = prefSettings.getString(macAddressName, "No Name");
         inputTxt.setText(aName);
     }
 

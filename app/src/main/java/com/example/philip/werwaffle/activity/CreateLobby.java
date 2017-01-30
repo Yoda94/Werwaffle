@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.os.Handler;
-import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -31,10 +30,10 @@ import java.lang.reflect.Method;
 
 
 public class CreateLobby extends Activity {
-    public EditText lobyName;
-    public EditText lobyPassword;
-    public Button createLobBut;
-    public String  myssid;
+    EditText lobyName;
+    EditText lobyPassword;
+    Button createLobby;
+
 
 
 
@@ -81,6 +80,7 @@ public class CreateLobby extends Activity {
             Method getWifiApConfigurationMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
             netConfig=(WifiConfiguration)getWifiApConfigurationMethod.invoke(wifiManager);
             Log.e("CLIENT", "\nSSID:"+netConfig.SSID+"\nPassword:"+netConfig.preSharedKey+"\n");
+            loopCheckHotSpot();
 
         } catch (Exception e) {
             Log.e(this.getClass().toString(), "", e);
@@ -107,20 +107,43 @@ public class CreateLobby extends Activity {
                 }
 
             }
-        },1000);
+        },200);
     }
+
+    public void afterTextChanged(Editable editable) {
+        lobyName = (EditText) findViewById(R.id.creatlobname);
+        lobyPassword = (EditText) findViewById(R.id.creatlobpassword);
+        createLobby = (Button) findViewById(R.id.createPlayerBut);
+        editable = lobyName.getText();
+        if (editable.length() > 0 ) {
+            // enable button
+        } else if (editable.length() == 0 ) {
+            // disable button
+            createLobby.setEnabled(false);
+        }
+        editable = lobyPassword.getText();
+        if (editable.length() > 0 ) {
+            // enable button
+        } else if (editable.length() == 0 ) {
+            // disable button
+            createLobby.setEnabled(false);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_lobby);
-        Button createLobby = (Button) findViewById(R.id.createPlayerBut);
+        createLobby = (Button) findViewById(R.id.createPlayerBut);
+        if (ApManager.isApOn(CreateLobby.this)){ApManager.configApState(CreateLobby.this);}
+
+
         createLobby.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 hotSpotConf();
             }
         });
-        loopCheckHotSpot();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.

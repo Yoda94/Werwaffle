@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
 import com.example.philip.werwaffle.netcode2.WifiHelper;
+import com.google.android.gms.appindexing.AppIndex;
 
 import java.util.ArrayList;
 
@@ -26,6 +28,11 @@ public class partyRooom extends AppCompatActivity {
     public TextView roomLable;
     public Button showPasBut;
     public Button startGameBut;
+    private SharedPreferences prefSettings;
+    private SharedPreferences.Editor prefEditor;
+    private static final int PREFERENCE_MODE_PRIVATE = 0;
+    public String macAddressName;
+    public String macAddressIMG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,21 +91,39 @@ public class partyRooom extends AppCompatActivity {
             @Override
             public void run() {
                 // TODO Auto-generated method stub
-
+                //OwnMacAddres
+                WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                WifiInfo wInfo = wifiManager.getConnectionInfo();
+                String OwnmacAddress = wInfo.getMacAddress();
                 ArrayList<String> deviceList = WifiHelper.getDeviceList();
-                if (deviceList.size() > 0) {
-                    Toast.makeText(partyRooom.this,"größer",
-                            Toast.LENGTH_SHORT).show();
+                if (deviceList.contains(OwnmacAddress)){}else{
+                    deviceList.add(OwnmacAddress);}
+                //Get Name on macAdress
+                ArrayList<String> NameList = new ArrayList<String>();
+
+                for (int i = 0; i < deviceList.size(); i++) {
+                    String mac = deviceList.get(i).toString();
+                    macAddressName = mac+"Name";
+                    prefSettings = getSharedPreferences("profil", MODE_PRIVATE);
+                    prefEditor = prefSettings.edit();
+                    String aName = prefSettings.getString(macAddressName, mac);
+                    NameList.add(aName);
                 }
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                        partyRooom.this, android.R.layout.simple_list_item_1, deviceList);
+                if (deviceList.size() > 0) {
 
-                lv.setAdapter(arrayAdapter);
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                            partyRooom.this, android.R.layout.simple_list_item_1, NameList);
+                    lv.setAdapter(null);
+                    lv.setAdapter(arrayAdapter);
+                }
+
+
+
+
                 doInback();
             }
-        }, 1000);
+        }, 3000);
 
     }
-
 }

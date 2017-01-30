@@ -1,11 +1,15 @@
 package com.example.philip.werwaffle.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +36,7 @@ public class MainActivity extends Activity {
     public Button showCardBut;
     public Button profilBut;
     public Button button_test_game;
+    public int caseNumber;
     public ArrayList arrayList;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
@@ -90,15 +95,125 @@ public class MainActivity extends Activity {
                 startActivity(goToJoinLobby);
             }
         });
+
+
     }
+public void GetStupidPermissions(int caseNumber, String Permission){
+    //int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Permission);
+    // Here, thisActivity is the current activity
+    if (ContextCompat.checkSelfPermission(MainActivity.this, Permission)
+            != PackageManager.PERMISSION_GRANTED) {
 
+        // Should we show an explanation?
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Permission)) {
 
+            // Show an explanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
 
+        } else {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Permission}, caseNumber);
+
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+    }
+}
 
     @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 100: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                }
+                return;
+            }
+            case 101: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                }
+                return;
+            }
+
+            case 102: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                }
+                return;
+            }
+            case 103: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                }
+                return;
+            }
+            case 104: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                }
+                return;
+            }
+            case 105: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                }
+                return;
+            }
+
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+
+
+        }}
+
+            @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+                GetStupidPermissions(101, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                GetStupidPermissions(100, Manifest.permission.WRITE_SETTINGS);
+                GetStupidPermissions(102, Manifest.permission.CHANGE_NETWORK_STATE);
+                GetStupidPermissions(103, Manifest.permission.CHANGE_WIFI_STATE);
+                GetStupidPermissions(104, Manifest.permission.ACCESS_WIFI_STATE);
+                GetStupidPermissions(105, Manifest.permission.ACCESS_NETWORK_STATE);
         init();
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }

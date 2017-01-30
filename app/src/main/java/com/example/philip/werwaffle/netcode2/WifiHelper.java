@@ -1,5 +1,9 @@
 package com.example.philip.werwaffle.netcode2;
 
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -34,12 +38,9 @@ public class WifiHelper {
                 }
                 String[] splitted = line.split(" +");
                 if (splitted.length >= 4) {
-                    String ipAddress = splitted[0];
-                    boolean isReachable = InetAddress.getByName(
-                            splitted[0]).isReachable(500);
-                    if (isReachable) {
-                        deviceList.add(ipAddress);
-                    }
+                    String macAddress = splitted[3];
+                    if (deviceList.contains(macAddress)){}else{
+                        deviceList.add(macAddress);}
                 }
             }
             br.close();
