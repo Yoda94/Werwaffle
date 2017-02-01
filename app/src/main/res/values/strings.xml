@@ -21,7 +21,6 @@
     <string name="string_seer_desc">A wise man who can see into the hearts of the villagers and see their true intent, be they murderous or innocent. Wins together with the Village if no more werewolves are alive.</string>
     <string name="string_white_werewolf_desc">A cold blooded killer. Strives to kill all villagers AND and wolves. Can only win alone.</string>
     <string name="action_settings">Settings</string>
-    <string name="wifiHotspot">Wifi Hotsport enabled</string>
     <string name="wifi">Wifi enabled</string>
     <string name="no">No!</string>
     <string name="createLobbyText">In order to create a lobby you need to start a Hotspot.</string>
@@ -121,6 +120,9 @@
     </string>
     <string name="string_button_test_game">Test Game</string>
     <string name="string_button_vote">Vote!</string>
+    <string name="string_network_type">Do you want to use an existing Network?</string>
+    <string name="string_is_ready_true">Ready</string>
+    <string name="string_is_ready_false">Preparing</string>
 
     <string name="title_activity_party_room">partyRoom</string>
     <string name="dummy_button">Dummy Button</string>
