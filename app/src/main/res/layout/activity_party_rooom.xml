@@ -26,12 +26,11 @@
             android:id="@+id/partySSID"
             android:layout_weight="0.61" />
 
-        <Button
-            android:text="Show Password"
+        <TextView
+            android:text="@string/connected_devices"
             android:layout_width="match_parent"
-            android:layout_height="26dp"
-            android:id="@+id/partyPasswordBut"
-            android:layout_weight="0.15" />
+            android:layout_height="wrap_content"
+            android:id="@+id/textView" />
 
         <ListView
             android:layout_width="match_parent"

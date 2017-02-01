@@ -19,14 +19,17 @@
         android:layout_toRightOf="@+id/password"
         android:layout_toEndOf="@+id/password"
         android:layout_marginLeft="39dp"
-        android:layout_marginStart="39dp" />
+        android:layout_marginStart="39dp"
+        android:text="@string/JoinLobbyTxt" />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/listV4"
-        android:layout_below="@+id/password"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    <Button
+        android:text="@string/goToWifiMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/joinLobbytex1"
+        android:layout_alignLeft="@+id/joinLobbytex1"
+        android:layout_alignStart="@+id/joinLobbytex1"
+        android:layout_marginTop="50dp"
+        android:id="@+id/joinLobbyButton" />
 
 </RelativeLayout>

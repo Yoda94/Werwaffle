@@ -98,32 +98,32 @@ public class MainActivity extends Activity {
 
 
     }
-public void GetStupidPermissions(int caseNumber, String Permission){
-    //int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Permission);
-    // Here, thisActivity is the current activity
-    if (ContextCompat.checkSelfPermission(MainActivity.this, Permission)
-            != PackageManager.PERMISSION_GRANTED) {
+    public void GetStupidPermissions(int caseNumber, String Permission){
+        //int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Permission);
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Permission)
+                != PackageManager.PERMISSION_GRANTED) {
 
-        // Should we show an explanation?
-        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Permission)) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Permission)) {
 
-            // Show an explanation to the user *asynchronously* -- don't block
-            // this thread waiting for the user's response! After the user
-            // sees the explanation, try again to request the permission.
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
 
-        } else {
+            } else {
 
-            // No explanation needed, we can request the permission.
+                // No explanation needed, we can request the permission.
 
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Permission}, caseNumber);
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Permission}, caseNumber);
 
-            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
         }
     }
-}
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -210,7 +210,7 @@ public void GetStupidPermissions(int caseNumber, String Permission){
         setContentView(R.layout.activity_main);
                 GetStupidPermissions(101, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 GetStupidPermissions(100, Manifest.permission.WRITE_SETTINGS);
-                GetStupidPermissions(102, Manifest.permission.CHANGE_NETWORK_STATE);
+                GetStupidPermissions(102, Manifest.permission.ACCESS_COARSE_LOCATION);
                 GetStupidPermissions(103, Manifest.permission.CHANGE_WIFI_STATE);
                 GetStupidPermissions(104, Manifest.permission.ACCESS_WIFI_STATE);
                 GetStupidPermissions(105, Manifest.permission.ACCESS_NETWORK_STATE);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 public class partyRooom extends AppCompatActivity {
     public ListView lv;
     public TextView roomLable;
-    public Button showPasBut;
     public Button startGameBut;
     private SharedPreferences prefSettings;
     private SharedPreferences.Editor prefEditor;
@@ -39,53 +39,29 @@ public class partyRooom extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_party_rooom);
         lv = (ListView) findViewById(R.id.partyListV);
-        showPasBut = (Button) findViewById(R.id.partyPasswordBut);
         startGameBut = (Button) findViewById(R.id.partyBut);
         roomLable = (TextView) findViewById(R.id.partySSID);
-        if (getIntent().getStringExtra("password")==null) {
-            showPasBut.setEnabled(false);
-            startGameBut.setEnabled(false);
-        }
 
         init();
-        doInback();
+        updateCOnnectedDevices();
     }
 
 
 
-
-    public void init(){
+    public void init() {
         WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         String connectedSSID = wifiInfo.getSSID().toString();
-        if (ApManager.isApOn(partyRooom.this)){
-            String myssid = getIntent().getStringExtra("ssid");
-            roomLable.setText("You are the Host running: "+myssid);
-        }else{
-            roomLable.setText("You are connected to: "+connectedSSID);
-        }
-        showPasBut.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                //Popup start
-                AlertDialog.Builder alert = new AlertDialog.Builder(partyRooom.this);
-                alert.setTitle("Show Password");
-                alert.setMessage("Password for your Lobby was: " + getIntent().getStringExtra("password"));
-
-                alert.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                });
-                alert.show();
-                //Popup end
+            if (ApManager.isApOn(partyRooom.this)) {
+                roomLable.setText("You are the Host");
+            } else {
+                roomLable.setText("You are connected to: "+connectedSSID);
+                startGameBut.setEnabled(false);
             }
-        });
     }
 
 
-
-    public void doInback() {
+    public void updateCOnnectedDevices() {
         new Handler().postDelayed(new Runnable() {
 
             @Override
@@ -119,9 +95,7 @@ public class partyRooom extends AppCompatActivity {
                 }
 
 
-
-
-                doInback();
+                updateCOnnectedDevices();
             }
         }, 3000);
 

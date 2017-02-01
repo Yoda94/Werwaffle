@@ -4,8 +4,8 @@
     <string name="profileBut">Profile</string>
     <string name="string_name_label">Name</string>
     <string name="showCardBut">Show all owned cards</string>
-    <string name="joinBut">Join Game</string>
-    <string name="hostBut">Create Game</string>
+    <string name="joinBut">Join a lobby</string>
+    <string name="hostBut">Create lobby</string>
     <string name="createPlayerBut">Create Player</string>
     <string name="hintName">Lobby Name</string>
     <string name="string_werewolf_role">Werewolf</string>
@@ -24,8 +24,11 @@
     <string name="wifiHotspot">Wifi Hotsport enabled</string>
     <string name="wifi">Wifi enabled</string>
     <string name="no">No!</string>
+    <string name="createLobbyText">In order to create a lobby you need to start a Hotspot.</string>
+    <string name="connected_devices">Connected devices:</string>
+    <string name="JoinLobbyTxt">You need to connect to an Wifi to join the party connected to this Wifi room.</string>
     <string name="yes">Yes!</string>
-    <string name="string_create_lobby">Create Lobby</string>
+    <string name="string_create_lobby">Go to wifi menu</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
