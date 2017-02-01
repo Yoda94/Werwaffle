@@ -27,10 +27,15 @@
             android:layout_weight="0.61" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/partyRoomServerIP" />
+
+        <TextView
             android:text="@string/connected_devices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/textView" />
+            android:id="@+id/partyRoomTextView2" />
 
         <ListView
             android:layout_width="match_parent"

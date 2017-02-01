@@ -9,9 +9,12 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -19,10 +22,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
+import com.example.philip.werwaffle.netcode2.ApManager;
+import com.example.philip.werwaffle.netcode2.ClientActivity;
+import com.example.philip.werwaffle.netcode2.ServerActivity;
 import com.example.philip.werwaffle.netcode2.WifiHelper;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 
 import java.util.ArrayList;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class partyRooom extends AppCompatActivity {
     public ListView lv;
@@ -33,6 +42,7 @@ public class partyRooom extends AppCompatActivity {
     private static final int PREFERENCE_MODE_PRIVATE = 0;
     public String macAddressName;
     public String macAddressIMG;
+    public TextView ipHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +51,7 @@ public class partyRooom extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.partyListV);
         startGameBut = (Button) findViewById(R.id.partyBut);
         roomLable = (TextView) findViewById(R.id.partySSID);
+        ipHost = (TextView) findViewById(R.id.partyRoomServerIP);
 
         init();
         updateCOnnectedDevices();
@@ -54,9 +65,23 @@ public class partyRooom extends AppCompatActivity {
         String connectedSSID = wifiInfo.getSSID().toString();
             if (ApManager.isApOn(partyRooom.this)) {
                 roomLable.setText("You are the Host");
+                ServerActivity myServer = new ServerActivity();
+                startGameBut.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        //Start Game
+                    }
+                });
             } else {
                 roomLable.setText("You are connected to: "+connectedSSID);
-                startGameBut.setEnabled(false);
+                startGameBut.setText("Connect?");
+                startGameBut.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        //Connect to Server
+                        ClientActivity myclient = new ClientActivity();
+                    }
+                });
             }
     }
 
@@ -70,19 +95,25 @@ public class partyRooom extends AppCompatActivity {
                 //OwnMacAddres
                 WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
                 WifiInfo wInfo = wifiManager.getConnectionInfo();
-                String OwnmacAddress = wInfo.getMacAddress();
-                ArrayList<String> deviceList = WifiHelper.getDeviceList();
-                if (deviceList.contains(OwnmacAddress)){}else{
-                    deviceList.add(OwnmacAddress);}
+                String OwnmacAddress = wInfo.getMacAddress().toString();
+                final ArrayList<String> deviceList = WifiHelper.getDeviceList();
+                String containment = OwnmacAddress +","+"0";
+                if (deviceList.contains(containment)){}else{
+                    deviceList.add(containment);
+
+
+                }
                 //Get Name on macAdress
                 ArrayList<String> NameList = new ArrayList<String>();
 
                 for (int i = 0; i < deviceList.size(); i++) {
-                    String mac = deviceList.get(i).toString();
-                    macAddressName = mac+"Name";
+                    String contain = deviceList.get(i).toString();
+                    String[] splitted = contain.split(",");
+                    String macAddress = splitted[0];
+                    macAddressName = macAddress+"Name";
                     prefSettings = getSharedPreferences("profil", MODE_PRIVATE);
                     prefEditor = prefSettings.edit();
-                    String aName = prefSettings.getString(macAddressName, mac);
+                    String aName = prefSettings.getString(macAddressName, macAddress);
                     NameList.add(aName);
                 }
 
@@ -94,6 +125,18 @@ public class partyRooom extends AppCompatActivity {
                     lv.setAdapter(arrayAdapter);
                 }
 
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position,
+                                            long id) {
+
+                        String contain = deviceList.get(position).toString();
+                        String[] split = contain.split(",");
+                        String ipadress = split[1];
+                        ipHost.setText(ipadress);
+
+                    }
+                });
 
                 updateCOnnectedDevices();
             }

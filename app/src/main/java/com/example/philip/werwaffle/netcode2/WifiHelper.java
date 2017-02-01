@@ -39,8 +39,10 @@ public class WifiHelper {
                 String[] splitted = line.split(" +");
                 if (splitted.length >= 4) {
                     String macAddress = splitted[3];
-                    if (deviceList.contains(macAddress)){}else{
-                        deviceList.add(macAddress);}
+                    String ipAdress = splitted[0];
+                    String containment = macAddress +","+ ipAdress;
+                    if (deviceList.contains(containment)){}else{
+                        deviceList.add(containment);}
                 }
             }
             br.close();
