@@ -39,7 +39,7 @@ public class EditProfil extends AppCompatActivity {
         WifiInfo wInfo = wifiManager.getConnectionInfo();
         macAddress = wInfo.getMacAddress();
 
-        macAddressName = macAddress+"Name";
+        macAddressName = macAddress+"name";
         macAddressIMG = macAddress+"IMG";
 
         inputTxt = (EditText) findViewById(R.id.creatlobname);

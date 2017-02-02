@@ -24,23 +24,26 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/partySSID"
-            android:layout_weight="0.61" />
+            android:layout_weight="0.46" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/partyRoomServerIP" />
+            android:id="@+id/partyRoomServerIP"
+            android:layout_weight="0.08" />
 
         <TextView
             android:text="@string/connected_devices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/partyRoomTextView2" />
+            android:id="@+id/partyRoomTextView2"
+            android:layout_weight="0.09" />
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="337dp"
-            android:id="@+id/partyListV" />
+            android:layout_height="171dp"
+            android:id="@+id/partyListV"
+            android:layout_weight="0.32" />
 
         <Button
             android:text="Start Game"

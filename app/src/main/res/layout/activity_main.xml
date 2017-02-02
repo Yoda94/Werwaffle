@@ -68,4 +68,15 @@
         android:layout_marginTop="17dp"
         android:id="@+id/button_test_game" />
 
+    <Button
+        android:text="server"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/mainClientBut"
+        android:layout_toRightOf="@+id/mainClientBut"
+        android:layout_toEndOf="@+id/mainClientBut"
+        android:layout_marginLeft="74dp"
+        android:layout_marginStart="74dp"
+        android:id="@+id/mainserverBut" />
+
 </RelativeLayout>

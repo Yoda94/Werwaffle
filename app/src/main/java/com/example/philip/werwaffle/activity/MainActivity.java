@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
 
 
 
@@ -78,6 +77,9 @@ public class MainActivity extends Activity {
                 startActivity(goToJoinLobby);
             }
         });
+
+
+
         showCardBut = (Button) findViewById(R.id.profilBut);
         showCardBut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,7 +212,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
                 GetStupidPermissions(101, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 GetStupidPermissions(100, Manifest.permission.WRITE_SETTINGS);
-                GetStupidPermissions(102, Manifest.permission.ACCESS_COARSE_LOCATION);
+                GetStupidPermissions(102, Manifest.permission.INTERNET);
                 GetStupidPermissions(103, Manifest.permission.CHANGE_WIFI_STATE);
                 GetStupidPermissions(104, Manifest.permission.ACCESS_WIFI_STATE);
                 GetStupidPermissions(105, Manifest.permission.ACCESS_NETWORK_STATE);

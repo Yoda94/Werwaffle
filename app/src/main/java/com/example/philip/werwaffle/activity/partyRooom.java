@@ -17,21 +17,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
 import com.example.philip.werwaffle.netcode2.ApManager;
-import com.example.philip.werwaffle.netcode2.ClientActivity;
-import com.example.philip.werwaffle.netcode2.ServerActivity;
+import com.example.philip.werwaffle.netcode2.Client;
+import com.example.philip.werwaffle.netcode2.Server;
 import com.example.philip.werwaffle.netcode2.WifiHelper;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.server.converter.StringToIntConverter;
 
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class partyRooom extends AppCompatActivity {
     public ListView lv;
@@ -43,6 +45,18 @@ public class partyRooom extends AppCompatActivity {
     public String macAddressName;
     public String macAddressIMG;
     public TextView ipHost;
+    public String connectedSSID;
+    public Boolean Host;
+
+    public String connectToIP;
+
+    public Server server;
+    public TextView infoip, msg;
+
+
+    TextView response;
+    EditText editTextAddress, editTextPort;
+    Button buttonConnect, buttonClear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,38 +67,55 @@ public class partyRooom extends AppCompatActivity {
         roomLable = (TextView) findViewById(R.id.partySSID);
         ipHost = (TextView) findViewById(R.id.partyRoomServerIP);
 
-        init();
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        connectedSSID = wifiInfo.getSSID().toString();
+        if (ApManager.isApOn(partyRooom.this)) {
+            host();
+        } else {
+            client();
+        }
         updateCOnnectedDevices();
     }
 
-
-
-    public void init() {
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        String connectedSSID = wifiInfo.getSSID().toString();
-            if (ApManager.isApOn(partyRooom.this)) {
-                roomLable.setText("You are the Host");
-                ServerActivity myServer = new ServerActivity();
-                startGameBut.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v){
-                        //Start Game
-                    }
-                });
-            } else {
-                roomLable.setText("You are connected to: "+connectedSSID);
-                startGameBut.setText("Connect?");
-                startGameBut.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v){
-                        //Connect to Server
-                        ClientActivity myclient = new ClientActivity();
-                    }
-                });
-            }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        server.onDestroy();
     }
 
+    public void host() {
+        Host = Boolean.TRUE;
+        infoip = (TextView) findViewById(R.id.partyRoomTextView2);
+        msg = (TextView) findViewById(R.id.partySSID);
+        server = new Server(this);
+        infoip.setText(server.getIpAddress() + ":" + server.getPort());
+
+        roomLable.setText("You are the Host");
+        startGameBut.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+            }
+        });
+    }
+
+    public void client() {
+        Host = Boolean.FALSE;
+        roomLable.setText("You are connected to: "+connectedSSID);
+        response = (TextView) findViewById(R.id.partyRoomServerIP);
+        startGameBut.setText("Connect");
+        startGameBut.setEnabled(false);
+
+        startGameBut.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                Client myClient = new Client(connectToIP, 8080, response);
+                myClient.execute();
+            }
+        });
+    }
 
     public void updateCOnnectedDevices() {
         new Handler().postDelayed(new Runnable() {
@@ -97,11 +128,9 @@ public class partyRooom extends AppCompatActivity {
                 WifiInfo wInfo = wifiManager.getConnectionInfo();
                 String OwnmacAddress = wInfo.getMacAddress().toString();
                 final ArrayList<String> deviceList = WifiHelper.getDeviceList();
-                String containment = OwnmacAddress +","+"0";
+                String containment = OwnmacAddress +","+getIpAddress();
                 if (deviceList.contains(containment)){}else{
                     deviceList.add(containment);
-
-
                 }
                 //Get Name on macAdress
                 ArrayList<String> NameList = new ArrayList<String>();
@@ -118,7 +147,6 @@ public class partyRooom extends AppCompatActivity {
                 }
 
                 if (deviceList.size() > 0) {
-
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                             partyRooom.this, android.R.layout.simple_list_item_1, NameList);
                     lv.setAdapter(null);
@@ -134,13 +162,49 @@ public class partyRooom extends AppCompatActivity {
                         String[] split = contain.split(",");
                         String ipadress = split[1];
                         ipHost.setText(ipadress);
+                        connectToIP = ipadress;
+                        if (! Host){
+                            if (connectToIP.equals("192.168.43.1")){
+                                startGameBut.setEnabled(true);
+                            }
+                        }
 
                     }
                 });
-
                 updateCOnnectedDevices();
             }
         }, 3000);
-
     }
+
+
+    private String getIpAddress() {
+      String ip = "";
+      try {
+          Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
+                  .getNetworkInterfaces();
+          while (enumNetworkInterfaces.hasMoreElements()) {
+              NetworkInterface networkInterface = enumNetworkInterfaces
+                      .nextElement();
+              Enumeration<InetAddress> enumInetAddress = networkInterface
+                      .getInetAddresses();
+              while (enumInetAddress.hasMoreElements()) {
+                  InetAddress inetAddress = enumInetAddress.nextElement();
+
+                  if (inetAddress.isSiteLocalAddress()) {
+                      ip += "SiteLocalAddress: "
+                              + inetAddress.getHostAddress() + "\n";
+                  }
+
+              }
+
+          }
+
+      } catch (SocketException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+          ip += "Something Wrong! " + e.toString() + "\n";
+      }
+
+      return ip;
+}
 }
