@@ -11,13 +11,17 @@ import android.net.wifi.WifiManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
 import com.example.philip.werwaffle.R;
+
+import java.util.UUID;
 
 public class EditProfil extends AppCompatActivity {
 
@@ -30,24 +34,30 @@ public class EditProfil extends AppCompatActivity {
     private static final int PREFERENCE_MODE_PRIVATE = 0;
     public String macAddressName;
     public String macAddressIMG;
-    public String macAddress;
+    public String aName;
 
 
 
     public void init(){
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wInfo = wifiManager.getConnectionInfo();
-        macAddress = wInfo.getMacAddress();
 
-        macAddressName = macAddress+"name";
-        macAddressIMG = macAddress+"IMG";
+        //Get Unique ID
+        final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+        final String tmDevice, tmSerial, androidId;
+        tmDevice = "" + tm.getDeviceId();
+        tmSerial = "" + tm.getSimSerialNumber();
+        androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        String deviceId = deviceUuid.toString();
+
+        macAddressName = deviceId+"name";
+        macAddressIMG = deviceId+"IMG";
 
         inputTxt = (EditText) findViewById(R.id.creatlobname);
         selectBut = (ImageButton) findViewById(R.id.imageBut);
 
         prefSettings = getSharedPreferences("profil", MODE_PRIVATE);
         prefEditor = prefSettings.edit();
-        String aName = prefSettings.getString(macAddressName, "Empty");
+        aName = prefSettings.getString(macAddressName, "Empty");
 
         inputTxt.setText(aName);
 
@@ -143,5 +153,7 @@ public class EditProfil extends AppCompatActivity {
         String aName = prefSettings.getString(macAddressName, "No Name");
         inputTxt.setText(aName);
     }
+
+
 
 }

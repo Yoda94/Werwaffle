@@ -7,7 +7,9 @@ import android.net.wifi.WifiManager;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 
+import com.example.philip.werwaffle.activity.EditProfil;
 import com.example.philip.werwaffle.activity.partyRooom;
 
 import java.io.IOException;
@@ -19,7 +21,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
-
+import java.util.UUID;
 
 
 import static android.content.Context.MODE_PRIVATE;
@@ -34,6 +36,7 @@ public class Server {
     partyRooom activity;
     ServerSocket serverSocket;
     String message = "";
+    Context context;
     static final int socketServerPORT = 8080;
 
     public Server(partyRooom activity) {
@@ -111,12 +114,25 @@ public class Server {
             String msgReply = "Hello from Server, you are #" + cnt;
             String test = "TEST!";
 
+            //Get Shard Prefs
+            //Get Unique ID
+            final TelephonyManager tm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+            final String tmDevice, tmSerial, androidId;
+            tmDevice = "" + tm.getDeviceId();
+            tmSerial = "" + tm.getSimSerialNumber();
+            androidId = "" + android.provider.Settings.Secure.getString(activity.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+            UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+            String deviceId = deviceUuid.toString();
+            String macAddressName = deviceId + "name";
+            SharedPreferences pref = activity.getSharedPreferences("profil", MODE_PRIVATE);
+            String name = pref.getString(macAddressName,"none");
+
 
             try {
                 outputStream = hostThreadSocket.getOutputStream();
                 PrintStream printStream = new PrintStream(outputStream);
                 printStream.print(msgReply);
-                printStream.print(test);
+                printStream.print(" my name is "+name);
                 printStream.close();
 
                 message += "replayed: " + msgReply + "\n";

@@ -47,6 +47,7 @@ public class MainActivity extends Activity {
      */
     private GoogleApiClient client;
 
+
     public void init() {
         createBut = (Button) findViewById(R.id.createBut);
         createBut.setOnClickListener(new View.OnClickListener() {

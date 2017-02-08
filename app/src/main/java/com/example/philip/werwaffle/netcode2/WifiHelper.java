@@ -29,6 +29,7 @@ public class WifiHelper {
         boolean isFirstLine = true;
 
         try {
+            deviceList.clear();
             br = new BufferedReader(new FileReader("/proc/net/arp"));
             String line;
             while ((line = br.readLine()) != null) {
@@ -40,9 +41,9 @@ public class WifiHelper {
                 if (splitted.length >= 4) {
                     String macAddress = splitted[3];
                     String ipAdress = splitted[0];
-                    String containment = macAddress +","+ ipAdress;
-                    if (deviceList.contains(containment)){}else{
-                        deviceList.add(containment);}
+                    //String containment = macAddress +","+ipAdress;
+                    if (deviceList.contains(ipAdress)){}else{
+                        deviceList.add(ipAdress);}
                 }
             }
             br.close();

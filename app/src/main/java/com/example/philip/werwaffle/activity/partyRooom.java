@@ -124,31 +124,25 @@ public class partyRooom extends AppCompatActivity {
             public void run() {
                 // TODO Auto-generated method stub
                 //OwnMacAddres
-                WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-                WifiInfo wInfo = wifiManager.getConnectionInfo();
-                String OwnmacAddress = wInfo.getMacAddress().toString();
                 final ArrayList<String> deviceList = WifiHelper.getDeviceList();
-                String containment = OwnmacAddress +","+getIpAddress();
-                if (deviceList.contains(containment)){}else{
-                    deviceList.add(containment);
+                if (deviceList.contains(getIpAddress())){}else{
+                    deviceList.add(getIpAddress());
                 }
                 //Get Name on macAdress
-                ArrayList<String> NameList = new ArrayList<String>();
+                //ArrayList<String> NameList = new ArrayList<String>();
 
-                for (int i = 0; i < deviceList.size(); i++) {
-                    String contain = deviceList.get(i).toString();
-                    String[] splitted = contain.split(",");
-                    String macAddress = splitted[0];
-                    macAddressName = macAddress+"Name";
-                    prefSettings = getSharedPreferences("profil", MODE_PRIVATE);
-                    prefEditor = prefSettings.edit();
-                    String aName = prefSettings.getString(macAddressName, macAddress);
-                    NameList.add(aName);
-                }
+                //for (int i = 0; i < deviceList.size(); i++) {
+                  //  String ipAdress = deviceList.get(i);
+                    //macAddressName = macAddress+"Name";
+                    //prefSettings = getSharedPreferences("profil", MODE_PRIVATE);
+                    //prefEditor = prefSettings.edit();
+                    //String aName = prefSettings.getString("macAddressName", macAddress);
+                    //NameList.add(aName);
+                //}
 
                 if (deviceList.size() > 0) {
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                            partyRooom.this, android.R.layout.simple_list_item_1, NameList);
+                            partyRooom.this, android.R.layout.simple_list_item_1, deviceList);
                     lv.setAdapter(null);
                     lv.setAdapter(arrayAdapter);
                 }
@@ -158,9 +152,7 @@ public class partyRooom extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> parent, View view, int position,
                                             long id) {
 
-                        String contain = deviceList.get(position).toString();
-                        String[] split = contain.split(",");
-                        String ipadress = split[1];
+                        String ipadress = deviceList.get(position);
                         ipHost.setText(ipadress);
                         connectToIP = ipadress;
                         if (! Host){
@@ -173,7 +165,7 @@ public class partyRooom extends AppCompatActivity {
                 });
                 updateCOnnectedDevices();
             }
-        }, 3000);
+        }, 2000);
     }
 
 
@@ -191,7 +183,7 @@ public class partyRooom extends AppCompatActivity {
                   InetAddress inetAddress = enumInetAddress.nextElement();
 
                   if (inetAddress.isSiteLocalAddress()) {
-                      ip += "SiteLocalAddress: "
+                      ip += "Own ipAddress:"
                               + inetAddress.getHostAddress() + "\n";
                   }
 

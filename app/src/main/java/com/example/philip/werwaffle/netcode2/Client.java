@@ -1,13 +1,23 @@
 package com.example.philip.werwaffle.netcode2;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.widget.TextView;
+
+import com.example.philip.werwaffle.activity.EditProfil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by philip on 2/2/17.
