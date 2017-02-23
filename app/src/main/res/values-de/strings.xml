@@ -43,4 +43,23 @@
     <string name="connected_devices">Verbundene Geräte:</string>
     <string name="createLobbyText">Um einen Raum zu eröffnen musst du einen Wifi Hotspot starten.</string>
     <string name="goToWifiMenu">Zu Wifi Menu</string>
+    <string name="ask_exit_game">Willst du das Spiel wirklich verlassen?</string>
+    <string name="connected_to_no_wifi">Du bist mit keinem Wifi verbunden.</string>
+    <string name="dummy_content"></string>
+    <string name="exit">Spiel verlassen</string>
+    <string name="havent_picked_img">Du hast kein Bild ausgewählt.</string>
+    <string name="join_lobby_info">Um einem Raum beizutreten musst du dich mit dem passenden Wifi verbinden.</string>
+    <string name="my_role_title">Meine Rolle</string>
+    <string name="no">Nein</string>
+    <string name="no_role_yet">Du hast noch keine Rolle</string>
+    <string name="player_list_title">Spieler</string>
+    <string name="selected_cards_title">Ausgewählte Karten</string>
+    <string name="string_connected_to">Du bist verbunden mit:</string>
+    <string name="string_is_ready_false"></string>
+    <string name="string_you_host">Du bist der Leiter.</string>
+    <string name="went_wrong">Etwas ist schief gelaufen.</string>
+    <string name="yes">Ja</string>
+    <string name="changeCardsBut">Ändern</string>
+    <string name="startRoundBt">Runde starten</string>
+    <string name="playerBut"></string>
 </resources>

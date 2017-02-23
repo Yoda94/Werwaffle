@@ -29,7 +29,6 @@ public class WifiHelper {
         boolean isFirstLine = true;
 
         try {
-            deviceList.clear();
             br = new BufferedReader(new FileReader("/proc/net/arp"));
             String line;
             while ((line = br.readLine()) != null) {

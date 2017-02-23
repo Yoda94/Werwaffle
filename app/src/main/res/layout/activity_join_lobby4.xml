@@ -10,26 +10,38 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.philip.werwaffle.activity.Join_lobby4">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/joinLobbytex1"
-        android:layout_marginTop="19dp"
-        android:layout_below="@+id/textView3"
-        android:layout_toRightOf="@+id/password"
-        android:layout_toEndOf="@+id/password"
-        android:layout_marginLeft="39dp"
-        android:layout_marginStart="39dp"
-        android:text="@string/JoinLobbyTxt" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:text="@string/goToWifiMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/joinLobbytex1"
-        android:layout_alignLeft="@+id/joinLobbytex1"
-        android:layout_alignStart="@+id/joinLobbytex1"
-        android:layout_marginTop="50dp"
-        android:id="@+id/joinLobbyButton" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/joinLobbytex1"
+            android:layout_marginTop="19dp"
+            android:layout_marginLeft="39dp"
+            android:layout_marginStart="39dp"
+            android:text="@string/JoinLobbyTxt" />
+
+        <Button
+            android:text="@string/goToWifiMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/joinLobbytex1"
+            android:layout_alignLeft="@+id/joinLobbytex1"
+            android:layout_alignStart="@+id/joinLobbytex1"
+            android:layout_marginTop="50dp"
+            android:id="@+id/joinLobbyButton" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/join_lobby_tv2"
+            android:text="Text"
+            android:layout_below="@+id/joinLobbyButton"
+            android:layout_alignLeft="@+id/joinLobbyButton"
+            android:layout_alignStart="@+id/joinLobbyButton"
+            android:layout_marginTop="70dp" />
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -11,8 +11,19 @@
     tools:context="com.example.philip.werwaffle.activity.MainActivity">
 
     <Button
+        android:text="@string/profileBut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/profilBut"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
         android:text="@string/hostBut"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="63dp"
         android:id="@+id/createBut"
@@ -24,7 +35,7 @@
 
     <Button
         android:text="@string/joinBut"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/joinBut"
         android:layout_centerVertical="true"
@@ -35,7 +46,7 @@
 
     <Button
         android:text="@string/showCardBut"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="98dp"
         android:id="@+id/showCards"
@@ -44,39 +55,5 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-    <Button
-        android:text="@string/profileBut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/profilBut"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="24dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:text="@string/string_button_test_game"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profilBut"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="19dp"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="17dp"
-        android:id="@+id/button_test_game" />
-
-    <Button
-        android:text="server"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/mainClientBut"
-        android:layout_toRightOf="@+id/mainClientBut"
-        android:layout_toEndOf="@+id/mainClientBut"
-        android:layout_marginLeft="74dp"
-        android:layout_marginStart="74dp"
-        android:id="@+id/mainserverBut" />
 
 </RelativeLayout>

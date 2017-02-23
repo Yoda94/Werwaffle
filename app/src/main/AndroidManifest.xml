@@ -40,14 +40,11 @@
             android:label="@string/title_activity_show_cards"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.EditProfil" />
-        <activity
-            android:name=".activity.GameActivity"
-            android:label="@string/title_activity_game"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.connecting_to_wifi" />
         <activity android:name=".activity.partyRooom" />
-        <activity android:name=".activity.ClientActivity2" />
-        <activity android:name=".activity.ServerActivity2"></activity>
+        <activity
+            android:name=".activity.playground"
+            android:label="@string/title_activity_playground"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

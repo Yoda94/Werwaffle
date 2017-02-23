@@ -56,9 +56,12 @@ public class CreateLobby extends Activity {
             @Override
             public void run() {
                 if (ApManager.isApOn(CreateLobby.this)) { //if hotspot is on
-                    Intent switchlobby = new Intent(CreateLobby.this, partyRooom.class);
+                    Intent intent = new Intent(CreateLobby.this, playground.class);
+                    Bundle b = new Bundle();
+                    b.putBoolean("host", true); //Your id
+                    intent.putExtras(b); //Put your id to your next Intent
+                    startActivity(intent);
                     finish();
-                    startActivity(switchlobby);
                 }else {
                     loopCheckHotSpot();
                 }
