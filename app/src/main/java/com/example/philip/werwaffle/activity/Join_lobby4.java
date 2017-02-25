@@ -1,16 +1,10 @@
 package com.example.philip.werwaffle.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.philip.werwaffle.R;
+
+import layout.playground;
+
 import static android.net.wifi.WifiManager.ACTION_PICK_WIFI_NETWORK;
 
 public class Join_lobby4 extends Activity {

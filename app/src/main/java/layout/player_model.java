@@ -10,10 +10,12 @@ public class player_model {
     String name;
     String img;
     Button but;
+    Boolean alive;
 
-    player_model(String name, String img){
+    player_model(String name, String img, boolean alive){
         this.name = name;
         this.img = img;
+        this.alive = alive;
     }
     public String getName(){
         return this.name;
@@ -24,5 +26,5 @@ public class player_model {
     public Button getButton(){
         return this.but;
     }
-
+    public boolean isAlive(){return this.alive;}
 }

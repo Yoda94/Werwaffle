@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class ShowCards extends AppCompatActivity {
@@ -21,15 +23,26 @@ public class ShowCards extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_cards);
         lv = (ListView) findViewById(R.id.show_cards_lv);
-        modelItems = new card_model[6];
-        modelItems[0] = new card_model(getString(R.string.string_witch_role), getnumber(getString(R.string.string_witch_role)), getString(R.string.string_witch_desc));
-        modelItems[1] = new card_model(getString(R.string.string_doctor_role), getnumber(getString(R.string.string_doctor_role)), getString(R.string.string_doctor_desc));
-        modelItems[2] = new card_model(getString(R.string.string_seer_role), getnumber(getString(R.string.string_seer_role)), getString(R.string.string_seer_desc));
-        modelItems[3] = new card_model(getString(R.string.string_villager_role), getnumber(getString(R.string.string_villager_role)), getString(R.string.string_villager_desc));
-        modelItems[4] = new card_model(getString(R.string.string_werewolf_role), getnumber(getString(R.string.string_werewolf_role)), getString(R.string.string_werewolf_desc));
-        modelItems[5] = new card_model(getString(R.string.string_white_werewolf_role), getnumber(getString(R.string.string_white_werewolf_role)), getString(R.string.string_white_werewolf_desc));
+        modelItems = new card_model[13];
+        adModelItem(0, getString(R.string.string_witch_role),getString(R.string.string_witch_desc));
+        adModelItem(1, getString(R.string.string_doctor_role), getString(R.string.string_doctor_desc));
+        adModelItem(2, getString(R.string.string_seer_role), getString(R.string.string_seer_desc));
+        adModelItem(3, getString(R.string.string_villager_role), getString(R.string.string_villager_desc));
+        adModelItem(4, getString(R.string.string_werewolf_role), getString(R.string.string_werewolf_desc));
+        adModelItem(5, getString(R.string.string_white_werewolf_role), getString(R.string.string_white_werewolf_desc));
+        adModelItem(6, getString(R.string.string_suendenbock_role),getString(R.string.string_suendenbock_desc));
+        adModelItem(7, getString(R.string.string_bigbadwolf_role),getString(R.string.string_bigbadwolf_desc));
+        adModelItem(8, getString(R.string.string_urwolf_role),getString(R.string.string_urwolf_desc));
+        adModelItem(9, getString(R.string.string_mogli_role),getString(R.string.string_mogli_desc));
+        adModelItem(10, getString(R.string.string_maged_role),getString(R.string.string_maged_desc));
+        adModelItem(11, getString(R.string.string_hunter_role),getString(R.string.string_hunter_desc));
+        adModelItem(12, getString(R.string.string_idiot_role),getString(R.string.string_idiot_desc));
         card_adapter adapter = new card_adapter(this, modelItems);
         lv.setAdapter(adapter);
+    }
+
+    public void adModelItem(int i,String name, String desc){
+        modelItems[i] = new card_model(name, getnumber(name), desc);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,5 +76,6 @@ public class ShowCards extends AppCompatActivity {
         editor.apply();
     }
 
-    }
+
+}
 

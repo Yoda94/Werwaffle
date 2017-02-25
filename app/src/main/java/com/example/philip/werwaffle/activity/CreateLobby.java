@@ -1,24 +1,13 @@
 package com.example.philip.werwaffle.activity;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.net.wifi.WifiConfiguration;
 import android.os.Handler;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.Editable;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.net.wifi.WifiManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.example.philip.werwaffle.R;
@@ -28,10 +17,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.lang.reflect.Method;
-
-import static android.net.wifi.WifiManager.ACTION_PICK_WIFI_NETWORK;
-import static android.provider.ContactsContract.Intents.Insert.ACTION;
+import layout.playground;
 
 
 public class CreateLobby extends Activity {

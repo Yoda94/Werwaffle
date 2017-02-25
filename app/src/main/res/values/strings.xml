@@ -1,15 +1,18 @@
 <resources>
     <string name="app_name">Werwaffle</string>
     <string name="string_you_host">You are the Host.</string>
+    <string name="settings_show_cards_switch">Show all Cards that are used in a round</string>
     <string name="string_connected_to">You are connected to:</string>
     <string name="havent_picked_img">You didn\'t pick a image.</string>
     <string name="went_wrong">Something went wrong.</string>
+    <string name="settings_show_cards_help_title">Show Cards</string>
+    <string name="settings_show_cards_help_desc">You can choos if you and your playmats can see the cards the computer choose.</string>
     <string name="connected_to_no_wifi">You are not connected to a Wifi.</string>
     <string name="join_lobby_info">In order to join a Room you need to connect to it\'s Wifi.</string>
     <string name="exit">Exit Game</string>
     <string name="ask_exit_game">Do you want to exit the Game?</string>
     <string name="player_list_title">Players</string>
-    <string name="selected_cards_title">Selected Cards</string>
+    <string name="selected_cards_title">Possible Cards</string>
     <string name="my_role_title">My Role</string>
     <string name="no_role_yet">No Role yet</string>
     <string name="title_activity_show_cards">ShowCards</string>
@@ -22,11 +25,29 @@
     <string name="hintName">Lobby Name</string>
     <string name="changeCardsBut">Change</string>
     <string name="startRoundBt">Start Round</string>
+    <string name="cards_in_game_title">Cards in Game</string>
     <string name="playerBut">BUTTON</string>
     <string name="string_werewolf_role">Werewolf</string>
     <string name="string_villager_role">Villager</string>
     <string name="string_doctor_role">Doctor</string>
     <string name="string_witch_role">Witch</string>
+    <string name="string_maged_role">Maid</string>
+    <string name="settings_bt">Settings</string>
+    <string name="string_mogli_role">Mogli</string>
+    <string name="string_urwolf_role">First Wolf</string>
+    <string name="string_bigbadwolf_role">Super evil Wolf</string>
+    <string name="string_idiot_role">Twit</string>
+    <string name="not_enouth_cards_title">Not enough Cards</string>
+    <string name="not_enouth_cards_desc">You did not select enough Cards. Select more Cards in order to Start the Game.</string>
+    <string name="string_suendenbock_role">Scapegoat</string>
+    <string name="string_hunter_role">Hunter</string>
+    <string name="string_maged_desc">When a villager is killed by voting you can obtain his role before it got relived. Obtaining a new Role means you are then completely this Role. Al "one time" abilities of this Role will be renewed. You are no longer the Maid.</string>
+    <string name="string_mogli_desc">Right now you are a simple villager. But when your role model (chosen by you during the first night) dies you will become a Werwolf.</string>
+    <string name="string_urwolf_desc">You are playing together with the other Werwolves. In addition to your Role as Werwolf you can chose (one time) to turn the Victim into an Werwolf instead of killing him. </string>
+    <string name="string_bigbadwolf_desc">You are playing together with the other Werwolves. In addition to your Role as Werwolf you can kill another Player every night. As soon as a Werwolf dies you will lose your extra power.</string>
+    <string name="string_idiot_desc">Well every Village got an twit. Who tought it\'s you?. When the villagers try to kill by voting you will not die because in the last second they see that you are only the twit and they will show mercy. But then you are not able to vote anymore.</string>
+    <string name="string_suendenbock_desc">Im sorry for you. Its not your day. Your only extra power is when the voting end in a tie you die. But if you die like that you can at least chose the Players that are able to vote next day. Note is al Players you chose die in this night there will be no voting. After this day all will return to normal. But your still dead.</string>
+    <string name="string_hunter_desc">When you die you can shoot someone. Anyone. Cool. </string>
     <string name="string_seer_role">Seer</string>
     <string name="string_white_werewolf_role">White Werewolf</string>
     <string name="string_werewolf_desc">A ferocious beast. Will hunt each night with his pack and kill a villager. Wins if no more villagers are alive.</string>
@@ -35,7 +56,7 @@
     <string name="string_witch_desc">An old hag that has a healing potion and a poison she can use to heal a werewolf victim or kill a villager of her choosing. Wins together with the Village if no more werewolves are alive.</string>
     <string name="string_seer_desc">A wise man who can see into the hearts of the villagers and see their true intent, be they murderous or innocent. Wins together with the Village if no more werewolves are alive.</string>
     <string name="string_white_werewolf_desc">A cold blooded killer. Strives to kill all villagers AND and wolves. Can only win alone.</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">When a villager is killed by voting you can obtain his role before it got relived. Obtaining a new Role means you are then completely this Role. Al \"one time\" abilities of this Role will be renewed. You are no longer the Maid.</string>
     <string name="wifi">Wifi enabled</string>
     <string name="no">No</string>
     <string name="createLobbyText">In order to create a lobby you need to start a Hotspot.</string>
@@ -150,5 +171,77 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="title_activity_test" translatable="false">test</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
 
 </resources>

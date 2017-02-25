@@ -53,7 +53,7 @@
     <string name="no">Nein</string>
     <string name="no_role_yet">Du hast noch keine Rolle</string>
     <string name="player_list_title">Spieler</string>
-    <string name="selected_cards_title">Ausgewählte Karten</string>
+    <string name="selected_cards_title">Mögliche Karten</string>
     <string name="string_connected_to">Du bist verbunden mit:</string>
     <string name="string_is_ready_false"></string>
     <string name="string_you_host">Du bist der Leiter.</string>
@@ -61,5 +61,27 @@
     <string name="yes">Ja</string>
     <string name="changeCardsBut">Ändern</string>
     <string name="startRoundBt">Runde starten</string>
-    <string name="playerBut"></string>
+    <string name="playerBut">BUTTON</string>
+    <string name="string_bigbadwolf_role">Super böser Wolf</string>
+    <string name="string_hunter_role">Jäger</string>
+    <string name="string_idiot_role">Trottel</string>
+    <string name="string_maged_role">Magd</string>
+    <string name="string_mogli_role">Mogli</string>
+    <string name="string_suendenbock_role">Sündenbock</string>
+    <string name="string_urwolf_role">Erster Wolf</string>
+    <string name="string_bigbadwolf_desc">Du spielst zusammen mit den Werwölfen. Zusätzlich zu deiner Rolle als Werwolf kannst du jede nach eine weitere Person töten. Aber sobalt ein Werwolf stierbt verlierst du diese extra Fähigkeit.</string>
+    <string name="string_hunter_desc">Wenn du stierbst kannst du noch jemanden erschießen und mit dir in den Tot ziehen. Egal wen.</string>
+    <string name="string_idiot_desc">"Jedes Dorf hat einen Trottel. Wer hätte gedacht das du das bist? Wenn das Dorf dich am Tag durch die Abstimmung töten will erkennen sie im letzten moment, dass du ja nur der Trottel bist und verschohnen dich. Aber du verlierst dein Wahlrecht.  "</string>
+    <string name="string_maged_desc">Sobalt ein Dorfbewohner am Tag durch die Abstimmung getötet wird kannst du, befor seine Rolle enthüllt wird diese einnehmen. Du bist dann nicht mehr die Magd sondern diese Role mit all ihren Fähigkeiten. Einmaliege Fähigkeiten dieser Rolle werden erneuert.</string>
+    <string name="string_mogli_desc">Momentan bist du ein einfacher Dorfbewohner. Aber sobalt dein Vorbild (das du in der ersten Nacht wählst) stierbt wirst du zu einem Werwolf.</string>
+    <string name="string_suendenbock_desc">Deine einzige extra Fähigkeit besteht darin, dass fals es bei der Abstimmung am Tag zu einem unentschieden kommst musst du sterben anstelle von den Angeklagten. Wenigstens kannst du wenn du auf diese Weiße stierbst bestimmen wer am nächten Tag Wählen darf und wer nicht. Bemerke: Wenn alle Spieler die Wählen dürfen in der Nacht sterben, dann gibt es keine Abstimmung am folgenden Tag. Danach kehr alles wieder zum normalen zurück. Aber du bist immernoch tot.</string>
+    <string name="string_urwolf_desc">"Du spielst zusammen mit den Werwölfen. Zusätzlich zu deiner Rolle als Werwolf darfst du einmalig das ausgewählte Opfer statt es zu töten in einen Werwolf verwandeln. "</string>
+    <string name="not_enouth_cards_title">Nicht genug Karten</string>
+    <string name="not_enouth_cards_desc">Du hast nicht genug Karten ausgewählt. Wähe mehr Karten aus um das Spiel starten zu können.</string>
+    <string name="cards_in_game_title">Karten im Spiel</string>
+    <string name="settings_bt">Einstellungen</string>
+    <string name="settings_show_cards_switch">Alle Karten die in eier Runde sind anzeigen</string>
+    <string name="title_activity_settings">Alle Karten die in eier Runde sind anzeigen</string>
+    <string name="settings_show_cards_help_title">Karten anzeigen</string>
+    <string name="settings_show_cards_help_desc">Du kannst wählen ob du und deine mitspieler sehen können welche Karten der Coputer ausgewählt hat.</string>
 </resources>

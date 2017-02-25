@@ -18,7 +18,7 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="281dp"
+            android:layout_width="356dp"
             android:layout_height="match_parent">
 
             <TextView
@@ -37,11 +37,10 @@
 
         </LinearLayout>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_menu_rotate"
-            android:id="@+id/fragment_my_role_imgBt" />
+        <Space
+            android:layout_width="12dp"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
 </FrameLayout>

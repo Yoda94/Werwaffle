@@ -21,7 +21,17 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import layout.Settings;
 
+/**ADDING A NEW ROLE:
+ * 1. Zu strings name und desc hinzufügen.
+ * 2. In MainActivity in die init packen.
+ * 3. In ShowCards hinzufügen.
+ */
+
+/**TOST EXAMPLE:
+ * Toast.makeText(this,"Here",Toast.LENGTH_SHORT).show();
+ */
 
 
 public class MainActivity extends Activity {
@@ -41,10 +51,7 @@ public class MainActivity extends Activity {
         buttons();
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+
     private GoogleApiClient client;
 
     private void init(){
@@ -55,7 +62,46 @@ public class MainActivity extends Activity {
         editor.putString(getString(R.string.string_villager_role), getString(R.string.string_villager_desc));
         editor.putString(getString(R.string.string_seer_role), getString(R.string.string_seer_desc));
         editor.putString(getString(R.string.string_doctor_role), getString(R.string.string_doctor_desc));
+        editor.putString(getString(R.string.string_suendenbock_role),getString(R.string.string_suendenbock_desc));
+        editor.putString(getString(R.string.string_bigbadwolf_role),getString(R.string.string_bigbadwolf_desc));
+        editor.putString(getString(R.string.string_urwolf_role),getString(R.string.string_urwolf_desc));
+        editor.putString(getString(R.string.string_mogli_role),getString(R.string.string_mogli_desc));
+        editor.putString(getString(R.string.string_maged_role),getString(R.string.string_maged_desc));
+        editor.putString(getString(R.string.string_hunter_role),getString(R.string.string_hunter_desc));
+        editor.putString(getString(R.string.string_idiot_role),getString(R.string.string_idiot_desc));
         editor.apply();
+
+        SharedPreferences.Editor editor2 = getSharedPreferences("card_power", MODE_PRIVATE).edit();
+        editor2.putInt(getString(R.string.string_witch_role), 4);
+        editor2.putInt(getString(R.string.string_werewolf_role), -5);
+        editor2.putInt(getString(R.string.string_white_werewolf_role), -3);
+        editor2.putInt(getString(R.string.string_villager_role), 2);
+        editor2.putInt(getString(R.string.string_seer_role), 5);
+        editor2.putInt(getString(R.string.string_doctor_role), 3);
+        editor2.putInt(getString(R.string.string_suendenbock_role),2);
+        editor2.putInt(getString(R.string.string_bigbadwolf_role),-10);
+        editor2.putInt(getString(R.string.string_urwolf_role),-10);
+        editor2.putInt(getString(R.string.string_mogli_role),-4);
+        editor2.putInt(getString(R.string.string_maged_role),2);
+        editor2.putInt(getString(R.string.string_hunter_role),2);
+        editor2.putInt(getString(R.string.string_idiot_role),2);
+        editor2.apply();
+
+        SharedPreferences.Editor editor3 = getSharedPreferences("card_evil", MODE_PRIVATE).edit();
+        editor3.putInt(getString(R.string.string_witch_role), 0);
+        editor3.putInt(getString(R.string.string_werewolf_role), 1);
+        editor3.putInt(getString(R.string.string_white_werewolf_role), 2);
+        editor3.putInt(getString(R.string.string_villager_role), 0);
+        editor3.putInt(getString(R.string.string_seer_role), 0);
+        editor3.putInt(getString(R.string.string_doctor_role), 0);
+        editor3.putInt(getString(R.string.string_suendenbock_role), 0);
+        editor3.putInt(getString(R.string.string_bigbadwolf_role), 1);
+        editor3.putInt(getString(R.string.string_urwolf_role), 1);
+        editor3.putInt(getString(R.string.string_mogli_role), 0);
+        editor3.putInt(getString(R.string.string_maged_role), 0);
+        editor3.putInt(getString(R.string.string_hunter_role), 0);
+        editor3.putInt(getString(R.string.string_idiot_role), 0);
+        editor3.apply();
     }
 
     public void buttons() {
@@ -65,9 +111,9 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 String[] item = new String[]{};
                 ArrayList<String> my_list = new ArrayList<String>(Arrays.asList(item));
-                Intent goToCreateLobby = new Intent(MainActivity.this, CreateLobby.class);
-                goToCreateLobby.putStringArrayListExtra("com.philip.EXTRA_GAMEDATA", my_list);
-                startActivity(goToCreateLobby);
+                Intent intent = new Intent(MainActivity.this, CreateLobby.class);
+                intent.putStringArrayListExtra("com.philip.EXTRA_GAMEDATA", my_list);
+                startActivity(intent);
             }
 
 
@@ -76,16 +122,16 @@ public class MainActivity extends Activity {
         joinBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToJoinLobby = new Intent(MainActivity.this, Join_lobby4.class);
-                startActivity(goToJoinLobby);
+                Intent intent = new Intent(MainActivity.this, Join_lobby4.class);
+                startActivity(intent);
             }
         });
         profilBut = (Button) findViewById(R.id.profilBut);
         profilBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToProfil = new Intent(MainActivity.this, EditProfil.class);
-                startActivity(goToProfil);
+                Intent intent = new Intent(MainActivity.this, EditProfil.class);
+                startActivity(intent);
             }
         });
 
@@ -93,8 +139,16 @@ public class MainActivity extends Activity {
         showCardBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToJoinLobby = new Intent(MainActivity.this, ShowCards.class);
-                startActivity(goToJoinLobby);
+                Intent intent = new Intent(MainActivity.this, ShowCards.class);
+                startActivity(intent);
+            }
+        });
+        Button settingsBut = (Button) findViewById(R.id.settingsBt);
+        settingsBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Settings.class);
+                startActivity(intent);
             }
         });
 
