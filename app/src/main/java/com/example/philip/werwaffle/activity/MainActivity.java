@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
 import com.google.android.gms.appindexing.Action;
@@ -18,10 +19,15 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import layout.Settings;
+import layout.addPlayer;
+import layout.player_model;
 
 /**ADDING A NEW ROLE:
  * 1. Zu strings name und desc hinzufügen.
@@ -48,13 +54,43 @@ public class MainActivity extends Activity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         GetStupidPermissions(100, Manifest.permission.WRITE_SETTINGS);
         init();
+        createPlayerTEST();
         buttons();
+    }
+    public void createPlayerTEST(){
+        ArrayList<player_model> personss = addPlayer.getPlayerlist();
+        personss.clear();
+        //getme
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        String img = pref.getString("img", "None");
+        String name = pref.getString("name", "None");
+        String uniqueKEy = pref.getString("uniqueKEy", "None");
+        addPlayer.addPlayer(name, img, 2, 0, uniqueKEy);
+        addPlayer.addPlayer("Max", img, 2, 0, "asd");
+        addPlayer.addPlayer("Perter", img, 2, 0, "asda");
+        addPlayer.addPlayer("Olaf", img, 2, 0, "sdf");
+        addPlayer.addPlayer("Hanns", img, 2, 0, "sdsddfsda");
+        addPlayer.addPlayer("Klara", img, 2, 0, "rtz");
+        //addPlayer.addPlayer("Julia", img, "2", 0, "vbn");
+        //addPlayer.addPlayer("Lisa", img, "2", 0, "rtz");
     }
 
 
     private GoogleApiClient client;
 
     private void init(){
+        SharedPreferences.Editor prefe = getSharedPreferences("bools", MODE_PRIVATE).edit();
+        prefe.putBoolean("gameRunning", false);
+        prefe.apply();
+
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        String uniqueKEy = pref.getString("uniqueKEy", "None");
+        if (uniqueKEy.equals("None")) {
+            SharedPreferences.Editor prefEdit = getSharedPreferences("profil", MODE_PRIVATE).edit();
+            String NewUniqueKEy = getuniqueKEy();
+            prefEdit.putString("uniqueKEy", NewUniqueKEy);
+            prefEdit.apply();
+        }
         SharedPreferences.Editor editor = getSharedPreferences("card_desc", MODE_PRIVATE).edit();
         editor.putString(getString(R.string.string_witch_role), getString(R.string.string_witch_desc));
         editor.putString(getString(R.string.string_werewolf_role), getString(R.string.string_werewolf_desc));
@@ -154,6 +190,12 @@ public class MainActivity extends Activity {
 
 
     }
+
+    public String getuniqueKEy(){
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(130, random).toString(32);
+    }
+
     public void GetStupidPermissions(int caseNumber, String Permission){
         //int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Permission);
         // Here, thisActivity is the current activity

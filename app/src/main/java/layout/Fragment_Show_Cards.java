@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
 import com.example.philip.werwaffle.activity.ShowCards;
@@ -26,6 +27,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 
 public class Fragment_Show_Cards extends Fragment {
+    public ArrayList<player_model> persons;
     ListView lv;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,11 +80,11 @@ public class Fragment_Show_Cards extends Fragment {
     }
 
     private void start(){
-        int numberOfPlayers = 8;
+        persons = addPlayer.getPlayerlist();
         ArrayList<String> cardsInGame = showSelectedCards();
-        if (AbleToStart(numberOfPlayers, cardsInGame)) {
-            ArrayList<String> finalCards = selectCards(numberOfPlayers, cardsInGame);
-            assigneCardsToPlayer(finalCards, numberOfPlayers);
+        if (AbleToStart(cardsInGame)) {
+            ArrayList<String> finalCards = selectCards(cardsInGame);
+            assigneCardsToPlayer(finalCards);
             setGameStart();
         }else {
             new AlertDialog.Builder(getActivity())
@@ -92,9 +94,9 @@ public class Fragment_Show_Cards extends Fragment {
         }
     }
 
-    public boolean AbleToStart(int numberOfPlayers, ArrayList<String> selectedCards){
+    public boolean AbleToStart(ArrayList<String> selectedCards){
         boolean startable = false;
-        if (numberOfPlayers <= selectedCards.size()){
+        if (persons.size() <= selectedCards.size()){
             startable = true;
         }else {
             String Werwolf = getString(R.string.string_werewolf_role);
@@ -138,10 +140,10 @@ public class Fragment_Show_Cards extends Fragment {
         }
         return cardsInGame;
     }
-    private ArrayList<String> selectCards(int numberOfPlayers, ArrayList<String> cardsInGame){
+    private ArrayList<String> selectCards(ArrayList<String> cardsInGame){
         ArrayList<String> cardsSecected = new ArrayList<String>();
         cardsSecected.clear();
-        for (int i = 0; i < numberOfPlayers; i++ ){
+        for (int i = 0; i < persons.size(); i++ ){
             int powerLevel = getPowerLevl(cardsSecected);
             String newCard = getCard(cardsInGame, powerLevel, cardsSecected);
             cardsSecected.add(newCard);
@@ -203,32 +205,25 @@ public class Fragment_Show_Cards extends Fragment {
         }
         return powerLevel;
     }
-    private void assigneCardsToPlayer(ArrayList finalCards, int numberOfPlayers){
-        SharedPreferences.Editor prefEditor = getContext().getSharedPreferences("whoAmI", MODE_PRIVATE).edit();
-        SharedPreferences.Editor gameEditor = getContext().getSharedPreferences("game", MODE_PRIVATE).edit();
+    private void assigneCardsToPlayer(ArrayList finalCards){
         SharedPreferences card_evil = getContext().getSharedPreferences("card_evil", MODE_PRIVATE);
-        prefEditor.clear();
-        gameEditor.clear();
-        for (int i = 0; i < numberOfPlayers; i++) {
+        for (int i = 0; i < persons.size(); i++) {
             Random r = new Random();
-            int x = r.nextInt((numberOfPlayers-i));
+            int x = r.nextInt((persons.size()-i));
             String card = finalCards.get(x).toString();
-            String key = "player" + i;
-            String alive = key + "alive";
-            String evi = key + "evil";
-            int evil = card_evil.getInt(card, 0);
-            prefEditor.putString(key, card);
-            gameEditor.putBoolean(alive, true);
-            gameEditor.putInt(evi, evil);
+            persons.get(i).setPlayerNR(i); //assingne playerNR
+            persons.get(i).setAlive(1);
+            persons.get(i).setEvil(card_evil.getInt(card, 0));
+            persons.get(i).setRole(card);
+            persons.get(i).setSkillUsable(true);
             finalCards.remove(x);
         }
-        prefEditor.apply();
-        gameEditor.apply();
     }
     private void setGameStart(){
         SharedPreferences.Editor prefEditor = getContext().getSharedPreferences("bools", MODE_PRIVATE).edit();
         prefEditor.putBoolean("gameRunning",true);
         prefEditor.apply();
+
     }
 
 }

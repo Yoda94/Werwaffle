@@ -3,12 +3,10 @@ package layout;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 
@@ -22,26 +20,21 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.philip.werwaffle.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import layout.BlankFragment;
-import layout.Fragment_Show_Cards;
-import layout.cards_in_game;
-import layout.myRole;
-import layout.person;
-import layout.player_adapter2;
 
 
 public class playground extends AppCompatActivity {
@@ -62,13 +55,23 @@ public class playground extends AppCompatActivity {
     private ViewPager mViewPager;
     public static boolean host;
     private volatile boolean gameRunning;
-    public ArrayList<player_model> personss;
+    public static ArrayList<player_model> persons;
+    public static   player_adapter2 playerAdapter;
+    private static int nightState;
+    Boolean firstTime;
+    LinearLayoutManager llm;
+
+    private static Context context;
+
+    public static Context getAppContext() {
+        return playground.context;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playground);
-
+        playground.context = getApplicationContext();
         Bundle b = getIntent().getExtras();
         host = b.getBoolean("host");
         gameRunning = false;
@@ -97,65 +100,168 @@ public class playground extends AppCompatActivity {
                 }
                 if (position == 3){finalCards();}
                 if (position == 0) {
-                    refreshPlayerList();
+                    RecyclerView rv = (RecyclerView) findViewById(R.id.fragment_blenk_reclyV);
+                    rv.setLayoutManager(llm);
+                    rv.setAdapter(playerAdapter);
                 }
                 if (position == 1){}
             }
         });
         gameLoop();
-        
+        persons = addPlayer.getPlayerlist();
+        playerAdapter = new player_adapter2(persons);
+        llm = new LinearLayoutManager(playground.this);
+
     }
+
+
     private void gameLoop(){
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                while (gameRunning) {
-                    refreshPlayerAlive();
-                    //      if (endRound(checkWin())) {gameRunning = false;else{
-                    //          startNight();
-                    //          showNightResult();
-                    //          playerAlive();
-                    //          if (endRound(checkWin()))) {gameRunning = false;}else{
-                    //              startDay();
-                    //              showDayResult();
-                    //              gameLoop();
-                    //          }
-                    //      }
-                    if (!gameRunning) {
-                        SharedPreferences pref = getSharedPreferences("bools", MODE_PRIVATE);
-                        gameRunning = pref.getBoolean("gameRunning", false);
-                        gameLoop();
+                if (gameRunning) {
+                    if (endRound()) {
+                        gameRunning = false;
+                    } else {
+                        playerAdapter.notifyDataSetChanged();
+                        startNight();
+                        //          showNightResult();
+                        //          playerAlive();
+                        //          if (endRound(checkWin()))) {gameRunning = false;}else{
+                        //              startDay();
+                        //              showDayResult();
+                        //              gameLoop();
                     }
                 }
+                if (!gameRunning) {
+                    SharedPreferences pref = getSharedPreferences("bools", MODE_PRIVATE);
+                    gameRunning = pref.getBoolean("gameRunning", false);
+                    gameLoop();
+                }
             }
-        }, 500);
+        }, 5000);
+    }
+    public static void what(Integer target){
+        if (nightState == 1){activateSkillOn(target);}
+    }
+
+    public static void activateSkillOn(Integer target){
+        String role = getMyRoleName();
+        if (canBeUsed()){
+            if (canUseOn(target)){
+                useSkillOn(target, role);
+            }
+        }
+    }
+    public static void useSkillOn(Integer target, String role){
+        if (role.equals(context.getString(R.string.string_werewolf_role))){wolfSkill(target);}
+        if (role.equals(context.getString(R.string.string_bigbadwolf_role))){bigBadWolfSkill(target);}
+      //  if (role.equals(context.getString(R.string.string_urwolf_role))){urWolfSkill(target);}
+      //  if (role.equals(context.getString(R.string.string_white_werewolf_role))){whiteWolfSkill(target);}
+      //  if (role.equals(context.getString(R.string.string_mogli_role))){
+      //      if (persons.get(getMyNummber()).getEvil()==1) {wolfSkill(target);}else {mogliSkill();}
+      //  }
+      //  if (role.equals(context.getString(R.string.string_witch_role))){witchSkill(target);}
+      //  if (role.equals(context.getString(R.string.string_seer_role))){seerSkill(target);}
+      //  if (role.equals(context.getString(R.string.string_doctor_role))){doctorSkill(target);}
+      //  if (role.equals(context.getString(R.string.string_suendenbock_role))){noSkill();}
+      //  if (role.equals(context.getString(R.string.string_maged_role))){noSkill();}
+      //  if (role.equals(context.getString(R.string.string_hunter_role))){noSkill();}
+      //  if (role.equals(context.getString(R.string.string_idiot_role))){noSkill();}
+      //  if (role.equals(context.getString(R.string.string_villager_role))){noSkill();}
+    }
+
+    public static void wolfSkill(Integer target){
+        if (!persons.get(getMyNummber()).didIVote){
+            persons.get(target).setVotes(1);
+            persons.get(getMyNummber()).setUsedOnPlayer(target);
+            playerAdapter.notifyItemChanged(target);
+        }else {
+            int oldTarget = persons.get(getMyNummber()).getUsedOnPlayer();
+            if (oldTarget != -1){
+                persons.get(oldTarget).setVotes(-1);
+                persons.get(target).setVotes(1);
+                persons.get(getMyNummber()).setUsedOnPlayer(target);
+                playerAdapter.notifyItemChanged(target);
+                playerAdapter.notifyItemChanged(oldTarget);
+            }
+        }
+        persons.get(getMyNummber()).setDidIVote(true);
+    }
+    public static void bigBadWolfSkill(Integer target){
+        if (nightState == 1){wolfSkill(target);}else {
+            if (!getEvilOf(getDeadPlayerNumbers()).contains(1)){ //no Wolf dead
+                persons.get(target).setAlive(0);
+            }
+        }
+    }
+
+    public static boolean canUseOn(Integer target){
+        SharedPreferences pref = playground.getAppContext().getSharedPreferences("lastRound", MODE_PRIVATE);
+        int usedOnPlayerNR = pref.getInt("playerNR", -1);
+        return (usedOnPlayerNR != target);
+    }
+
+    public static boolean canBeUsed(){
+        return persons.get(getMyNummber()).getSkillUsable();
+    }
+
+
+
+    public void startNight(){
+        int NR = getMyNummber();
+        reWriteButtons(NR, persons.get(NR).getRole());
+        nightState = 1;
+    }
+    public void reWriteButtons(Integer me, String role){
+        for (int x = 0; x < persons.size(); x++){
+            String newCapture = whatCanIdoInNight(role);
+            if (x != me) {persons.get(x).setButton(newCapture);}
+        }
+        playerAdapter.notifyDataSetChanged();
+    }
+
+    public String whatCanIdoInNight(String role){
+        String stuff = "None";
+        if (role.equals(getString(R.string.string_werewolf_role))){stuff = "kill";}
+        if (role.equals(getString(R.string.string_bigbadwolf_role))){stuff = "kill";}
+        if (role.equals(getString(R.string.string_urwolf_role))){stuff = "kill";}
+        if (role.equals(getString(R.string.string_white_werewolf_role))){stuff = "kill";}
+        if (role.equals(getString(R.string.string_mogli_role))){stuff = "nothing";}
+        if (role.equals(getString(R.string.string_witch_role))){stuff = "kill";}
+        if (role.equals(getString(R.string.string_seer_role))){stuff = "see";}
+        if (role.equals(getString(R.string.string_doctor_role))){stuff = "heal";}
+        if (role.equals(getString(R.string.string_suendenbock_role))){stuff = "nothing";}
+        if (role.equals(getString(R.string.string_maged_role))){stuff = "nothing";}
+        if (role.equals(getString(R.string.string_hunter_role))){stuff = "nothing";}
+        if (role.equals(getString(R.string.string_idiot_role))){stuff = "nothing";}
+        if (role.equals(getString(R.string.string_villager_role))){stuff = "nothing";}
+        return stuff;
     }
 
     public int checkWin(){
         int state = -1;
-        SharedPreferences game = getSharedPreferences("game", MODE_PRIVATE);
-        ArrayList<String> playersAlive = getPlayersAlive();
-        ArrayList<Integer> roleListOfAlivePlayersAsInteger = getRolesOf(playersAlive);
-        if (ifContainsOnly(0, roleListOfAlivePlayersAsInteger)){
+        ArrayList<Integer> playersAlive = getPlayersAlive();
+        ArrayList<Integer> evilOfPlayersAlive = getEvilOf(playersAlive);
+        if (ifContainsOnly(0, evilOfPlayersAlive)){
             state = 0;
         }
-        if (ifContainsOnly(1, roleListOfAlivePlayersAsInteger)){
+        if (ifContainsOnly(1, evilOfPlayersAlive)){
             state = 1;
         }
-        if (ifContainsOnly(2, roleListOfAlivePlayersAsInteger)){
+        if (ifContainsOnly(2, evilOfPlayersAlive)){
             state = 2;
         }
-
-
         return state;
     }
-    public boolean endRound(int state){
+    public boolean endRound(){
+        int state = checkWin();
         boolean end = false;
-        if (state == 1){end=true;} // display villagers wins
-        if (state == 2){end=true;} // display wolves wins
-        if (state == 3){end=true;} // display whitWolf wins
-        return end;
+        if (state == 0){end=true;} // display villagers wins
+        if (state == 1){end=true;} // display wolves wins
+        if (state == 2){end=true;} // display whitWolf wins
+        return false;
     }
 
     private boolean ifContainsOnly(int value, ArrayList<Integer> list){ // contains only 0,0,0 or 1,1,1...
@@ -166,105 +272,61 @@ public class playground extends AppCompatActivity {
         return state;
     }
 
-    private ArrayList<Integer> getRolesOf(ArrayList<String> playerList){//contains player2, player5...
-        ArrayList<Integer> roleList = new ArrayList<>();
-        roleList.clear();
-        SharedPreferences pref = getSharedPreferences("game", MODE_PRIVATE);
+    private static ArrayList<Integer> getEvilOf(ArrayList<Integer> playerList){
+        ArrayList<Integer> evilList = new ArrayList<>();
+        evilList .clear();
         for (int i = 0; i < playerList.size(); i++){
-            String playerAndNR = playerList.get(i);
-            String key = playerAndNR + "evil";
-            int role = pref.getInt(key, -1);
-            roleList.add(role);
+            int NR = playerList.get(i);
+            evilList .add(persons.get(NR).getEvil());
         }
-        return roleList;
+        return evilList ;
     }
 
-    private ArrayList<String> getPlayersAlive(){
-        ArrayList<String> playersAlive = new ArrayList<>();
+    private static ArrayList<Integer> getPlayersAlive(){ //contains 1,2,4
+        ArrayList<Integer> playersAlive = new ArrayList<>();
         playersAlive.clear();
-        SharedPreferences game = getSharedPreferences("game", MODE_PRIVATE);
-        int numberOfPlayers = game.getInt("numberOfPlayers", 1);
-        for (int i = 0; i <=  numberOfPlayers; i++){
-            String key = "player" + numberOfPlayers + "alive";
-            Boolean isIAlive = game.getBoolean(key, false);
-            if (isIAlive){
-                String name = "player" + numberOfPlayers;
-                playersAlive.add(name);
-            }
+        for (int i = 0; i <  persons.size(); i++){
+            if(persons.get(i).isAlive()==1){ playersAlive.add(i);}
         }
         return playersAlive;
     }
 
-    private ArrayList<String> getDeadPlayers(){ //contains player5, player0,...
-        ArrayList<String> playersDead = new ArrayList<>();
+    private static ArrayList<Integer> getDeadPlayerNumbers(){ //contains 1,2,3,4
+        ArrayList<Integer> playersDead = new ArrayList<>();
         playersDead.clear();
-        SharedPreferences game = getSharedPreferences("game", MODE_PRIVATE);
-        int numberOfPlayers = game.getInt("numberOfPlayers", 1);
-        for (int i = 0; i <=  numberOfPlayers; i++){
-            String key = "player" + numberOfPlayers + "alive";
-            Boolean isIAlive = game.getBoolean(key, true);
-            if (!isIAlive){
-                String name = "player" + numberOfPlayers;
-                playersDead.add(name);
-            }
+        for (int i = 0; i <  persons.size(); i++){
+            if(persons.get(i).isAlive()==0){ playersDead.add(i);}
         }
         return playersDead;
-    }
-    private void refreshPlayerAlive(){
-        ArrayList<String> deadPlayers = getDeadPlayers();
-        for (int i = 0; i < deadPlayers.size(); i++){
-
-        }
     }
 
     private void finalCards() {
         ListView lv = (ListView) findViewById(R.id.fragment_cards_in_game_lv);
         ArrayList<String> finalCards = new ArrayList<String>();
-        SharedPreferences pref = this.getSharedPreferences("whoAmI", MODE_PRIVATE);
-        Map<String, ?> keys = pref.getAll();
-        for (Map.Entry<String, ?> entry : keys.entrySet()) {
-            Log.d("map values", entry.getKey() + ": " +
-                    entry.getValue().toString());
-            String card = pref.getString(entry.getKey(), getString(R.string.went_wrong));
-            finalCards.add(card);
+        for (int i = 0; i < persons.size(); i++) {
+            finalCards.add(persons.get(i).getRole());
         }
         Collections.shuffle(finalCards);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, finalCards);
         lv.setAdapter(adapter);
     }
-    public int getMyNummber(){
-        return 0;
+    public static int getMyNummber(){
+        int myNR = 0;
+        SharedPreferences pref = playground.getAppContext().getSharedPreferences("profil", MODE_PRIVATE);
+        String uniqueKEy = pref.getString("uniqueKEy", "None");
+        for (int i = 0; i < persons.size(); i++) {
+            if(persons.get(i).getUniqueKEy().equals(uniqueKEy)){myNR = i;}
+        }
+        return myNR;
     }
-    public String getMyRoleName(){
-        int playerNr = getMyNummber();
-        String key = "player" + playerNr;
-        SharedPreferences pref = this.getSharedPreferences("whoAmI", MODE_PRIVATE);
-        String myRole = pref.getString(key, getString(R.string.no_role_yet));
-        return myRole;
+    public static String getMyRoleName(){
+        return persons.get(getMyNummber()).getRole();
     }
     public String getMyRoldeDesc(String role){
         SharedPreferences pref = this.getSharedPreferences("card_desc", MODE_PRIVATE);
-        String myDesc = pref.getString(role, "");
-        return myDesc;
+        return pref.getString(role, "");
     }
 
-    private void refreshPlayerList(){
-        SharedPreferences.Editor editor = getSharedPreferences("game", MODE_PRIVATE).edit();
-        editor.putInt("numberOfPlayers", 1); //replace with real number
-        editor.apply();
-        RecyclerView rv = (RecyclerView) findViewById(R.id.fragment_blenk_reclyV);
-        LinearLayoutManager llm = new LinearLayoutManager(playground.this);
-        rv.setLayoutManager(llm);
-        personss = new ArrayList<player_model>();
-        //getme
-        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
-        String img = pref.getString("img", "None");
-        String name = pref.getString("name", "None");
-        //
-        personss.add(new player_model(name, img, true));
-        player_adapter2 adapter2 = new player_adapter2(personss);
-        rv.setAdapter(adapter2);
-    }
 
     public static boolean isHost(){
         return host;
