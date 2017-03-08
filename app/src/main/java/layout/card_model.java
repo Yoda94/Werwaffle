@@ -1,4 +1,4 @@
-package com.example.philip.werwaffle.activity;
+package layout;
 
 import android.widget.Button;
 
@@ -11,11 +11,13 @@ public class card_model {
     String desc;
     int value;
     Button but;
+    Integer integer;
 
-    card_model(String name, int value, String desc){
+    card_model(String name, int value, String desc, Integer integer){
         this.name = name;
         this.value = value;
         this.desc = desc;
+        this.integer = integer;
     }
     public String getName(){
         return this.name;
@@ -29,6 +31,7 @@ public class card_model {
     public Button getButton(){
         return this.but;
     }
+    public Integer getInteger(){return this.integer;}
     public void setValue(int new_value){
         value = new_value;
     }

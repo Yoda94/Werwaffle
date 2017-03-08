@@ -15,14 +15,7 @@ import com.google.gson.Gson;
 
 
 import com.example.philip.werwaffle.R;
-import com.google.android.gms.tasks.Task;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class BlankFragment extends Fragment {
@@ -33,9 +26,20 @@ public class BlankFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_blank, container, false);
+        RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.fragment_blenk_reclyV);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 
 }

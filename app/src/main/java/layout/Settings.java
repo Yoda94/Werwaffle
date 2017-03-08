@@ -24,23 +24,38 @@ public class Settings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        final String myUniqKey = pref.getString("uniqueKEy", "None");
         Switch switchBT = (Switch) findViewById(R.id.settings_show_cards_swith);
         ImageButton help_show_cards = (ImageButton) findViewById(R.id.settings_help_show_cards);
+        Switch voteSW = (Switch) findViewById(R.id.settings_switch_vote_same);
+        ImageButton vote_help = (ImageButton) findViewById(R.id.settings_but_vote_help);
         switchBT.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences.Editor editor = getSharedPreferences("bools", MODE_PRIVATE).edit();
-                editor.putBoolean("cards_in_game_switch", isChecked);
-                editor.apply();
+                addPlayer.me(myUniqKey).setSettingsShowCards(isChecked);
             }
         });
-        SharedPreferences pref = getSharedPreferences("bools", MODE_PRIVATE);
-        switchBT.setChecked(pref.getBoolean("cards_in_game_switch",false));
+        switchBT.setChecked(addPlayer.me(myUniqKey).getSettingsShowCards());
         help_show_cards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(Settings.this)
-                        .setTitle(getString(R.string.settings_show_cards_help_title))
                         .setMessage(getString(R.string.settings_show_cards_help_desc))
+                        .create().show();
+            }
+        });
+
+        voteSW.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                addPlayer.me(myUniqKey).setSettingsVoteSameTime(isChecked);
+            }
+        });
+        voteSW.setChecked(addPlayer.me(myUniqKey).getSettingsVoteSameTime());
+        vote_help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(Settings.this)
+                        .setMessage(getString(R.string.settings_vote_desc))
                         .create().show();
             }
         });

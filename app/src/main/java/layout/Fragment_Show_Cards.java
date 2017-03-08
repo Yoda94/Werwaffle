@@ -13,10 +13,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
-import com.example.philip.werwaffle.activity.ShowCards;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +48,8 @@ public class Fragment_Show_Cards extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ShowCards.class);
                 startActivity(intent);
-                showSelectedCards(); //need to be on section changed
+                updateSelectedCards();//need to be on section changed
+                //showSelectedCards(); //need to be on section changed
             }
         });
         startBt.setOnClickListener(new View.OnClickListener() {
@@ -81,9 +80,10 @@ public class Fragment_Show_Cards extends Fragment {
 
     private void start(){
         persons = addPlayer.getPlayerlist();
-        ArrayList<String> cardsInGame = showSelectedCards();
+        ArrayList<Integer> cardsInGame = showSelectedCards();
         if (AbleToStart(cardsInGame)) {
-            ArrayList<String> finalCards = selectCards(cardsInGame);
+            resetALLButHost(); //and not selectedCardsInt
+            ArrayList<Integer> finalCards = selectCards(cardsInGame);
             assigneCardsToPlayer(finalCards);
             setGameStart();
         }else {
@@ -94,13 +94,13 @@ public class Fragment_Show_Cards extends Fragment {
         }
     }
 
-    public boolean AbleToStart(ArrayList<String> selectedCards){
+    public boolean AbleToStart(ArrayList<Integer> selectedCards){
         boolean startable = false;
         if (persons.size() <= selectedCards.size()){
             startable = true;
         }else {
-            String Werwolf = getString(R.string.string_werewolf_role);
-            String Villager = getString(R.string.string_villager_role);
+            Integer Werwolf = (R.string.string_werewolf_role);
+            Integer Villager = (R.string.string_villager_role);
             if (selectedCards.contains(Werwolf) || selectedCards.contains(Villager)) {
                 startable = true;
             }
@@ -110,48 +110,35 @@ public class Fragment_Show_Cards extends Fragment {
 
     private void updateSelectedCards(){
         ArrayList<String> selCards = new ArrayList<String>();
-        selCards .clear();
-        SharedPreferences pref = getContext().getSharedPreferences("cards", MODE_PRIVATE);
-        Map<String, ?> keys = pref.getAll();
-        for (Map.Entry<String, ?> entry : keys.entrySet()) {
-            Log.d("map values", entry.getKey() + ": " +
-                    entry.getValue().toString());
-            boolean isRoleSelected = pref.getBoolean(entry.getKey(), false);
-            if (isRoleSelected) {
-                selCards .add(entry.getKey());
-            }
+        selCards.clear();
+        //new stuff
+        ArrayList<Integer> cardsInt = addPlayer.host().getSelectedCardsInt();
+        System.out.println("HostArray:"+cardsInt);
+        for (Integer cards : cardsInt){
+            String s = getContext().getString(cards);
+            selCards.add(s);
         }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, selCards );
         lv.setAdapter(adapter);
     }
 
-    private ArrayList<String> showSelectedCards() {
-        ArrayList<String> cardsInGame = new ArrayList<String>();
-        cardsInGame.clear();
-        SharedPreferences pref = getContext().getSharedPreferences("cards", MODE_PRIVATE);
-        Map<String, ?> keys = pref.getAll();
-        for (Map.Entry<String, ?> entry : keys.entrySet()) {
-            Log.d("map values", entry.getKey() + ": " +
-                    entry.getValue().toString());
-            boolean isRoleSelected = pref.getBoolean(entry.getKey(), false);
-            if (isRoleSelected) {
-                cardsInGame.add(entry.getKey());
-            }
-        }
+    private ArrayList<Integer> showSelectedCards() {
+        ArrayList<Integer> cardsInGame = addPlayer.host().getSelectedCardsInt();
         return cardsInGame;
     }
-    private ArrayList<String> selectCards(ArrayList<String> cardsInGame){
-        ArrayList<String> cardsSecected = new ArrayList<String>();
+    private ArrayList<Integer> selectCards(ArrayList<Integer> cardsInGame){
+        ArrayList<Integer> cardsSecected = new ArrayList<>();
         cardsSecected.clear();
         for (int i = 0; i < persons.size(); i++ ){
             int powerLevel = getPowerLevl(cardsSecected);
-            String newCard = getCard(cardsInGame, powerLevel, cardsSecected);
+            Integer newCard = getCard(cardsInGame, powerLevel, cardsSecected);
             cardsSecected.add(newCard);
         }
         return cardsSecected;
     }
-    private String getCard(ArrayList<String> cardsInGame, int powerLevel, ArrayList<String> currentCards){
-        String card = "";
+    private Integer getCard(ArrayList<Integer> cardsInGame, int powerLevel, ArrayList<Integer> currentCards){
+        Integer card;
         boolean done = false;
         ArrayList<Integer> exeption = new ArrayList<Integer>();
         exeption.clear();
@@ -165,7 +152,7 @@ public class Fragment_Show_Cards extends Fragment {
                 int bestFit = powerLevel;
                 Collections.shuffle(cardsInGame);
                 for (int i = 0; i < cardsInGame.size(); i++) {
-                    int cardpower = pref2.getInt(cardsInGame.get(i), 1000);
+                    int cardpower = pref2.getInt(getString(cardsInGame.get(i)), 1000);
                     int dToZero = Math.abs(powerLevel + cardpower);
                     if ((dToZero <= Math.abs(bestFit)) && (!exeption.contains(i)) ) {
                         bestFit = dToZero;
@@ -184,46 +171,66 @@ public class Fragment_Show_Cards extends Fragment {
         return card;
     }
 
-    private boolean canCardBeChosen(String card, ArrayList<String> currentCards){
+    private boolean canCardBeChosen(Integer card, ArrayList<Integer> currentCards){
         boolean can = true;
-        String whiteWolf = getString(R.string.string_white_werewolf_role);
-        String bigBadWolf = getString(R.string.string_bigbadwolf_role);
+        Integer whiteWolf = (R.string.string_white_werewolf_role);
+        Integer bigBadWolf = (R.string.string_bigbadwolf_role);
         if ((card.equals(whiteWolf)) && (currentCards.size() < 6)){can = false;}
         if (card.equals(bigBadWolf) && currentCards.size() < 7){can = false;}
         return can;
     }
 
-    private int getPowerLevl(ArrayList<String> currentCards){
+    private int getPowerLevl(ArrayList<Integer> currentCards){
         int powerLevel = 0;
         SharedPreferences pref3 = getContext().getSharedPreferences("card_power", MODE_PRIVATE);
         if (currentCards.size() > 0) {
             for (int i = 0; i < currentCards.size(); i++) {
-                String key = currentCards.get(i);
+                String key = getString(currentCards.get(i));
                 int cardpower = pref3.getInt(key, 0);
                 powerLevel = powerLevel+cardpower;
             }
         }
         return powerLevel;
     }
-    private void assigneCardsToPlayer(ArrayList finalCards){
+    private void assigneCardsToPlayer(ArrayList<Integer> finalCards){
         SharedPreferences card_evil = getContext().getSharedPreferences("card_evil", MODE_PRIVATE);
+        SharedPreferences card_perma_skill = getContext().getSharedPreferences("card_perma_skill", MODE_PRIVATE);
         for (int i = 0; i < persons.size(); i++) {
             Random r = new Random();
             int x = r.nextInt((persons.size()-i));
-            String card = finalCards.get(x).toString();
+            Integer card = finalCards.get(x);
             persons.get(i).setPlayerNR(i); //assingne playerNR
             persons.get(i).setAlive(1);
-            persons.get(i).setEvil(card_evil.getInt(card, 0));
+            persons.get(i).setEvil(card_evil.getInt(getString(card), 0));
             persons.get(i).setRole(card);
             persons.get(i).setSkillUsable(true);
+            persons.get(i).setPermaSkill(card_perma_skill.getBoolean(getString(card), false));
+            persons.get(i).setUsedOnPlayer(-1);
             finalCards.remove(x);
         }
     }
     private void setGameStart(){
-        SharedPreferences.Editor prefEditor = getContext().getSharedPreferences("bools", MODE_PRIVATE).edit();
-        prefEditor.putBoolean("gameRunning",true);
-        prefEditor.apply();
+        getMe().setGameRunning(true);
 
+    }
+
+    private player_model getMe(){
+        SharedPreferences set = getContext().getSharedPreferences("profil", MODE_PRIVATE);
+        String myUniqueKey = set.getString("uniqueKEy", "None");
+        return addPlayer.me(myUniqueKey);
+    }
+
+    private void resetALLButHost(){
+        for (int i = 0; i < persons.size(); i++){
+            persons.get(i).resetAllButHost();
+        }
+        SharedPreferences.Editor editor = getContext().getSharedPreferences("bools", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor2 = getContext().getSharedPreferences("game", MODE_PRIVATE).edit();
+        editor.putBoolean("gameRunning", false);
+        editor2.putInt("nightCount", 0);
+        editor2.putInt("nightState", 0);
+        editor.apply();
+        editor2.apply();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.philip.werwaffle.activity;
+package layout;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -119,11 +119,12 @@ public class EditProfil extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         String name = inputTxt.getText().toString();
         SharedPreferences.Editor prefEditor = getSharedPreferences("profil", MODE_PRIVATE).edit();
+        SharedPreferences preferences = getSharedPreferences("profil", MODE_PRIVATE);
         prefEditor.putString("name", name);
         prefEditor.apply();
-
-        String aName = prefSettings.getString("name", "No Name");
-        inputTxt.setText(aName);
+        String uniqkey = preferences.getString("uniqueKEy", "None");
+        String img = preferences.getString("img", "None");
+        addPlayer.addPlayer(name,img,2,0,uniqkey);
     }
 
 }

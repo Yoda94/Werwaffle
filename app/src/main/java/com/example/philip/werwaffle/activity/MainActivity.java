@@ -11,23 +11,29 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
+
+import layout.EditProfil;
+import layout.Settings;
+import layout.ShowCards;
+
+import com.example.philip.werwaffle.netcode2.ApManager;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import junit.framework.Test;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
-import layout.Settings;
 import layout.addPlayer;
 import layout.player_model;
+import layout.test;
 
 /**ADDING A NEW ROLE:
  * 1. Zu strings name und desc hinzufügen.
@@ -54,8 +60,18 @@ public class MainActivity extends Activity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         GetStupidPermissions(100, Manifest.permission.WRITE_SETTINGS);
         init();
-        createPlayerTEST();
+        createME();
+        //createPlayerTEST();
         buttons();
+    }
+    public void createME(){
+        ArrayList<player_model> personss = addPlayer.getPlayerlist();
+        personss.clear();
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        String img = pref.getString("img", "None");
+        String name = pref.getString("name", "None");
+        String uniqueKEy = pref.getString("uniqueKEy", "None");
+        addPlayer.addPlayer(name, img, 2, 0, uniqueKEy);
     }
     public void createPlayerTEST(){
         ArrayList<player_model> personss = addPlayer.getPlayerlist();
@@ -67,12 +83,12 @@ public class MainActivity extends Activity {
         String uniqueKEy = pref.getString("uniqueKEy", "None");
         addPlayer.addPlayer(name, img, 2, 0, uniqueKEy);
         addPlayer.addPlayer("Max", img, 2, 0, "asd");
-        addPlayer.addPlayer("Perter", img, 2, 0, "asda");
-        addPlayer.addPlayer("Olaf", img, 2, 0, "sdf");
-        addPlayer.addPlayer("Hanns", img, 2, 0, "sdsddfsda");
-        addPlayer.addPlayer("Klara", img, 2, 0, "rtz");
-        //addPlayer.addPlayer("Julia", img, "2", 0, "vbn");
-        //addPlayer.addPlayer("Lisa", img, "2", 0, "rtz");
+       // addPlayer.addPlayer("Perter", img, 2, 0, "asda");
+       // addPlayer.addPlayer("Olaf", img, 2, 0, "sdf");
+       // addPlayer.addPlayer("Hanns", img, 2, 0, "sdsddfsda");
+       // addPlayer.addPlayer("Klara", img, 2, 0, "rtz");
+       // addPlayer.addPlayer("Julia", img, 2, 0, "vbn");
+       // addPlayer.addPlayer("Lisa", img, 2, 0, "rtz");
     }
 
 
@@ -123,21 +139,32 @@ public class MainActivity extends Activity {
         editor2.putInt(getString(R.string.string_idiot_role),2);
         editor2.apply();
 
+        //Werwolfs start at 10
         SharedPreferences.Editor editor3 = getSharedPreferences("card_evil", MODE_PRIVATE).edit();
         editor3.putInt(getString(R.string.string_witch_role), 0);
-        editor3.putInt(getString(R.string.string_werewolf_role), 1);
-        editor3.putInt(getString(R.string.string_white_werewolf_role), 2);
+        editor3.putInt(getString(R.string.string_werewolf_role), 10);
+        editor3.putInt(getString(R.string.string_white_werewolf_role), 11);
         editor3.putInt(getString(R.string.string_villager_role), 0);
         editor3.putInt(getString(R.string.string_seer_role), 0);
         editor3.putInt(getString(R.string.string_doctor_role), 0);
         editor3.putInt(getString(R.string.string_suendenbock_role), 0);
-        editor3.putInt(getString(R.string.string_bigbadwolf_role), 1);
-        editor3.putInt(getString(R.string.string_urwolf_role), 1);
+        editor3.putInt(getString(R.string.string_bigbadwolf_role), 10);
+        editor3.putInt(getString(R.string.string_urwolf_role), 10);
         editor3.putInt(getString(R.string.string_mogli_role), 0);
         editor3.putInt(getString(R.string.string_maged_role), 0);
         editor3.putInt(getString(R.string.string_hunter_role), 0);
         editor3.putInt(getString(R.string.string_idiot_role), 0);
         editor3.apply();
+
+        SharedPreferences.Editor editor4 = getSharedPreferences("card_perma_skill", MODE_PRIVATE).edit();
+        editor4.putBoolean(getString(R.string.string_werewolf_role), true);
+        editor4.putBoolean(getString(R.string.string_white_werewolf_role), true);
+        editor4.putBoolean(getString(R.string.string_seer_role), true);
+        editor4.putBoolean(getString(R.string.string_doctor_role), true);
+        editor4.putBoolean(getString(R.string.string_bigbadwolf_role), true);
+        editor4.putBoolean(getString(R.string.string_urwolf_role), true);
+        editor4.putBoolean(getString(R.string.string_mogli_role), true);
+        editor4.apply();
     }
 
     public void buttons() {
@@ -183,8 +210,15 @@ public class MainActivity extends Activity {
         settingsBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Settings.class);
-                startActivity(intent);
+                if (ApManager.isApOn(MainActivity.this)) { //if hotspot is on
+                    //DO server stuff
+                    Intent intent = new Intent(MainActivity.this, Settings.class);
+                    startActivity(intent);
+                } else {
+                    //DO Client stuff
+                    Intent intent = new Intent(MainActivity.this, Settings.class);
+                    startActivity(intent);
+                }
             }
         });
 

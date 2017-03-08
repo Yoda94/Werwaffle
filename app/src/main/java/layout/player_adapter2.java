@@ -1,5 +1,6 @@
 package layout;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.philip.werwaffle.R;
@@ -28,13 +30,13 @@ import java.util.List;
 
 public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.PersonViewHolder> {
 
-
     public static class PersonViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView name;
         TextView voteCount;
+        TextView hint;
         Button but;
-        LinearLayout layout;
+        RelativeLayout layout;
         ImageView imgView;
 
         PersonViewHolder(View itemView) {
@@ -42,21 +44,22 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
             cv = (CardView) itemView.findViewById(R.id.one_player_cardV);
             name = (TextView) itemView.findViewById(R.id.one_player_text);
             but = (Button) itemView.findViewById(R.id.one_player_bt);
-            layout = (LinearLayout) itemView.findViewById(R.id.one_player_linearLayout);
+            layout = (RelativeLayout) itemView.findViewById(R.id.one_player_linearLayout);
             imgView = (ImageView) itemView.findViewById(R.id.one_player_img);
             voteCount = (TextView) itemView.findViewById(R.id.one_player_vote_count);
+            hint = (TextView) itemView.findViewById(R.id.one_player_hint);
 
         }
     }
 
     static ArrayList<player_model> persons;
-
     public static ArrayList<player_model> getList(){
         return persons;
     }
+    private Activity activity;
 
-
-    player_adapter2(ArrayList<player_model> persons) {
+    player_adapter2(ArrayList<player_model> persons, Activity myactivity) {
+        this.activity = myactivity;
         this.persons = persons;
     }
 
@@ -88,12 +91,17 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
             @Override
             public void onClick(View v) {
                 playground idk = new playground();
-                playground.what(i);
+                idk.what(i, activity, persons);
             }
         });
         personViewHolder.but.setEnabled(persons.get(i).isButtonEnabled());
-        String id = persons.get(i).getVotes().toString();
-        personViewHolder.voteCount.setText(id);
+        personViewHolder.hint.setText(persons.get(i).getHint());
+        if (persons.get(i).getvotesVisible()){
+            String id = persons.get(i).getVotes().toString();
+            personViewHolder.voteCount.setText(id);
+        }else {
+            personViewHolder.voteCount.setText("");
+        }
     }
 
     @Override
