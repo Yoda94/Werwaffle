@@ -1,5 +1,6 @@
 package layout;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -9,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by philip on 2/26/17.
@@ -23,7 +25,7 @@ public class addPlayer {
         }
         return playerlist;
     }
-    public static void addPlayer(String name, String img, int alive, int playerNR, String uniqueKEy){
+    public static void addPlayer(String name, String img, int alive, int playerNR, String uniqueKEy, Activity mActivety){
         if (playerlist == null) {
             playerlist = new ArrayList<>();
         }
@@ -31,17 +33,17 @@ public class addPlayer {
         for (int i = 0; i < playerlist.size(); i++){
             if (playerlist.get(i).getUniqueKEy().equals(uniqueKEy)){
                 playerExists = true;
-                playerlist.get(i).overWrite(new player_model(name, img, alive, playerNR, uniqueKEy));
+                playerlist.get(i).overWrite(new player_model(name, img, alive, playerNR, uniqueKEy, mActivety));
             }
         }
         if (! playerExists) {
-            playerlist.add(new player_model(name, img, alive, playerNR, uniqueKEy));
+            playerlist.add(new player_model(name, img, alive, playerNR, uniqueKEy, mActivety));
         }
     }
-    static JSONArray getJsonArray(){
+    static JSONArray getJsonArray(ArrayList<Integer> playerNRList){
         JSONArray jsonArray = new JSONArray();
-        for (int i=0; i < playerlist.size(); i++) {
-            jsonArray.put(playerlist.get(i).getJSONObject());
+        for (Integer nr:playerNRList) {
+            jsonArray.put(playerlist.get(nr).getJSONObject());
         }
         return jsonArray;
     }
@@ -49,7 +51,7 @@ public class addPlayer {
         ArrayList<player_model> array = new ArrayList<>();
         for (int i=0; i < jsonArray.length(); i++){
             try {
-                array.add(new player_model("None", "None", 0, 0, "None"));
+                array.add(new player_model("None", "None", 0, 1, "None", null));
                 JSONObject obj = jsonArray.getJSONObject(i);
                 array.get(i).jsonObjectToArrayListObject(obj);
             } catch (JSONException e) {
@@ -75,12 +77,18 @@ public class addPlayer {
                     String name = givenList.get(i).getName();
                     String img = givenList.get(i).getImg();
                     int alive = givenList.get(i).isAlive();
-                    int playerNR = givenList.get(i).getPlayerNR();
                     String uniqueKEy = givenList.get(i).getUniqueKEy();
-                    playerlist.add(new player_model(name, img, alive, playerNR, uniqueKEy));
+                    playerlist.add(new player_model(name, img, alive,1, uniqueKEy, null));
                     //now overwirte the new player with the given player
                     playerlist.get(playerlist.size()-1).overWrite(givenList.get(i));
                 }
+            }
+        }
+        //Check for delet
+        for (int i=0;i<playerlist.size();i++){
+            if (playerlist.get(i).getDeletMe()){
+                //Delet if deletMe
+                playerlist.remove(i);
             }
         }
     }

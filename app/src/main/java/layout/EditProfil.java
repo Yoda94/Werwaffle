@@ -124,7 +124,7 @@ public class EditProfil extends AppCompatActivity {
         prefEditor.apply();
         String uniqkey = preferences.getString("uniqueKEy", "None");
         String img = preferences.getString("img", "None");
-        addPlayer.addPlayer(name,img,2,0,uniqkey);
+        addPlayer.addPlayer(name,img,2,0,uniqkey, this);
     }
 
 }

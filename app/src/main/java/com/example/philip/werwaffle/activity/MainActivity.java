@@ -24,8 +24,6 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import junit.framework.Test;
-
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -33,7 +31,6 @@ import java.util.Arrays;
 
 import layout.addPlayer;
 import layout.player_model;
-import layout.test;
 
 /**ADDING A NEW ROLE:
  * 1. Zu strings name und desc hinzufügen.
@@ -61,7 +58,6 @@ public class MainActivity extends Activity {
         GetStupidPermissions(100, Manifest.permission.WRITE_SETTINGS);
         init();
         createME();
-        //createPlayerTEST();
         buttons();
     }
     public void createME(){
@@ -71,25 +67,9 @@ public class MainActivity extends Activity {
         String img = pref.getString("img", "None");
         String name = pref.getString("name", "None");
         String uniqueKEy = pref.getString("uniqueKEy", "None");
-        addPlayer.addPlayer(name, img, 2, 0, uniqueKEy);
+        addPlayer.addPlayer(name, img, 2,0, uniqueKEy, this);
     }
-    public void createPlayerTEST(){
-        ArrayList<player_model> personss = addPlayer.getPlayerlist();
-        personss.clear();
-        //getme
-        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
-        String img = pref.getString("img", "None");
-        String name = pref.getString("name", "None");
-        String uniqueKEy = pref.getString("uniqueKEy", "None");
-        addPlayer.addPlayer(name, img, 2, 0, uniqueKEy);
-        addPlayer.addPlayer("Max", img, 2, 0, "asd");
-       // addPlayer.addPlayer("Perter", img, 2, 0, "asda");
-       // addPlayer.addPlayer("Olaf", img, 2, 0, "sdf");
-       // addPlayer.addPlayer("Hanns", img, 2, 0, "sdsddfsda");
-       // addPlayer.addPlayer("Klara", img, 2, 0, "rtz");
-       // addPlayer.addPlayer("Julia", img, 2, 0, "vbn");
-       // addPlayer.addPlayer("Lisa", img, 2, 0, "rtz");
-    }
+
 
 
     private GoogleApiClient client;

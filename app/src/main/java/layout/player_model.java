@@ -1,6 +1,8 @@
 package layout;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,6 +16,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by philip on 2/22/17.
@@ -53,9 +57,10 @@ public class player_model {
     Boolean settingsVoteSameTime;
     Integer victim;
     ArrayList<Integer> selectedCardsInt;
+    Boolean deletMe;
 
 
-    player_model(String name, String img, int alive, int playerNR, String uniqueKEy){
+    player_model(String name, String img, int alive, int playerNR, String uniqueKEy, Activity activity){
         this.name = name;
         this.img = img;
         this.alive = alive;
@@ -80,10 +85,19 @@ public class player_model {
         nightStat = 0;
         gameRunning = false;
         host = false;
-        settingsShowCards = false;
-        settingsVoteSameTime = false;
         victim = -1;
         selectedCardsInt = new ArrayList<>();
+        deletMe = false;
+        if (activity != null) {
+            SharedPreferences pref = activity.getSharedPreferences("settings", MODE_PRIVATE);
+            settingsShowCards = pref.getBoolean("cards", false);
+            settingsVoteSameTime = pref.getBoolean("vote", false);
+        } else {
+            settingsShowCards = false;
+            settingsVoteSameTime = false;
+        }
+
+
     }
     public String getName(){
         return this.name;
@@ -118,6 +132,7 @@ public class player_model {
     public Boolean getHost(){return this.host;}
     public Integer getVictim(){return this.victim;}
     public ArrayList<Integer> getSelectedCardsInt(){return this.selectedCardsInt;}
+    public Boolean getDeletMe(){return this.deletMe;}
     public void setButton(String newCapture){capture = newCapture;}
     public void setName(String newName){
         name = newName;
@@ -146,8 +161,9 @@ public class player_model {
     public void setSettingsShowCards(boolean bool){settingsShowCards = bool;}
     public void setSettingsVoteSameTime(boolean bool){settingsVoteSameTime = bool;}
     public void setSelectedCardsInt(ArrayList<Integer> selection){selectedCardsInt = selection;}
+    public void setDeletMe(boolean bool){deletMe = bool;}
     public void setVictim(int i){victim = i;}
-    public void resetAll(){//dosent clear cardsSelected
+    public void resetAll(){//dosent clear cardsSelected, no settings
         enable = true;
         evil = 0;
         role = -1;
@@ -168,11 +184,10 @@ public class player_model {
         nightStat = 0;
         gameRunning = false;
         host = false;
-        settingsShowCards = false;
-        settingsVoteSameTime = false;
         victim = -1;
+        deletMe = false;
     }
-    public void resetAllButHost(){ //dosent clear cardsSelected
+    public void resetAllButHost(){ //dosent clear cardsSelected, no settings
         enable = true;
         evil = 0;
         role = -1;
@@ -192,9 +207,8 @@ public class player_model {
         nightCount = 0;
         nightStat = 0;
         gameRunning = false;
-        settingsShowCards = false;
-        settingsVoteSameTime = false;
         victim = -1;
+        deletMe = false;
     }
     public void overWrite(player_model newPerson){
         name            = newPerson.getName();
@@ -226,6 +240,7 @@ public class player_model {
         settingsVoteSameTime = newPerson.getSettingsVoteSameTime();
         victim          = newPerson.getVictim();
         selectedCardsInt = newPerson.getSelectedCardsInt();
+        deletMe         = newPerson.getDeletMe();
     }
 
     public JSONObject getJSONObject() {
@@ -259,6 +274,7 @@ public class player_model {
             obj.put("settingsShowCards",settingsShowCards);
             obj.put("settingsVoteSameTime",settingsVoteSameTime);
             obj.put("victim", victim);
+            obj.put("deletMe", deletMe);
 
             String jsom = new Gson().toJson(selectedCardsInt);
             obj.put("selectedCardsInt", jsom);
@@ -287,6 +303,7 @@ public class player_model {
             permaSkill      = json.getBoolean("permaSkill");
             iAmRdy          = json.getBoolean("iAmRdy");
             votesVisible    = json.getBoolean("votesVisible");
+            deletMe         = json.getBoolean("deletMe");
 
             role            = json.getInt("role");
             usedOnPlayer    = json.getInt("usedOnPlayer");

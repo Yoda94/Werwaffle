@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 
@@ -18,32 +17,23 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.BoringLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.example.philip.werwaffle.R;
-import com.example.philip.werwaffle.activity.test2;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 
 public class playground extends AppCompatActivity {
@@ -72,17 +62,13 @@ public class playground extends AppCompatActivity {
     Boolean firstTime;
     LinearLayoutManager llm;
     RecyclerView rv;
-    Server3 server;
-    Client3 myClient;
     public Context mContext;
     public Activity mActivity = this;
 
-
     //new server
-    ChatClientThread chatClientThread = null;
-    public static String msgLog = "";
-    public static List<ChatClient> userList;
-    ServerSocket serverSocket;
+    MyServer server;
+    MyClient client;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,47 +77,50 @@ public class playground extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         host = b.getBoolean("host");
         persons = addPlayer.getPlayerlist();
+        persons.clear();
+        createME();
+        sleepFor(500);
+        persons = addPlayer.getPlayerlist();
         persons.get(getMyNummber()).setHost(host);
         System.out.println("Host:"+persons.get(getMyNummber()).getHost());
         playerAdapter = new player_adapter2(persons, playground.this);
         gameRunning = false;
+        System.out.println("My current list:"+displayJsonPersons());
         if (host){
             //DO server stuff
             //New: start server
-            userList = new ArrayList<ChatClient>();
-            ChatServerThread chatServerThread = new ChatServerThread(persons);
-            chatServerThread.start();
-            createCLient();
-            createCLient();
-            sendArrayToAll();
-
-
+            server = new MyServer(playground.this);
             addPlayer.host().setNightStat(nightState);
             creatPlayground();
-            System.out.println("Host2:"+persons.get(getMyNummber()).getHost());
 
             gameLoop();
         }else {
             //DO Client stuff
-
             waitForHost();
-
             //New: Create Client
-            createCLient();
-            sendArrayToAll();
+            SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+            String uniqKey = pref.getString("uniqueKEy", "None");
+            client = new MyClient(uniqKey, playground.this);
+            sleepFor(1000);
+            ArrayList<Integer> send = new ArrayList<>();
+            send.add(0);
+            sendArrayToAll(send);
         }
 
 
 
         firstTime = true;
     }
-    public void createCLient(){
-        String textAddress = "192.168.43.1";
-        chatClientThread = new ChatClientThread(textAddress, 8080, playground.this);
-        chatClientThread.start();
-        sleepFor(1000);
-        sendArrayToAll();
+    public void createME(){
+        ArrayList<player_model> personss = addPlayer.getPlayerlist();
+        personss.clear();
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        String img = pref.getString("img", "None");
+        String name = pref.getString("name", "None");
+        String uniqueKEy = pref.getString("uniqueKEy", "None");
+        addPlayer.addPlayer(name, img, 2, 0, uniqueKEy, mActivity);
     }
+
 
     public void creatPlayground(){
         Toast.makeText(this,"Creating",Toast.LENGTH_SHORT).show();
@@ -174,6 +163,7 @@ public class playground extends AppCompatActivity {
                     rv.setAdapter(playerAdapter);
                 }
                 if (position == 1) {
+
                 }
             }
         });
@@ -198,10 +188,14 @@ public class playground extends AppCompatActivity {
         },2000);
     }
 
-    public void displayJsonPersons(){
-        JSONArray jsonArray = addPlayer.getJsonArray();
+    public String displayJsonPersons(){
+        ArrayList<Integer> ownList = new ArrayList<>();
+        for (int i=0;i<persons.size();i++) {
+            ownList.add(i);
+        }
+        JSONArray jsonArray = addPlayer.getJsonArray(ownList);
         String text = jsonArray.toString();
-        displayInfo(text);
+        return text;
     }
 
 
@@ -211,9 +205,9 @@ public class playground extends AppCompatActivity {
             @Override
             public void run() {
                 if (gameRunning) {
-                    sendArrayToAll();
-                    ArrayList<Integer> test = persons.get(getMyNummber()).getSelectedCardsInt();
-                    System.out.println("Array:"+test);
+                    ArrayList<Integer> send = new ArrayList<>();
+                    send.add(getMyNummber());
+                    sendArrayToAll(send);
                     if (endRound()) {
                         gameRunning = false;
                     } else { // start Night
@@ -222,13 +216,16 @@ public class playground extends AppCompatActivity {
                             addPlayer.host().setNightCount(nightCount);
                             firstNight = false;
                         } //afterwards
-                        sendArrayToAll();
                         startNight();
                     }
                 } else { //not running
-                    gameRunning = addPlayer.host().getGameRunning();
-                    firstNight = true;
-                    gameLoop();
+                    if (addPlayer.host() != null) {
+                        gameRunning = addPlayer.host().getGameRunning();
+                        firstNight = true;
+                        gameLoop();
+                    }else { //host null
+                        waitForHost();
+                    }
                 }
             }
         }, 2000);
@@ -272,8 +269,11 @@ public class playground extends AppCompatActivity {
             persons.get(me).setHint(mActivity.getString(R.string.ready));
             persons.get(me).setButtonState(false);
             playerAdapter.notifyItemChanged(me);
-            sendArrayToAll();
         }
+        ArrayList<Integer> send = new ArrayList<>();
+        send.add(me);
+        send.add(target);
+        sendArrayToAll(send);
     }
 
     public void activateSkillOn(Integer target) {
@@ -307,24 +307,28 @@ public class playground extends AppCompatActivity {
     }
 
     public void wolfSkill(Integer target) {
+        int me = getMyNummber();
         persons.get(getMyNummber()).setIAmRdy(true);
         if (nightState == 1) {
-            if (!persons.get(getMyNummber()).didIVote) {
+            if (!persons.get(me).didIVote) {
                 persons.get(target).setVotes(1);
-                persons.get(getMyNummber()).setUsedOnPlayer(target);
+                persons.get(me).setUsedOnPlayer(target);
                 playerAdapter.notifyItemChanged(target);
             } else {
-                int oldTarget = persons.get(getMyNummber()).getUsedOnPlayer();
+                int oldTarget = persons.get(me).getUsedOnPlayer();
                 if (oldTarget != -1) {
                     persons.get(oldTarget).setVotes(-1);
                     persons.get(target).setVotes(1);
-                    persons.get(getMyNummber()).setUsedOnPlayer(target);
+                    persons.get(me).setUsedOnPlayer(target);
                     playerAdapter.notifyItemChanged(target);
                     playerAdapter.notifyItemChanged(oldTarget);
                 }
             }
-            persons.get(getMyNummber()).setDidIVote(true);
-            sendArrayToAll();
+            persons.get(me).setDidIVote(true);
+            ArrayList<Integer> send = new ArrayList<>();
+            send.add(me);
+            send.add(target);
+            sendArrayToAll(send);
         }
         else {
             String info = mActivity.getString(R.string.already_try_to_eat)
@@ -352,9 +356,10 @@ public class playground extends AppCompatActivity {
 
     public void bigBadWolfSkill(Integer target) {
         boolean wolfDead = false;
+        int me = getMyNummber();
         if (nightState == 1) {
             wolfSkill(target);
-            persons.get(getMyNummber()).setIAmRdy(false);
+            persons.get(me).setIAmRdy(false);
         } else {
             for (int i = 10; i < 20; i++) {
                 if (getEvilOf(getDeadPlayerNumbers()).contains(i)) {wolfDead = true;}
@@ -362,14 +367,17 @@ public class playground extends AppCompatActivity {
             if (!wolfDead) {
                 if (mySkillIsUsable()) {
                     persons.get(target).setAlive(0);
-                    persons.get(getMyNummber()).setSkillUsable(false);
+                    persons.get(me).setSkillUsable(false);
                     displayInfo(kill_info(target));
-                    sendArrayToAll();
+                    ArrayList<Integer> send = new ArrayList<>();
+                    send.add(me);
+                    send.add(target);
+                    sendArrayToAll(send);
                 } else {
                     displayInfo(allreadyUsedSkill());
                 }
             }
-            persons.get(getMyNummber()).setIAmRdy(true);
+            persons.get(me).setIAmRdy(true);
         }
     }
 
@@ -389,36 +397,44 @@ public class playground extends AppCompatActivity {
         }
     }
     public void urWolfSkillUse(Integer target){
+        int me = getMyNummber();
         persons.get(getVictim()).setVotes(0);
         persons.get(getVictim()).setRole((R.string.string_werewolf_role));
         persons.get(getVictim()).setEvil(10);
-        persons.get(getMyNummber()).setUsedOnPlayer(target);
-        persons.get(getMyNummber()).setSkillUsable(false);
-        persons.get(getMyNummber()).setIAmRdy(true);
-        sendArrayToAll();
+        persons.get(me).setUsedOnPlayer(target);
+        persons.get(me).setSkillUsable(false);
+        persons.get(me).setIAmRdy(true);
+        ArrayList<Integer> send = new ArrayList<>();
+        send.add(me);
+        send.add(target);
+        sendArrayToAll(send);
     }
 
     public void whiteWolfSkill(Integer target) {
+        int me = getMyNummber();
         if (nightState == 1) {
             wolfSkill(target);
-            persons.get(getMyNummber()).setIAmRdy(false);
+            persons.get(me).setIAmRdy(false);
         } else {
             if (nightCount % 2 == 0) { //ever second night
                 if (mySkillIsUsable()) {
                     persons.get(target).setAlive(0);
                     persons.get(target).setHint(mActivity.getString(R.string.kill));
-                    persons.get(getMyNummber()).setUsedOnPlayer(target);
+                    persons.get(me).setUsedOnPlayer(target);
                     playerAdapter.notifyItemChanged(target);
                     displayInfo(kill_info(target));
-                    persons.get(getMyNummber()).setSkillUsable(false);
-                    sendArrayToAll();
+                    persons.get(me).setSkillUsable(false);
+                    ArrayList<Integer> send = new ArrayList<>();
+                    send.add(me);
+                    send.add(target);
+                    sendArrayToAll(send);
                 } else {
                     displayInfo(allreadyUsedSkill());
                 }
             } else { //if not second night refresh skill
-                persons.get(getMyNummber()).setUsedOnPlayer(-1);
+                persons.get(me).setUsedOnPlayer(-1);
             }
-            persons.get(getMyNummber()).setIAmRdy(true);
+            persons.get(me).setIAmRdy(true);
         }
     }
 
@@ -434,10 +450,13 @@ public class playground extends AppCompatActivity {
         }
     }
     public void mogliSkillUse(Integer target){
-        persons.get(getMyNummber()).setUsedOnPlayer(target);
-        persons.get(getMyNummber()).setSkillUsable(false);
-        persons.get(getMyNummber()).setIAmRdy(true);
-        sendArrayToAll();
+        int me = getMyNummber();
+        persons.get(me).setUsedOnPlayer(target);
+        persons.get(me).setSkillUsable(false);
+        persons.get(me).setIAmRdy(true);
+        ArrayList<Integer> send = new ArrayList<>();
+        send.add(me);
+        sendArrayToAll(send);
     }
 
     public void witchSkill(Integer target) {
@@ -448,17 +467,25 @@ public class playground extends AppCompatActivity {
         }
     }
     public void witchSkillUseKILL(Integer target){
+        int me = getMyNummber();
         persons.get(target).setAlive(0);
-        persons.get(getMyNummber()).setUsedOnPlayer(target);
-        persons.get(getMyNummber()).setSkillUsable(false);
-        sendArrayToAll();
+        persons.get(me).setUsedOnPlayer(target);
+        persons.get(me).setSkillUsable(false);
+        ArrayList<Integer> send = new ArrayList<>();
+        send.add(me);
+        send.add(target);
+        sendArrayToAll(send);
     }
     public void witchSkillUseSAVE(Integer victim){
+        int me = getMyNummber();
         if (persons.get(victim).getKillAble()) {
             persons.get(victim).setAlive(1);
-            persons.get(getMyNummber()).setSkill2Usable(false);
-            persons.get(getMyNummber()).setIAmRdy(true);
-            sendArrayToAll();
+            persons.get(me).setSkill2Usable(false);
+            persons.get(me).setIAmRdy(true);
+            ArrayList<Integer> send = new ArrayList<>();
+            send.add(me);
+            send.add(victim);
+            sendArrayToAll(send);
         }
     }
 
@@ -477,18 +504,22 @@ public class playground extends AppCompatActivity {
     }
 
     public void doctorSkill(Integer target) {
+        int me = getMyNummber();
         if (mySkillIsUsable()) {
-            if (persons.get(getMyNummber()).getUsedOnPlayer() != target) {
+            if (persons.get(me).getUsedOnPlayer() != target) {
                 persons.get(target).setKillAble(false);
-                persons.get(getMyNummber()).setSkillUsable(false);
+                persons.get(me).setSkillUsable(false);
                 String info = persons.get(target).getName() + mActivity.getString(R.string.cant_be_killed_by_wolv);
                 displayInfo(info);
-                persons.get(getMyNummber()).setIAmRdy(true);
-                sendArrayToAll();
+                persons.get(me).setIAmRdy(true);
+                ArrayList<Integer> send = new ArrayList<>();
+                send.add(me);
+                send.add(target);
+                sendArrayToAll(send);
             }
         }else {
             String info = mActivity.getString(R.string.already_healed1)
-                    + persons.get(persons.get(getMyNummber()).getUsedOnPlayer()).getName()
+                    + persons.get(persons.get(me).getUsedOnPlayer()).getName()
                     + mActivity.getString(R.string.already_healed2);
             displayInfo(info);
         }
@@ -857,11 +888,13 @@ public class playground extends AppCompatActivity {
                     persons.get(x).setButton(newCapture);
                     persons.get(x).setIAmRdy(false);
                     persons.get(x).setvotesVisible(false);
-                    persons.get(getMyNummber()).setHint("");
+                    persons.get(me).setHint("");
                 }
                 waitForAllRdyReWrite();
             }
-            sendArrayToAll();
+            ArrayList<Integer> send = new ArrayList<>();
+            send.add(me);
+            sendArrayToAll(send);
         } else { //vote one by one
             setMeRdy();
             for (int x = 0; x < persons.size(); x++) {
@@ -869,7 +902,9 @@ public class playground extends AppCompatActivity {
                 persons.get(x).setButton(newCapture);
                 persons.get(x).setvotesVisible(false);
             }
-            sendArrayToAll();
+            ArrayList<Integer> send = new ArrayList<>();
+            send.add(me);
+            sendArrayToAll(send);
         }
         playerAdapter.notifyDataSetChanged();
     }
@@ -1095,12 +1130,21 @@ public class playground extends AppCompatActivity {
         return pref.getString(role, "");
     }
 
-    public void sendArrayToAll(){
-        if (chatClientThread == null) {
-            return;
+    public void sendArrayToAll(ArrayList<Integer> changePlayerList){
+        if (host){
+            String msg = addPlayer.getJsonArray(changePlayerList).toString();
+            if (msg != null) {
+                server.broadcastMsg(msg, "server");
+            }
+        }else {
+            if (client.chatClientThread == null) {
+                return;
+            }
+            String msg = addPlayer.getJsonArray(changePlayerList).toString();
+            if (msg != null) {
+                client.chatClientThread.sendMsg(msg);
+            }
         }
-        System.out.println("Sending Array to All:" +addPlayer.getJsonArray().toString());
-        chatClientThread.sendMsg(addPlayer.getJsonArray().toString());
     }
 
 
@@ -1131,15 +1175,32 @@ public class playground extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     @Override
-    protected void onDestroy() {
+    protected void onDestroy() { //TODO change to on Close (even if AppManager)
+        System.out.println("onDestroy");
         super.onDestroy();
-        if (serverSocket != null) {
-            try {
-                serverSocket.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+
+        if (host) { //Close Server
+            if (server.serverSocket != null) {
+                try {
+                    server.serverSocket.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
+        } else { //Disconnect and deletMe true
+            if (client.chatClientThread == null) {
+                return;
+            }
+            int me = getMyNummber();
+            persons.get(me).setDeletMe(true);
+            ArrayList<Integer> send = new ArrayList<>();
+            send.add(me);
+            sendArrayToAll(send);
+            persons.get(me).setDeletMe(false);
+            SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+            String myUniqKey = pref.getString("uniqueKEy", "None");
+            client.chatClientThread.disconnect(myUniqKey);
         }
     }
     @Override
@@ -1164,7 +1225,7 @@ public class playground extends AppCompatActivity {
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        ArrayList<player_model> persons;
+
 
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -1195,8 +1256,8 @@ public class playground extends AppCompatActivity {
         @Override
         public int getCount() {
             int pageNumbers = 3;
-            persons = addPlayer.getPlayerlist();
-            boolean is_my_switch_on = persons.get(getMyNummber()).getSettingsShowCards();
+            SharedPreferences pref = getSharedPreferences("settings", MODE_PRIVATE);
+            boolean is_my_switch_on = pref.getBoolean("cards", false);
             if (is_my_switch_on && host) {
                 addPlayer.host().setSettingsShowCards(true);
             }

@@ -49,14 +49,6 @@
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name="layout.Settings" />
-        <activity android:name="layout.test">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".activity.test2"></activity>
     </application>
 
 </manifest>

@@ -14,10 +14,12 @@ import android.widget.Switch;
 
 import com.example.philip.werwaffle.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
 public class Settings extends AppCompatActivity {
+    SharedPreferences.Editor editor;
 
 
     @Override
@@ -30,9 +32,13 @@ public class Settings extends AppCompatActivity {
         ImageButton help_show_cards = (ImageButton) findViewById(R.id.settings_help_show_cards);
         Switch voteSW = (Switch) findViewById(R.id.settings_switch_vote_same);
         ImageButton vote_help = (ImageButton) findViewById(R.id.settings_but_vote_help);
+
+        editor = getSharedPreferences("settings", MODE_PRIVATE).edit();
+
         switchBT.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 addPlayer.me(myUniqKey).setSettingsShowCards(isChecked);
+                editor.putBoolean("cards", isChecked);
             }
         });
         switchBT.setChecked(addPlayer.me(myUniqKey).getSettingsShowCards());
@@ -48,6 +54,7 @@ public class Settings extends AppCompatActivity {
         voteSW.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 addPlayer.me(myUniqKey).setSettingsVoteSameTime(isChecked);
+                editor.putBoolean("vote", isChecked);
             }
         });
         voteSW.setChecked(addPlayer.me(myUniqKey).getSettingsVoteSameTime());
@@ -60,6 +67,11 @@ public class Settings extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        editor.apply();
     }
 }
 
