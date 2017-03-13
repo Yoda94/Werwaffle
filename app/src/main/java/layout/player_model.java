@@ -27,7 +27,7 @@ public class player_model {
     String name;
     String img;
     String capture;
-    int alive;
+    Integer alive;
     String uniqueKEy;
     String hint;
     Button button;
@@ -58,6 +58,8 @@ public class player_model {
     Integer victim;
     ArrayList<Integer> selectedCardsInt;
     Boolean deletMe;
+    Boolean notifyData;
+    Integer playgroundCreated;
 
 
     player_model(String name, String img, int alive, int playerNR, String uniqueKEy, Activity activity){
@@ -66,7 +68,7 @@ public class player_model {
         this.alive = alive;
         this.playerNR = playerNR;
         this.uniqueKEy = uniqueKEy;
-        enable = true;
+        enable = false;
         evil = 0;
         role = -1;
         skillUsable = true;
@@ -88,10 +90,24 @@ public class player_model {
         victim = -1;
         selectedCardsInt = new ArrayList<>();
         deletMe = false;
+        notifyData = true;
+        playgroundCreated = 0;
         if (activity != null) {
             SharedPreferences pref = activity.getSharedPreferences("settings", MODE_PRIVATE);
             settingsShowCards = pref.getBoolean("cards", false);
             settingsVoteSameTime = pref.getBoolean("vote", false);
+            //selectedCardsInt
+            ArrayList<card_model> cards = MainActivity.getMyCardList();
+            selectedCardsInt.clear();
+            for (int i=0;i<cards.size();i++){
+                Boolean isChecked = cards.get(i).getIsChecked();
+                if (isChecked){
+                    Integer role = cards.get(i).getRole();
+                    selectedCardsInt.add(role);
+                }
+            }
+
+
         } else {
             settingsShowCards = false;
             settingsVoteSameTime = false;
@@ -133,6 +149,8 @@ public class player_model {
     public Integer getVictim(){return this.victim;}
     public ArrayList<Integer> getSelectedCardsInt(){return this.selectedCardsInt;}
     public Boolean getDeletMe(){return this.deletMe;}
+    public Boolean getNotifyData(){return this.notifyData;}
+    public Integer getPlaygroundCreated(){return this.playgroundCreated;}
     public void setButton(String newCapture){capture = newCapture;}
     public void setName(String newName){
         name = newName;
@@ -145,6 +163,7 @@ public class player_model {
     public void setSkillUsable(boolean bool){skillUsable = bool;}
     public void setSkill2Usable(boolean bool){skill2Usable = bool;}
     public void setVotes(int vot){votes += vot;}
+    public void resetVotes(){votes = 0;}
     public void setDidIVote(boolean bool){didIVote = bool;}
     public void setUsedOnPlayer(int x){usedOnPlayer = x;}
     public void setHint(String newHint){hint = newHint;}
@@ -162,9 +181,12 @@ public class player_model {
     public void setSettingsVoteSameTime(boolean bool){settingsVoteSameTime = bool;}
     public void setSelectedCardsInt(ArrayList<Integer> selection){selectedCardsInt = selection;}
     public void setDeletMe(boolean bool){deletMe = bool;}
+    public void setNotifyData(boolean bool){notifyData = bool;}
+    public void setPlaygroundCreatedAdd(Integer add){playgroundCreated += add;}
+    public void setPlaygroundCreated(Integer newInt){playgroundCreated = newInt;}
     public void setVictim(int i){victim = i;}
     public void resetAll(){//dosent clear cardsSelected, no settings
-        enable = true;
+        enable = false;
         evil = 0;
         role = -1;
         skillUsable = true;
@@ -186,9 +208,10 @@ public class player_model {
         host = false;
         victim = -1;
         deletMe = false;
+        playgroundCreated = 1;
     }
     public void resetAllButHost(){ //dosent clear cardsSelected, no settings
-        enable = true;
+        enable = false;
         evil = 0;
         role = -1;
         skillUsable = true;
@@ -209,38 +232,39 @@ public class player_model {
         gameRunning = false;
         victim = -1;
         deletMe = false;
+        playgroundCreated = 1;
     }
     public void overWrite(player_model newPerson){
-        name            = newPerson.getName();
-        img             = newPerson.getImg();
-        uniqueKEy       = newPerson.getUniqueKEy();
-        hint            = newPerson.getHint();
-        role            = newPerson.getRole();
-        enable          = newPerson.isButtonEnabled();
-        skillUsable     = newPerson.getSkillUsable();
-        skill2Usable    = newPerson.getSkill2Usable();
-        didIVote        = newPerson.getDidIVote();
-        killAble        = newPerson.getKillAble();
-        diedThisNight   = newPerson.getDiedThisNight();
-        permaSkill      = newPerson.getPermaSkill();
-        iAmRdy          = newPerson.getiAmRdy();
-        votesVisible    = newPerson.getvotesVisible();
-        usedOnPlayer    = newPerson.getUsedOnPlayer();
-        votes           = newPerson.getVotes();
-        votedFor        = newPerson.getVotedFor();
-        evil            = newPerson.getEvil();
-        alive           = newPerson.isAlive();
-        playerNR        = newPerson.getPlayerNR();
-
-        nightCount      = newPerson.getNightCount();
-        nightStat       = newPerson.getNightStat();
-        gameRunning     = newPerson.getGameRunning();
-        host            = newPerson.getHost();
-        settingsShowCards = newPerson.getSettingsShowCards();
-        settingsVoteSameTime = newPerson.getSettingsVoteSameTime();
-        victim          = newPerson.getVictim();
-        selectedCardsInt = newPerson.getSelectedCardsInt();
-        deletMe         = newPerson.getDeletMe();
+        if (newPerson.getName()                != null){name                = newPerson.getName();                }
+        if (newPerson.getImg()                 != null){img                 = newPerson.getImg();                 }
+        if (newPerson.getUniqueKEy()           != null){uniqueKEy           = newPerson.getUniqueKEy();           }
+        if (newPerson.getHint()                != null){hint                = newPerson.getHint();                }
+        if (newPerson.getRole()                != null){role                = newPerson.getRole();                }
+        if (newPerson.isButtonEnabled()        != null){enable              = newPerson.isButtonEnabled();        }
+        if (newPerson.getSkillUsable()         != null){skillUsable         = newPerson.getSkillUsable();         }
+        if (newPerson.getSkill2Usable()        != null){skill2Usable        = newPerson.getSkill2Usable();        }
+        if (newPerson.getDidIVote()            != null){didIVote            = newPerson.getDidIVote();            }
+        if (newPerson.getKillAble()            != null){killAble            = newPerson.getKillAble();            }
+        if (newPerson.getDiedThisNight()       != null){diedThisNight       = newPerson.getDiedThisNight();       }
+        if (newPerson.getPermaSkill()          != null){permaSkill          = newPerson.getPermaSkill();          }
+        if (newPerson.getiAmRdy()              != null){iAmRdy              = newPerson.getiAmRdy();              }
+        if (newPerson.getvotesVisible()        != null){votesVisible        = newPerson.getvotesVisible();        }
+        if (newPerson.getUsedOnPlayer()        != null){usedOnPlayer        = newPerson.getUsedOnPlayer();        }
+        if (newPerson.getVotes()               != null){votes               = newPerson.getVotes();               }
+        if (newPerson.getVotedFor()            != null){votedFor            = newPerson.getVotedFor();            }
+        if (newPerson.getEvil()                != null){evil                = newPerson.getEvil();                }
+        if (newPerson.isAlive()                != null){alive               = newPerson.isAlive();                }
+        if (newPerson.getPlayerNR()            != null){playerNR            = newPerson.getPlayerNR();            }
+        if (newPerson.getNightCount()          != null){nightCount          = newPerson.getNightCount();          }
+        if (newPerson.getNightStat()           != null){nightStat           = newPerson.getNightStat();           }
+        if (newPerson.getGameRunning()         != null){gameRunning         = newPerson.getGameRunning();         }
+        if (newPerson.getHost()                != null){host                = newPerson.getHost();                }
+        if (newPerson.getSettingsShowCards()   != null){settingsShowCards   = newPerson.getSettingsShowCards();   }
+        if (newPerson.getSettingsVoteSameTime()!= null){settingsVoteSameTime= newPerson.getSettingsVoteSameTime();}
+        if (newPerson.getVictim()              != null){victim              = newPerson.getVictim();              }
+        if (newPerson.getSelectedCardsInt()    != null){selectedCardsInt    = newPerson.getSelectedCardsInt();    }
+        if (newPerson.getDeletMe()             != null){deletMe             = newPerson.getDeletMe();             }
+        if (newPerson.getPlaygroundCreated()   != null){playgroundCreated   = newPerson.getPlaygroundCreated();   }
     }
 
     public JSONObject getJSONObject() {
@@ -252,6 +276,7 @@ public class player_model {
             obj.put("playerNR", playerNR);
             obj.put("uniqueKEy", uniqueKEy);
             obj.put("enable", enable);
+            obj.put("playgroundCreated", playgroundCreated);
             obj.put("evil", evil);
             obj.put("role", role);
             obj.put("skillUsable", skillUsable);
@@ -288,56 +313,113 @@ public class player_model {
 
     public void jsonObjectToArrayListObject(JSONObject json){
         try {
-            name            = json.getString("name");
-            //img             = json.getString("img");
-            img = "None";
-            uniqueKEy       = json.getString("uniqueKEy");
-            hint            = json.getString("hint");
+            if (json.has("name")) {
+                name = json.getString("name");
+            } //else {name =null;}
+            if (json.has("img")) {
+                //img             = json.getString("img");
+                img = "None";
+            } //else {img =null;}
+            if (json.has("uniqueKEy")) {
+                uniqueKEy = json.getString("uniqueKEy");
+            } //else {uniqueKEy =null;}
+            if (json.has("hint")) {
+                hint = json.getString("hint");
+            } //else {hint =null;}
 
-            enable          = json.getBoolean("enable");
-            skillUsable     = json.getBoolean("skillUsable");
-            skill2Usable    = json.getBoolean("skill2Usable");
-            didIVote        = json.getBoolean("didIVote");
-            killAble        = json.getBoolean("killAble");
-            diedThisNight   = json.getBoolean("diedThisNight");
-            permaSkill      = json.getBoolean("permaSkill");
-            iAmRdy          = json.getBoolean("iAmRdy");
-            votesVisible    = json.getBoolean("votesVisible");
-            deletMe         = json.getBoolean("deletMe");
-
-            role            = json.getInt("role");
-            usedOnPlayer    = json.getInt("usedOnPlayer");
-            votes           = json.getInt("votes");
-            votedFor        = json.getInt("votedFor");
-            evil            = json.getInt("evil");
-            alive           = json.getInt("alive");
-            playerNR        = json.getInt("playerNR");
-
-
-            nightCount      = json.getInt("nightCount");
-            nightStat       = json.getInt("nightStat");
-            gameRunning     = json.getBoolean("gameRunning");
-            host            = json.getBoolean("host");
-            settingsShowCards = json.getBoolean("settingsShowCards");
-            settingsVoteSameTime = json.getBoolean("settingsVoteSameTime");
-            victim          = json.getInt("victim");
-
-            selectedCardsInt = new ArrayList<>();
-            String jsom = json.getString("selectedCardsInt");
-            StringBuilder sb2 = new StringBuilder(jsom);
-            sb2.deleteCharAt(0);
-            sb2.deleteCharAt(sb2.length()-1);
-            String resultString2 = sb2.toString();
-            String string22 = resultString2.replaceAll("\"","");
-            String str2[] = string22.split(",");
-            List<String> al2 = new ArrayList<String>();
-            al2 = Arrays.asList(str2);
-            for(String s: al2){
-                if (s.matches("[0-9]+")) {
-                    int result = Integer.parseInt(s);
-                    selectedCardsInt.add(result);
-                }
+            if (json.has("enable")) {
+                enable          = json.getBoolean("enable");
+            } //else {enable =null;}
+            if (json.has("skillUsable")) {
+                skillUsable     = json.getBoolean("skillUsable");
+            } //else {skillUsable =null;}
+            if (json.has("skill2Usable")) {
+                skill2Usable    = json.getBoolean("skill2Usable");
+            } //else {skill2Usable =null;}
+            if (json.has("didIVote")) {
+                didIVote        = json.getBoolean("didIVote");
+            } //else {didIVote =null;}
+            if (json.has("killAble")) {
+                killAble        = json.getBoolean("killAble");
+            } //else {killAble =null;}
+            if (json.has("diedThisNight")) {
+                diedThisNight   = json.getBoolean("diedThisNight");
+            } //else {diedThisNight =null;}
+            if (json.has("permaSkill")) {
+                permaSkill      = json.getBoolean("permaSkill");
+            } //else {permaSkill =null;}
+            if (json.has("iAmRdy")) {
+                iAmRdy          = json.getBoolean("iAmRdy");
+            } //else {iAmRdy =null;}
+            if (json.has("votesVisible")) {
+                votesVisible    = json.getBoolean("votesVisible");
+            } //else {votesVisible =null;}
+            if (json.has("deletMe")) {
+                deletMe         = json.getBoolean("deletMe");
+            } //else {deletMe =null;}
+            if (json.has("playgroundCreated")){
+                playgroundCreated= json.getInt("playgroundCreated");
             }
+            if (json.has("role")) {
+                role            = json.getInt("role");
+            } //else {role =null;}
+            if (json.has("usedOnPlayer")) {
+                usedOnPlayer    = json.getInt("usedOnPlayer");
+            } //else {usedOnPlayer =null;}
+            if (json.has("votes")) {
+                votes           = json.getInt("votes");
+            } //else {votes =null;}
+            if (json.has("votedFor")) {
+                votedFor        = json.getInt("votedFor");
+            } //else {votedFor =null;}
+            if (json.has("evil")) {
+                evil            = json.getInt("evil");
+            } //else {evil =null;}
+            if (json.has("alive")) {
+                alive           = json.getInt("alive");
+            } //else {alive =null;}
+            if (json.has("playerNR")) {
+                playerNR        = json.getInt("playerNR");
+            } //else {playerNR =null;}
+            if (json.has("nightCount")) {
+                nightCount      = json.getInt("nightCount");
+            } //else {nightCount =null;}
+            if (json.has("nightStat")) {
+                nightStat       = json.getInt("nightStat");
+            } //else {nightStat =null;}
+            if (json.has("gameRunning")) {
+                gameRunning     = json.getBoolean("gameRunning");
+            } //else {gameRunning =null;}
+            if (json.has("host")) {
+                host            = json.getBoolean("host");
+            } //else {host =null;}
+            if (json.has("settingsShowCards")) {
+                settingsShowCards = json.getBoolean("settingsShowCards");
+            } //else {settingsShowCards =null;}
+            if (json.has("settingsVoteSameTime")) {
+                settingsVoteSameTime = json.getBoolean("settingsVoteSameTime");
+            } //else {settingsVoteSameTime =null;}
+            if (json.has("victim")) {
+                victim          = json.getInt("victim");
+            } //else {victim =null;}
+            if (json.has("selectedCardsInt")) {
+                selectedCardsInt = new ArrayList<>();
+                String jsom = json.getString("selectedCardsInt");
+                StringBuilder sb2 = new StringBuilder(jsom);
+                sb2.deleteCharAt(0);
+                sb2.deleteCharAt(sb2.length() - 1);
+                String resultString2 = sb2.toString();
+                String string22 = resultString2.replaceAll("\"", "");
+                String str2[] = string22.split(",");
+                List<String> al2 = new ArrayList<String>();
+                al2 = Arrays.asList(str2);
+                for (String s : al2) {
+                    if (s.matches("[0-9]+")) {
+                        Integer result = Integer.parseInt(s);
+                        selectedCardsInt.add(result);
+                    }
+                }
+            } //else {selectedCardsInt =null;}
 
         }catch (JSONException e) {
             //trace("DefaultListItem.toString JSONException: "+e.getMessage());

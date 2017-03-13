@@ -1,10 +1,8 @@
 package layout;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,17 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.philip.werwaffle.R;
-import com.example.philip.werwaffle.activity.CreateLobby;
-import com.example.philip.werwaffle.activity.MainActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by philip on 2/25/17.
@@ -53,9 +46,6 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
     }
 
     static ArrayList<player_model> persons;
-    public static ArrayList<player_model> getList(){
-        return persons;
-    }
     private Activity activity;
 
     player_adapter2(ArrayList<player_model> persons, Activity myactivity) {
@@ -75,6 +65,7 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
         return pvh;
     }
 
+
     @Override
     public void onBindViewHolder(final PersonViewHolder personViewHolder, final int i) {
         personViewHolder.name.setText(persons.get(i).getName());
@@ -83,23 +74,27 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
             personViewHolder.imgView.setImageBitmap(com.example.philip.werwaffle.activity.RoundedImageView.getCroppedBitmap(
                     BitmapFactory.decodeFile(persons.get(i).getImg()), 200));
         }
-        if (persons.get(i).isAlive()==1){personViewHolder.layout.setBackgroundColor(Color.parseColor("#33ff33"));}
-        else if (persons.get(i).isAlive()==0){personViewHolder.layout.setBackgroundColor(Color.parseColor("#ff4d4d"));}
-        else {personViewHolder.layout.setBackgroundColor(Color.parseColor("#adad85"));}
+        if (persons.get(i).isAlive() == 1) {
+            personViewHolder.layout.setBackgroundColor(Color.parseColor("#33ff33"));
+        } else if (persons.get(i).isAlive() == 0) {
+            personViewHolder.layout.setBackgroundColor(Color.parseColor("#ff4d4d"));
+        } else if (persons.get(i).isAlive() == 2) {
+            personViewHolder.layout.setBackgroundColor(Color.parseColor("#adad85"));
+        }
         personViewHolder.but.setText(persons.get(i).getCapture());
         personViewHolder.but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 playground idk = new playground();
-                idk.what(i, activity, persons);
+                idk.what(i, activity);
             }
         });
         personViewHolder.but.setEnabled(persons.get(i).isButtonEnabled());
         personViewHolder.hint.setText(persons.get(i).getHint());
-        if (persons.get(i).getvotesVisible()){
+        if (persons.get(i).getvotesVisible()) {
             String id = persons.get(i).getVotes().toString();
             personViewHolder.voteCount.setText(id);
-        }else {
+        } else {
             personViewHolder.voteCount.setText("");
         }
     }

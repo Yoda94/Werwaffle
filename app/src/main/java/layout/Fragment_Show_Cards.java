@@ -4,7 +4,10 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,16 +29,29 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Fragment_Show_Cards extends Fragment {
     public ArrayList<player_model> persons;
-    ListView lv;
+    RecyclerView rv;
+    card_adapter_fragment adapter;
+    ArrayList<card_model> cards;
+    Handler handler;
+    boolean host;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_fragment__show__cards, container, false);
-        boolean host = playground.isHost();
+        host = playground.isHost();
         Button bt = (Button) rootView.findViewById(R.id.fragment_show_cards_bt);
         Button startBt = (Button) rootView.findViewById(R.id.start_round_bt);
-        lv = (ListView) rootView.findViewById(R.id.fragment_show_cards_lv);
-        updateSelectedCards();
+        rv = (RecyclerView) rootView.findViewById(R.id.fragmetn_show_cards_rv);
+
+
+
+        handler = new Handler();
+        cards = getHistCards();
+        adapter = new card_adapter_fragment(cards, getActivity());
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
+        reloadLoop();
         if (host){
             bt.setEnabled(true);
             startBt.setEnabled(true);
@@ -48,42 +64,26 @@ public class Fragment_Show_Cards extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ShowCards.class);
                 startActivity(intent);
-                updateSelectedCards();//need to be on section changed
-                //showSelectedCards(); //need to be on section changed
+
             }
         });
         startBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateSelectedCards();
                 start();
             }
         });
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                SharedPreferences pref = getContext().getSharedPreferences("card_desc", MODE_PRIVATE);
-                String name = parent.getItemAtPosition(position).toString();
-                String desc  = pref.getString(name, "No Description");
-                //Popup start
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setTitle(name);
-                alert.setMessage(desc);
-                alert.show();
-                //Popup end
-            }
-        });
-
         return rootView;
     }
 
     private void start(){
         persons = addPlayer.getPlayerlist();
-        ArrayList<Integer> cardsInGame = showSelectedCards();
+        ArrayList<Integer> cardsInGame = getSelectedCards();
         if (AbleToStart(cardsInGame)) {
             resetALLButHost(); //and not selectedCardsInt
-            ArrayList<Integer> finalCards = selectCards(cardsInGame);
+            ArrayList<Integer> finalCards = new ArrayList<>();
+            finalCards.clear();
+            finalCards = selectCards(cardsInGame);
             assigneCardsToPlayer(finalCards);
             setGameStart();
         }else {
@@ -108,22 +108,7 @@ public class Fragment_Show_Cards extends Fragment {
         return startable;
     }
 
-    private void updateSelectedCards(){
-        ArrayList<String> selCards = new ArrayList<String>();
-        selCards.clear();
-        //new stuff
-        ArrayList<Integer> cardsInt = addPlayer.host().getSelectedCardsInt();
-        System.out.println("HostArray:"+cardsInt);
-        for (Integer cards : cardsInt){
-            String s = getContext().getString(cards);
-            selCards.add(s);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, selCards );
-        lv.setAdapter(adapter);
-    }
-
-    private ArrayList<Integer> showSelectedCards() {
+    private ArrayList<Integer> getSelectedCards() {
         ArrayList<Integer> cardsInGame = addPlayer.host().getSelectedCardsInt();
         return cardsInGame;
     }
@@ -137,6 +122,7 @@ public class Fragment_Show_Cards extends Fragment {
         }
         return cardsSecected;
     }
+
     private Integer getCard(ArrayList<Integer> cardsInGame, int powerLevel, ArrayList<Integer> currentCards){
         Integer card;
         boolean done = false;
@@ -211,7 +197,21 @@ public class Fragment_Show_Cards extends Fragment {
     }
     private void setGameStart(){
         getMe().setGameRunning(true);
+        sendArrayToAll();
 
+    }
+    private void sendArrayToAll(){
+        if (! host){
+            return;
+        }
+        ArrayList<Integer> send = new ArrayList<>();
+        send.clear();
+        persons = addPlayer.getPlayerlist();
+        for (int i=0;i<persons.size();i++){
+            send.add(i);
+        }
+        String msg = addPlayer.getJsonArray(send).toString();
+        playground.server.sendFromServer(msg, false);
     }
 
     private player_model getMe(){
@@ -233,4 +233,55 @@ public class Fragment_Show_Cards extends Fragment {
         editor2.apply();
     }
 
+    public void reloadLoop(){
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (addPlayer.host().getPlaygroundCreated() % 2 == 0){
+                    sendArrayToAll();
+                    cards = getHistCards();
+                    System.out.println("Updating with: "+ cards);
+                    card_adapter_fragment adapter2 = new card_adapter_fragment(cards, getActivity());
+                    LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+                    rv.setLayoutManager(llm);
+                    rv.setAdapter(adapter2);
+                    addPlayer.host().setPlaygroundCreated(1);
+                }
+                reloadLoop();
+            }
+        },500);
+    }
+    private ArrayList<card_model> getHistCards(){
+        ArrayList<card_model> result = new ArrayList<>();
+        result.clear();
+        ArrayList<Integer> cardNames = addPlayer.host().getSelectedCardsInt();
+        System.out.println("HostCards:" + cardNames);
+        for (int i:cardNames){
+            Integer desc = getRightDesc(i);
+            result.add(new card_model(i,desc, getActivity()));
+        }
+        return result;
+    }
+    private Integer getRightDesc(Integer role){
+        if (role==(R.string.string_witch_role)         ) { return (R.string.string_witch_desc);         }
+        if (role==(R.string.string_doctor_role)        ) { return (R.string.string_doctor_desc);        }
+        if (role==(R.string.string_seer_role)          ) { return (R.string.string_seer_desc);          }
+        if (role==(R.string.string_villager_role)      ) { return (R.string.string_villager_desc);      }
+        if (role==(R.string.string_werewolf_role)      ) { return (R.string.string_werewolf_desc);      }
+        if (role==(R.string.string_white_werewolf_role)) { return (R.string.string_white_werewolf_desc);}
+        if (role==(R.string.string_suendenbock_role)   ) { return (R.string.string_suendenbock_desc);   }
+        if (role==(R.string.string_bigbadwolf_role)    ) { return (R.string.string_bigbadwolf_desc);    }
+        if (role==(R.string.string_urwolf_role)        ) { return (R.string.string_urwolf_desc);        }
+        if (role==(R.string.string_mogli_role)         ) { return (R.string.string_mogli_desc);         }
+        if (role==(R.string.string_maged_role)         ) { return (R.string.string_maged_desc);         }
+        if (role==(R.string.string_hunter_role)        ) { return (R.string.string_hunter_desc);        }
+        if (role==(R.string.string_idiot_role)         ) { return (R.string.string_idiot_desc);         }
+        return 0;
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+    }
 }

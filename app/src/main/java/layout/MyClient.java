@@ -23,7 +23,7 @@ public class MyClient {
     playground mClient;
 
     MyClient(String textUserName, playground mClient){
-        chatClientThread = new ChatClientThread(textUserName, "192.168.43.1", 8080);
+        chatClientThread = new ChatClientThread(textUserName, "192.168.43.1", 8080, mClient);
         chatClientThread.start();
         this.mClient = mClient;
     }
@@ -33,12 +33,14 @@ public class MyClient {
         String name;
         String dstAddress;
         int dstPort;
+        playground mClient;
 
         String msgToSend = "";
         boolean goOut = false;
 
-        ChatClientThread(String name, String address, int port) {
+        ChatClientThread(String name, String address, int port, playground client) {
             this.name = name;
+            this.mClient = client;
             dstAddress = address;
             dstPort = port;
         }
@@ -133,8 +135,13 @@ public class MyClient {
 
         }
 
-        public void sendMsg(String msg){
-            msgToSend = msg;
+        public void sendMsg(String msg, Boolean onlyToWolves){
+            if (onlyToWolves){
+                msgToSend = "1"+msg;
+            }else {
+                msgToSend = "0"+msg;
+            }
+
         }
 
         public void disconnect(String myUniqKey){
@@ -147,15 +154,47 @@ public class MyClient {
             }
         }
         public void resiveMsg(String msg){
+            String first = msg.substring(0,1);
+            System.out.println("First:" +first);
+            String newMsg;
+            if (first != "["){
+                newMsg = msg.substring(1);
+            }
+            else {
+                newMsg = msg;
+            }
+            displayInfo("I resived something");
             try {
-                JSONArray jsonArray = new JSONArray(msg); //convert string to JsonArray
-                ArrayList<player_model> resivedList = addPlayer.JsonArrayToArrayList(jsonArray); //JsonArray to player_model
-                addPlayer.addToExistingPersons(resivedList); //new and old persons together
-
+                System.out.println(msg);
+                System.out.println(newMsg);
+                JSONArray jsonArray = new JSONArray(newMsg); //convert string to JsonArray
+                addPlayer.JsonArrayToArrayList(jsonArray); //JsonArray to player_model
+                reloade();
             } catch (JSONException e) {
                 //trace("DefaultListItem.toString JSONException: "+e.getMessage());
                 Log.e("MYAPP", "unexpected JSON exception", e);
             }
+        }
+        public void reloade(){
+            mClient.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mClient.playerAdapter.notifyDataSetChanged();
+                    mClient.onResume();
+                }
+
+            });
+        }
+
+        public void displayInfo(final String info){
+            mClient.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(mClient,"I resived:"+info,Toast.LENGTH_SHORT).show();
+                }
+
+            });
         }
     }
 

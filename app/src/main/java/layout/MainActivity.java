@@ -1,4 +1,4 @@
-package com.example.philip.werwaffle.activity;
+package layout;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,10 +14,8 @@ import android.widget.Button;
 
 import com.example.philip.werwaffle.R;
 
-import layout.EditProfil;
-import layout.Settings;
-import layout.ShowCards;
-
+import com.example.philip.werwaffle.activity.CreateLobby;
+import com.example.philip.werwaffle.activity.Join_lobby4;
 import com.example.philip.werwaffle.netcode2.ApManager;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -28,9 +26,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import layout.addPlayer;
-import layout.player_model;
 
 /**ADDING A NEW ROLE:
  * 1. Zu strings name und desc hinzufügen.
@@ -49,6 +44,7 @@ public class MainActivity extends Activity {
     public Button joinBut;
     public Button showCardBut;
     public Button profilBut;
+    public static ArrayList<card_model> myCards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +56,20 @@ public class MainActivity extends Activity {
         createME();
         buttons();
     }
+    public static ArrayList<card_model> getMyCardList(){
+        if (myCards == null) {
+            myCards = new ArrayList<>();
+        }
+        return myCards;
+    }
     public void createME(){
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        String uniqueKEy = pref.getString("uniqueKEy", "None");
         ArrayList<player_model> personss = addPlayer.getPlayerlist();
         personss.clear();
-        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
         String img = pref.getString("img", "None");
         String name = pref.getString("name", "None");
-        String uniqueKEy = pref.getString("uniqueKEy", "None");
-        addPlayer.addPlayer(name, img, 2,0, uniqueKEy, this);
+        addPlayer.addPlayer(name, img, 2, 0, uniqueKEy, this);
     }
 
 
@@ -145,7 +147,39 @@ public class MainActivity extends Activity {
         editor4.putBoolean(getString(R.string.string_urwolf_role), true);
         editor4.putBoolean(getString(R.string.string_mogli_role), true);
         editor4.apply();
+
+
+        //addCards
+        addCard(this,(R.string.string_witch_role),           (R.string.string_witch_desc));
+        addCard(this,(R.string.string_doctor_role),          (R.string.string_doctor_desc));
+        addCard(this,(R.string.string_seer_role),            (R.string.string_seer_desc));
+        addCard(this,(R.string.string_villager_role),        (R.string.string_villager_desc));
+        addCard(this,(R.string.string_werewolf_role),        (R.string.string_werewolf_desc));
+        addCard(this,(R.string.string_white_werewolf_role),  (R.string.string_white_werewolf_desc));
+        addCard(this,(R.string.string_suendenbock_role),     (R.string.string_suendenbock_desc));
+        addCard(this,(R.string.string_bigbadwolf_role),      (R.string.string_bigbadwolf_desc));
+        addCard(this,(R.string.string_urwolf_role),          (R.string.string_urwolf_desc));
+        addCard(this,(R.string.string_mogli_role),           (R.string.string_mogli_desc));
+        addCard(this,(R.string.string_maged_role),           (R.string.string_maged_desc));
+        addCard(this,(R.string.string_hunter_role),          (R.string.string_hunter_desc));
+        addCard(this,(R.string.string_idiot_role),           (R.string.string_idiot_desc));
+
     }
+    public static void addCard(Activity mActivety, Integer role, Integer desc){
+        if (myCards == null) {
+            myCards = new ArrayList<>();
+        }
+        Boolean exists = false;
+        for (int i=0;i<myCards.size();i++){
+            if (myCards.get(i).getRole()==(role)){exists = true;}
+        }
+        if (! exists) {
+            myCards.add(new card_model(role, desc, mActivety));
+        }
+        ShowCards.cards = myCards;
+
+    }
+
 
     public void buttons() {
         createBut = (Button) findViewById(R.id.createBut);

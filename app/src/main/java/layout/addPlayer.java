@@ -3,7 +3,12 @@ package layout;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+
+import com.example.philip.werwaffle.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,8 +23,10 @@ import java.util.List;
 
 public class addPlayer {
     public static ArrayList<player_model> playerlist;
+    public static Boolean playerExists;
 
-    public static  ArrayList<player_model> getPlayerlist(){
+
+    public static ArrayList<player_model> getPlayerlist(){
         if (playerlist == null) {
             playerlist = new ArrayList<>();
         }
@@ -47,40 +54,57 @@ public class addPlayer {
         }
         return jsonArray;
     }
-    static ArrayList<player_model> JsonArrayToArrayList(JSONArray jsonArray){
-        ArrayList<player_model> array = new ArrayList<>();
-        for (int i=0; i < jsonArray.length(); i++){
-            try {
-                array.add(new player_model("None", "None", 0, 1, "None", null));
-                JSONObject obj = jsonArray.getJSONObject(i);
-                array.get(i).jsonObjectToArrayListObject(obj);
-            } catch (JSONException e) {
-                //trace("DefaultListItem.toString JSONException: "+e.getMessage());
-                Log.e("MYAPP", "unexpected JSON exception", e);
+    static void JsonArrayToArrayList(JSONArray jsonArray){
+        if (jsonArray.length()>0) {
+            for (int i = 0; i < jsonArray.length(); i++) { //check if exists by finding key
+                playerExists = false;
+                try {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    String key="";
+                    if (obj.has("uniqueKEy")) {
+                        key = obj.getString("uniqueKEy");
+                        for (int m=0;m<playerlist.size();m++) {
+                            if (playerlist.get(m).getUniqueKEy().equals(key)){
+                                playerExists = true;
+                            }
+                        }
+                    }
+                    if (playerExists) {
+                        addToExistingPersons(obj, key);
+                        System.out.println("addToExistingPersons()");
+                    } else {
+                        createNewPerson(obj);
+                        System.out.println("createNewPerson()");
+                    }
+                } catch (JSONException e) {
+                    Log.e("MYAPP", "unexpected JSON exception", e);
+                }
             }
         }
-        return array;
     }
-    static void addToExistingPersons(ArrayList<player_model> givenList){
-        if (givenList.size()>0){
-            for (int i=0; i<givenList.size();i++) {
-                Boolean newPlayer = true;
-                for (int m = 0; m < playerlist.size(); m++) {
-                    if (playerlist.get(m).getUniqueKEy().equals(givenList.get(i).getUniqueKEy())) {
-                        newPlayer = false;
-                        //Overwrite
-                        playerlist.get(m).overWrite(givenList.get(i));
-                        break;
-                    }
-                }
-                if (newPlayer) {
-                    String name = givenList.get(i).getName();
-                    String img = givenList.get(i).getImg();
-                    int alive = givenList.get(i).isAlive();
-                    String uniqueKEy = givenList.get(i).getUniqueKEy();
-                    playerlist.add(new player_model(name, img, alive,1, uniqueKEy, null));
-                    //now overwirte the new player with the given player
-                    playerlist.get(playerlist.size()-1).overWrite(givenList.get(i));
+    private static void createNewPerson(JSONObject object){
+        if (object !=null){
+            playerlist.add(new player_model("None", "None", 2, -13, "None", null));
+            playerlist.get(playerlist.size()-1).jsonObjectToArrayListObject(object);
+        }
+
+        //Print list
+        ArrayList<Integer> allNr = new ArrayList<>();
+        for (int i=0;i<playerlist.size();i++){
+            allNr.add(i);
+        }
+        System.out.println("My list is now: "+addPlayer.getJsonArray(allNr));
+
+
+
+    }
+
+    static void addToExistingPersons(JSONObject object, String uniqueKey){
+        if (object != null){
+            for (int i=0;i<playerlist.size();i++){
+                if (playerlist.get(i).getUniqueKEy().equals(uniqueKey)){
+                    playerlist.get(i).jsonObjectToArrayListObject(object);
+                    break;
                 }
             }
         }
@@ -91,6 +115,14 @@ public class addPlayer {
                 playerlist.remove(i);
             }
         }
+        //Print list
+        ArrayList<Integer> allNr = new ArrayList<>();
+        for (int i=0;i<playerlist.size();i++){
+            allNr.add(i);
+        }
+        System.out.println("My list is now: "+addPlayer.getJsonArray(allNr));
+
+
     }
     static player_model host(){
         int nr=-1;

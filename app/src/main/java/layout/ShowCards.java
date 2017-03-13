@@ -3,6 +3,8 @@ package layout;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.widget.ListView;
 
@@ -11,38 +13,35 @@ import com.example.philip.werwaffle.R;
 import java.util.ArrayList;
 
 public class ShowCards extends AppCompatActivity {
-    public ListView lv;
-    public card_model[] modelItems;
-    public ArrayList<Integer> arrayList;
+    RecyclerView rv;
+    public static ArrayList<card_model> cards;
+    player_model personMe;
+    ArrayList<card_model> myCards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_cards);
-        arrayList = new ArrayList<>();
-        arrayList.clear();
-        lv = (ListView) findViewById(R.id.show_cards_lv);
-        modelItems = new card_model[13];
-        adModelItem(0, getString(R.string.string_witch_role),getString(R.string.string_witch_desc), R.string.string_witch_role);
-        adModelItem(1, getString(R.string.string_doctor_role), getString(R.string.string_doctor_desc), R.string.string_doctor_role);
-        adModelItem(2, getString(R.string.string_seer_role), getString(R.string.string_seer_desc),R.string.string_seer_role);
-        adModelItem(3, getString(R.string.string_villager_role), getString(R.string.string_villager_desc), R.string.string_villager_role);
-        adModelItem(4, getString(R.string.string_werewolf_role), getString(R.string.string_werewolf_desc),R.string.string_werewolf_role);
-        adModelItem(5, getString(R.string.string_white_werewolf_role), getString(R.string.string_white_werewolf_desc),R.string.string_white_werewolf_role);
-        adModelItem(6, getString(R.string.string_suendenbock_role),getString(R.string.string_suendenbock_desc),R.string.string_suendenbock_role);
-        adModelItem(7, getString(R.string.string_bigbadwolf_role),getString(R.string.string_bigbadwolf_desc),R.string.string_bigbadwolf_role);
-        adModelItem(8, getString(R.string.string_urwolf_role),getString(R.string.string_urwolf_desc), R.string.string_urwolf_role);
-        adModelItem(9, getString(R.string.string_mogli_role),getString(R.string.string_mogli_desc),R.string.string_mogli_role);
-        adModelItem(10, getString(R.string.string_maged_role),getString(R.string.string_maged_desc),R.string.string_maged_role);
-        adModelItem(11, getString(R.string.string_hunter_role),getString(R.string.string_hunter_desc),R.string.string_hunter_role);
-        adModelItem(12, getString(R.string.string_idiot_role),getString(R.string.string_idiot_desc), R.string.string_idiot_role);
-        card_adapter adapter = new card_adapter(this, modelItems);
-        lv.setAdapter(adapter);
+        checkPrefs();
+        myCards = MainActivity.getMyCardList();
+
+        card_adapter2 adapter = new card_adapter2(myCards, this);
+        rv = (RecyclerView) findViewById(R.id.show_cards_rv);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
+
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        personMe = addPlayer.me(pref.getString("uniqueKEy", "None"));
+    }
+    public static ArrayList<card_model> getCardslist(){
+        if (cards == null) {
+            cards = new ArrayList<>();
+            cards = MainActivity.getMyCardList();
+        }
+        return cards;
     }
 
-    public void adModelItem(int i,String name, String desc, Integer integer){
-        modelItems[i] = new card_model(name, getnumber(name), desc, integer);
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -50,37 +49,54 @@ public class ShowCards extends AppCompatActivity {
         return true;
     }
 
-    private int getnumber(String key){
-        SharedPreferences pref = getSharedPreferences("cards", MODE_PRIVATE);
-        boolean isRoleSelected = pref.getBoolean(key, false);
-        if (isRoleSelected){
-            return 1;
-        }else {
-            return 0;
+    public void checkPrefs(){
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        ArrayList<Integer> cardName = new ArrayList<>();
+        cardName.clear();
+        ArrayList<card_model> myCards = MainActivity.getMyCardList();
+        for (int i=0;i<myCards.size();i++){
+            cardName.add(myCards.get(i).getRole());
+        }
+        for (int i:cardName){
+            String key = getString(i);
+            Boolean isChecked = pref.getBoolean(key, false);
+            if (isChecked){
+                for (int m=0;i<myCards.size();m++){
+                    if (myCards.get(m).getRole()==i){
+                        myCards.get(m).setIsChecked(isChecked);
+                        break;
+                    }
+                }
+            }
         }
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        SharedPreferences.Editor editor = getSharedPreferences("cards", MODE_PRIVATE).edit();
-        SharedPreferences preferences = getSharedPreferences("profil", MODE_PRIVATE);
-        String myuniqKey = preferences.getString("uniqueKEy","None");
-        for (int i = 0; i < modelItems.length; i++ ){
-            String role = modelItems[i].getName();
-            if (modelItems[i].getValue() == 1){
-                editor.putBoolean(role, true);
-                arrayList.add(modelItems[i].getInteger());
+    public void onStop() {super.onStop();}
 
-            }else{
-                editor.putBoolean(role, false);
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        cards = new ArrayList<>();
+        cards.clear();
+        ArrayList<Integer> cardNames = new ArrayList<>();
+        cardNames.clear();
+        myCards = MainActivity.getMyCardList();
+        for (int i=0;i<myCards.size();i++){
+            if (myCards.get(i).getIsChecked()){
+                cards.add(myCards.get(i));
+                cardNames.add(myCards.get(i).getRole());
             }
         }
-        addPlayer.me(myuniqKey).setSelectedCardsInt(arrayList);
-        System.out.println("ShowCards Array:"+arrayList);
+        personMe.setSelectedCardsInt(cardNames);
+        personMe.setPlaygroundCreatedAdd(1);
+        SharedPreferences.Editor editor = getSharedPreferences("profil", MODE_PRIVATE).edit();
+        for (int i:cardNames) {
+            String key = getString(i);
+            editor.putBoolean(key, true);
+        }
         editor.apply();
     }
-
 
 }
 
