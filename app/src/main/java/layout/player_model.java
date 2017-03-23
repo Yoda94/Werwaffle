@@ -37,6 +37,10 @@ public class player_model {
     Integer playerNR;
     Integer evil;
     Integer role;
+    Integer role1;
+    Integer role2;
+    Integer role3;
+    Integer lives;
     Boolean skillUsable;
     Boolean skill2Usable;
     Integer votes;
@@ -48,18 +52,25 @@ public class player_model {
     Integer votedFor;
     Boolean iAmRdy;
     Boolean votesVisible;
+    Boolean killHim;
 
     Integer nightCount;
     Integer nightStat;
     Boolean gameRunning;
     Boolean host;
-    Boolean settingsShowCards;
-    Boolean settingsVoteSameTime;
     Integer victim;
     ArrayList<Integer> selectedCardsInt;
     Boolean deletMe;
     Boolean notifyData;
     Integer playgroundCreated;
+    Boolean canIVote;
+
+    //Settings
+    Boolean settingsShowCards;
+    Boolean settingsVoteSameTime;
+    Boolean settingsRoleSwitch;
+    Boolean settingsWolvSee;
+    Integer settingsLives;
 
 
     player_model(String name, String img, int alive, int playerNR, String uniqueKEy, Activity activity){
@@ -71,12 +82,17 @@ public class player_model {
         enable = false;
         evil = 0;
         role = -1;
+        role1 = -1;
+        role2 = -1;
+        role3 = -1;
+        lives = 1;
         skillUsable = true;
         skill2Usable = true;
         votes = 0;
         didIVote = false;
         usedOnPlayer = -1;
         hint = "";
+        killHim = false;
         killAble = true;
         diedThisNight = false;
         permaSkill = false;
@@ -85,6 +101,7 @@ public class player_model {
         votesVisible = false;
         nightCount = 0;
         nightStat = 0;
+        canIVote = true;
         gameRunning = false;
         host = false;
         victim = -1;
@@ -94,8 +111,12 @@ public class player_model {
         playgroundCreated = 0;
         if (activity != null) {
             SharedPreferences pref = activity.getSharedPreferences("settings", MODE_PRIVATE);
-            settingsShowCards = pref.getBoolean("cards", false);
-            settingsVoteSameTime = pref.getBoolean("vote", false);
+            //Settings
+            settingsShowCards       = pref.getBoolean("cards", false);
+            settingsVoteSameTime    = pref.getBoolean("vote", false);
+            settingsRoleSwitch      = pref.getBoolean("role", false);
+            settingsWolvSee         = pref.getBoolean("wolves", false);
+            settingsLives           = pref.getInt("lives", 1);
             //selectedCardsInt
             ArrayList<card_model> cards = MainActivity.getMyCardList();
             selectedCardsInt.clear();
@@ -111,6 +132,7 @@ public class player_model {
         } else {
             settingsShowCards = false;
             settingsVoteSameTime = false;
+            settingsRoleSwitch = false;
         }
 
 
@@ -143,14 +165,35 @@ public class player_model {
     public Integer getNightStat(){return this.nightStat;}
     public Integer getNightCount(){return this.nightCount;}
     public Boolean getGameRunning(){return this.gameRunning;}
-    public Boolean getSettingsShowCards(){return this.settingsShowCards;}
-    public Boolean getSettingsVoteSameTime(){return this.settingsVoteSameTime;}
     public Boolean getHost(){return this.host;}
+    public Integer getLives(){return this.lives;}
     public Integer getVictim(){return this.victim;}
     public ArrayList<Integer> getSelectedCardsInt(){return this.selectedCardsInt;}
     public Boolean getDeletMe(){return this.deletMe;}
     public Boolean getNotifyData(){return this.notifyData;}
     public Integer getPlaygroundCreated(){return this.playgroundCreated;}
+    public Boolean getCanIVote(){return this.canIVote;}
+    public Boolean nextRoleExistsAndSet(){
+        if (role.equals(role1) && role2 != -1){
+            role=role2;
+            lives -= 1;
+            return true;
+        }
+        else if (role.equals(role2) && role3 != -1){
+            role=role3;
+            lives -= 1;
+            return true;
+        }
+        lives = 0;
+        return false;
+    }
+    //Settings
+    public Boolean getSettingsShowCards(){return this.settingsShowCards;}
+    public Boolean getSettingsVoteSameTime(){return this.settingsVoteSameTime;}
+    public Boolean getSettingsRoleSwitch(){return this.settingsRoleSwitch;}
+    public Boolean getSettingsWolvSee(){return this.settingsWolvSee;}
+    public Boolean getKillHim(){return this.killHim;}
+    public Integer getSettingsLives(){return this.settingsLives;}
     public void setButton(String newCapture){capture = newCapture;}
     public void setName(String newName){
         name = newName;
@@ -159,10 +202,16 @@ public class player_model {
     public void setPlayerNR(int newNumber){playerNR = newNumber;}
     public void setButtonState(boolean newValue){enable = newValue;}
     public void setEvil(int newValue){evil = newValue;}
+    public void setKillHim(boolean bool){killHim = bool;}
     public void setRole(Integer newValue){role = newValue;}
+    public void setRole1(Integer newValue){role1 = newValue;}
+    public void setRole2(Integer newValue){role2 = newValue;}
+    public void setRole3(Integer newValue){role3 = newValue;}
+    public void setLives(Integer liv){lives = liv;}
     public void setSkillUsable(boolean bool){skillUsable = bool;}
     public void setSkill2Usable(boolean bool){skill2Usable = bool;}
-    public void setVotes(int vot){votes += vot;}
+    public void setVotesAdd(int add){votes += add;}
+    public void setVotes(int newVotes){votes = newVotes;}
     public void resetVotes(){votes = 0;}
     public void setDidIVote(boolean bool){didIVote = bool;}
     public void setUsedOnPlayer(int x){usedOnPlayer = x;}
@@ -177,46 +226,56 @@ public class player_model {
     public void setNightStat(int i){nightStat = i;}
     public void setNightCount(int i){nightCount = i;}
     public void setGameRunning(boolean bool){gameRunning = bool;}
-    public void setSettingsShowCards(boolean bool){settingsShowCards = bool;}
-    public void setSettingsVoteSameTime(boolean bool){settingsVoteSameTime = bool;}
     public void setSelectedCardsInt(ArrayList<Integer> selection){selectedCardsInt = selection;}
     public void setDeletMe(boolean bool){deletMe = bool;}
     public void setNotifyData(boolean bool){notifyData = bool;}
     public void setPlaygroundCreatedAdd(Integer add){playgroundCreated += add;}
     public void setPlaygroundCreated(Integer newInt){playgroundCreated = newInt;}
     public void setVictim(int i){victim = i;}
-    public void resetAll(){//dosent clear cardsSelected, no settings
+    public void setCanIVote(boolean bool){canIVote = bool;}
+    //Settings
+    public void setSettingsShowCards(boolean bool){settingsShowCards = bool;}
+    public void setSettingsVoteSameTime(boolean bool){settingsVoteSameTime = bool;}
+    public void setSettingsRoleSwitch(boolean bool){settingsRoleSwitch = bool;}
+    public void setSettingsWolvSee(boolean bool){settingsWolvSee = bool;}
+    public void setSettingsLives(Integer integer){settingsLives = integer;}
+
+    public void resetGameDate(){
         enable = false;
         evil = 0;
-        role = -1;
         skillUsable = true;
         skill2Usable = true;
         votes = 0;
         didIVote = false;
         usedOnPlayer = -1;
-        hint = "";
         killAble = true;
         diedThisNight = false;
         permaSkill = false;
         votedFor = -1;
         iAmRdy = false;
         alive = 2;
+        killHim = false;
         votesVisible = false;
         nightCount = 0;
         nightStat = 0;
         gameRunning = false;
-        host = false;
         victim = -1;
         deletMe = false;
         playgroundCreated = 1;
+        canIVote = true;
     }
     public void resetAllButHost(){ //dosent clear cardsSelected, no settings
         enable = false;
         evil = 0;
         role = -1;
+        role1 = -1;
+        role2 = -1;
+        role3 = -1;
+        lives = 1;
         skillUsable = true;
         skill2Usable = true;
         votes = 0;
+        capture = "";
         didIVote = false;
         usedOnPlayer = -1;
         hint = "";
@@ -224,6 +283,7 @@ public class player_model {
         diedThisNight = false;
         permaSkill = false;
         votedFor = -1;
+        killHim =false;
         iAmRdy = false;
         alive = 2;
         votesVisible = false;
@@ -233,7 +293,14 @@ public class player_model {
         victim = -1;
         deletMe = false;
         playgroundCreated = 1;
+        canIVote = true;
     }
+    public void resetNightStuff(){
+        votes = 0;
+        didIVote = false;
+        killAble = true;
+    }
+
     public void overWrite(player_model newPerson){
         if (newPerson.getName()                != null){name                = newPerson.getName();                }
         if (newPerson.getImg()                 != null){img                 = newPerson.getImg();                 }
@@ -259,12 +326,16 @@ public class player_model {
         if (newPerson.getNightStat()           != null){nightStat           = newPerson.getNightStat();           }
         if (newPerson.getGameRunning()         != null){gameRunning         = newPerson.getGameRunning();         }
         if (newPerson.getHost()                != null){host                = newPerson.getHost();                }
-        if (newPerson.getSettingsShowCards()   != null){settingsShowCards   = newPerson.getSettingsShowCards();   }
-        if (newPerson.getSettingsVoteSameTime()!= null){settingsVoteSameTime= newPerson.getSettingsVoteSameTime();}
         if (newPerson.getVictim()              != null){victim              = newPerson.getVictim();              }
         if (newPerson.getSelectedCardsInt()    != null){selectedCardsInt    = newPerson.getSelectedCardsInt();    }
         if (newPerson.getDeletMe()             != null){deletMe             = newPerson.getDeletMe();             }
         if (newPerson.getPlaygroundCreated()   != null){playgroundCreated   = newPerson.getPlaygroundCreated();   }
+        if (newPerson.getCanIVote()            != null){canIVote            = newPerson.canIVote;   }
+        if (newPerson.getSettingsShowCards()   != null){settingsShowCards   = newPerson.getSettingsShowCards();   }
+        if (newPerson.getSettingsVoteSameTime()!= null){settingsVoteSameTime= newPerson.getSettingsVoteSameTime();}
+        if (newPerson.getSettingsRoleSwitch()  != null){settingsRoleSwitch  = newPerson.getSettingsRoleSwitch();}
+        if (newPerson.getSettingsWolvSee()     != null){settingsWolvSee     = newPerson.getSettingsWolvSee();}
+        if (newPerson.getSettingsLives()       != null){settingsLives       = newPerson.getSettingsLives();}
     }
 
     public JSONObject getJSONObject() {
@@ -279,11 +350,15 @@ public class player_model {
             obj.put("playgroundCreated", playgroundCreated);
             obj.put("evil", evil);
             obj.put("role", role);
+            obj.put("role1", role1);
+            obj.put("role2", role2);
+            obj.put("role3", role3);
             obj.put("skillUsable", skillUsable);
             obj.put("skill2Usable", skill2Usable);
             obj.put("votes", votes);
             obj.put("didIVote", didIVote);
             obj.put("hint", hint);
+            obj.put("killHim", killHim);
             obj.put("killAble", killAble);
             obj.put("diedThisNight", diedThisNight);
             obj.put("permaSkill", permaSkill);
@@ -291,18 +366,25 @@ public class player_model {
             obj.put("usedOnPlayer", usedOnPlayer);
             obj.put("iAmRdy", iAmRdy);
             obj.put("votesVisible", votesVisible);
+            obj.put("canIVote", canIVote);
+            obj.put("lives", lives);
+
 
             obj.put("nightCount",nightCount);
             obj.put("nightStat",nightStat);
             obj.put("gameRunning",gameRunning);
             obj.put("host",host);
-            obj.put("settingsShowCards",settingsShowCards);
-            obj.put("settingsVoteSameTime",settingsVoteSameTime);
             obj.put("victim", victim);
             obj.put("deletMe", deletMe);
 
             String jsom = new Gson().toJson(selectedCardsInt);
             obj.put("selectedCardsInt", jsom);
+            //Settings
+            obj.put("settingsShowCards",settingsShowCards);
+            obj.put("settingsVoteSameTime",settingsVoteSameTime);
+            obj.put("settingsRoleSwitch",settingsRoleSwitch);
+            obj.put("settingsWolvSee",settingsWolvSee);
+            obj.put("settingsLives",settingsLives);
 
         } catch (JSONException e) {
             //trace("DefaultListItem.toString JSONException: "+e.getMessage());
@@ -342,6 +424,9 @@ public class player_model {
             if (json.has("killAble")) {
                 killAble        = json.getBoolean("killAble");
             } //else {killAble =null;}
+            if (json.has("killHim")) {
+                killHim        = json.getBoolean("killHim");
+            } //else {killAble =null;}
             if (json.has("diedThisNight")) {
                 diedThisNight   = json.getBoolean("diedThisNight");
             } //else {diedThisNight =null;}
@@ -350,6 +435,9 @@ public class player_model {
             } //else {permaSkill =null;}
             if (json.has("iAmRdy")) {
                 iAmRdy          = json.getBoolean("iAmRdy");
+            } //else {iAmRdy =null;}
+            if (json.has("lives")) {
+                lives          = json.getInt("lives");
             } //else {iAmRdy =null;}
             if (json.has("votesVisible")) {
                 votesVisible    = json.getBoolean("votesVisible");
@@ -362,7 +450,16 @@ public class player_model {
             }
             if (json.has("role")) {
                 role            = json.getInt("role");
-            } //else {role =null;}
+            }
+            if (json.has("role1")) {
+                role1            = json.getInt("role1");
+            }
+            if (json.has("role2")) {
+                role2            = json.getInt("role2");
+            }
+            if (json.has("role3")) {
+                role3            = json.getInt("role3");
+            }
             if (json.has("usedOnPlayer")) {
                 usedOnPlayer    = json.getInt("usedOnPlayer");
             } //else {usedOnPlayer =null;}
@@ -393,14 +490,11 @@ public class player_model {
             if (json.has("host")) {
                 host            = json.getBoolean("host");
             } //else {host =null;}
-            if (json.has("settingsShowCards")) {
-                settingsShowCards = json.getBoolean("settingsShowCards");
-            } //else {settingsShowCards =null;}
-            if (json.has("settingsVoteSameTime")) {
-                settingsVoteSameTime = json.getBoolean("settingsVoteSameTime");
-            } //else {settingsVoteSameTime =null;}
             if (json.has("victim")) {
                 victim          = json.getInt("victim");
+            } //else {victim =null;}
+            if (json.has("canIVote")) {
+                canIVote         = json.getBoolean("canIVote");
             } //else {victim =null;}
             if (json.has("selectedCardsInt")) {
                 selectedCardsInt = new ArrayList<>();
@@ -420,6 +514,22 @@ public class player_model {
                     }
                 }
             } //else {selectedCardsInt =null;}
+            //Settings
+            if (json.has("settingsShowCards")) {
+                settingsShowCards = json.getBoolean("settingsShowCards");
+            } //else {settingsShowCards =null;}
+            if (json.has("settingsVoteSameTime")) {
+                settingsVoteSameTime = json.getBoolean("settingsVoteSameTime");
+            } //else {settingsVoteSameTime =null;}
+            if (json.has("settingsRoleSwitch")) {
+                settingsRoleSwitch = json.getBoolean("settingsRoleSwitch");
+            } //else {settingsVoteSameTime =null;}
+            if (json.has("settingsWolvSee")) {
+                settingsWolvSee = json.getBoolean("settingsWolvSee");
+            } //else {settingsVoteSameTime =null;}
+            if (json.has("settingsRoleSwitch")) {
+                settingsLives = json.getInt("settingsLives");
+            } //else {settingsVoteSameTime =null;}
 
         }catch (JSONException e) {
             //trace("DefaultListItem.toString JSONException: "+e.getMessage());

@@ -7,6 +7,9 @@
     <string name="went_wrong">Something went wrong.</string>
     <string name="settings_show_cards_help_title">Show Cards</string>
     <string name="settings_show_cards_help_desc">You can choos if you and your playmats can see the cards the computer choose.</string>
+    <string name="settings_role_desc">If you check it you\'ll be able to the roles of dead players.</string>
+    <string name="settings_wolvesSee_desc">If you check the Wolves will be able to see eath other during the Night.</string>
+    <string name="settings_lives_desc">You can decide how many lives each Player has. For every live he will get a spesific role. We will Play his first role till he dies, then he will play his next role.</string>
     <string name="connected_to_no_wifi">You are not connected to a Wifi.</string>
     <string name="join_lobby_info">In order to join a Room you need to connect to it\'s Wifi.</string>
     <string name="exit">Exit Game</string>

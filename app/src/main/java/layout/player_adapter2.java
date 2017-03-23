@@ -28,6 +28,7 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
         TextView name;
         TextView voteCount;
         TextView hint;
+        TextView lives;
         Button but;
         RelativeLayout layout;
         ImageView imgView;
@@ -41,6 +42,7 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
             imgView = (ImageView) itemView.findViewById(R.id.one_player_img);
             voteCount = (TextView) itemView.findViewById(R.id.one_player_vote_count);
             hint = (TextView) itemView.findViewById(R.id.one_player_hint);
+            lives = (TextView) itemView.findViewById(R.id.one_player_lives);
 
         }
     }
@@ -97,6 +99,7 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
         } else {
             personViewHolder.voteCount.setText("");
         }
+        personViewHolder.lives.setText("Lives: "+persons.get(i).getLives().toString());
     }
 
     @Override

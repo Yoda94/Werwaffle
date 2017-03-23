@@ -2,8 +2,12 @@ package layout;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.philip.werwaffle.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +37,7 @@ public class MyServer {
 
 
     private class ChatServerThread extends Thread {
+        Integer cnt = 1;
 
         @Override
         public void run() {
@@ -45,8 +50,9 @@ public class MyServer {
                     socket = serverSocket.accept();
                     ChatClient client = new ChatClient();
                     userList.add(client);
-                    ConnectThread connectThread = new ConnectThread(client, socket);
+                    ConnectThread connectThread = new ConnectThread(client, socket, cnt);
                     connectThread.start();
+                    cnt += 1;
                 }
 
             } catch (IOException e) {
@@ -71,12 +77,14 @@ public class MyServer {
         Socket socket;
         ChatClient connectClient;
         String msgToSend = "";
+        Integer cnt;
 
-        ConnectThread(ChatClient client, Socket socket){
+        ConnectThread(ChatClient client, Socket socket, Integer cnt){
             connectClient = client;
             this.socket= socket;
             client.socket = socket;
             client.chatThread = this;
+            this.cnt = cnt;
         }
 
         @Override
@@ -92,6 +100,13 @@ public class MyServer {
 
                 connectClient.name = n;
 
+
+                //sending one change
+                dataOutputStream.writeUTF(cnt.toString());
+                dataOutputStream.flush();
+
+
+                //sending array
                 ArrayList<Integer> allPlayers = new ArrayList<>();
                 ArrayList<player_model> currentList = addPlayer.getPlayerlist();
                 for (int i=0; i<currentList.size();i++){
@@ -102,13 +117,17 @@ public class MyServer {
                 dataOutputStream.writeUTF(jsonArrayOfAll);
                 dataOutputStream.flush();
 
+
+
                 //broadcastMsg(n + " join our chat.\n", n, false);
 
                 while (true) {
                     if (dataInputStream.available() > 0) {
+                        disableStartButForASec();
                         final String newMsg = dataInputStream.readUTF();
 
                         //Here resives the server newMsg from n
+
 
                         desiceWhatToDo(newMsg, n);
                     }
@@ -194,6 +213,7 @@ public class MyServer {
                 newMsg = msg;
             }
             displayInfo("I resived this something");
+            playground.resived = true;
             System.out.println(msg);
             System.out.println(newMsg);
             JSONArray jsonArray = new JSONArray(newMsg); //convert string to JsonArray
@@ -239,12 +259,27 @@ public class MyServer {
     }
     public void displayInfo(final String info){
         mServer.runOnUiThread(new Runnable() {
-
             @Override
             public void run() {
                 Toast.makeText(mServer,"I resived:"+info,Toast.LENGTH_SHORT).show();
             }
 
+        });
+    }
+    private void disableStartButForASec(){
+        mServer.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final Button startBt = (Button) mServer.findViewById(R.id.start_round_bt);
+                startBt.setEnabled(false);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                      startBt.setEnabled(true);
+                    }
+                },2000);
+            }
         });
     }
 

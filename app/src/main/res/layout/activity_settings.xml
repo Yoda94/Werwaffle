@@ -64,6 +64,118 @@
             android:id="@+id/settings_switch_vote_same"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
+
+        <Switch
+            android:text="Tote Rollen anzeigen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/settings_switch_displayRole"
+            android:layout_alignBottom="@+id/settings_bt_displayRole"
+            android:layout_toRightOf="@+id/settings_bt_displayRole"
+            android:layout_marginBottom="11dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_help"
+            android:layout_marginTop="12dp"
+            android:id="@+id/settings_bt_displayRole"
+            android:layout_below="@+id/settings_but_vote_help"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_help"
+            android:layout_marginTop="18dp"
+            android:id="@+id/settings_wolvesSee_BT"
+            android:layout_below="@+id/settings_switch_displayRole"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Switch
+            android:text="Wolves see another"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/settings_wolvesSee_SW"
+            android:layout_alignBottom="@+id/settings_wolvesSee_BT"
+            android:layout_alignLeft="@+id/settings_switch_vote_same"
+            android:layout_alignStart="@+id/settings_switch_vote_same"
+            android:layout_marginBottom="12dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_help"
+            android:layout_marginTop="15dp"
+            android:id="@+id/settings_lives_bt"
+            android:layout_below="@+id/settings_wolvesSee_BT"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/settings_lives_group"
+            android:orientation="horizontal"
+            android:layout_alignBottom="@+id/settings_lives_bt"
+            android:layout_alignLeft="@+id/settings_wolvesSee_SW"
+            android:layout_alignStart="@+id/settings_wolvesSee_SW">
+
+            <RadioButton
+                android:text="1 "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_live1"
+                android:layout_alignBottom="@+id/settings_lives_bt"
+                android:layout_alignLeft="@+id/settings_wolvesSee_SW"
+                android:layout_alignStart="@+id/settings_wolvesSee_SW"
+                android:checked="false"
+                android:onClick="onRadioButtonClicked"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:text="2 "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_live2"
+                android:layout_alignBaseline="@+id/settings_live1"
+                android:layout_alignBottom="@+id/settings_live1"
+                android:layout_centerHorizontal="true"
+                android:onClick="onRadioButtonClicked"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:text="3 "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_live3"
+                android:layout_alignBaseline="@+id/settings_live2"
+                android:layout_alignBottom="@+id/settings_live2"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="52dp"
+                android:layout_marginEnd="52dp"
+                android:onClick="onRadioButtonClicked"
+                android:layout_weight="1" />
+
+        </RadioGroup>
+
+        <TextView
+            android:text="Number of Lives"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:layout_weight="1"
+            android:layout_alignTop="@+id/settings_lives_bt"
+            android:layout_toRightOf="@+id/settings_lives_bt"
+            android:layout_toEndOf="@+id/settings_lives_bt" />
+
     </RelativeLayout>
 
 </RelativeLayout>

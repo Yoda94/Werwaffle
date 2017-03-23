@@ -33,14 +33,16 @@ public class Fragment_Show_Cards extends Fragment {
     card_adapter_fragment adapter;
     ArrayList<card_model> cards;
     Handler handler;
+    Button startBt, changeBt;
     boolean host;
+    int numberOfRoles;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_fragment__show__cards, container, false);
         host = playground.isHost();
-        Button bt = (Button) rootView.findViewById(R.id.fragment_show_cards_bt);
-        Button startBt = (Button) rootView.findViewById(R.id.start_round_bt);
+        changeBt = (Button) rootView.findViewById(R.id.fragment_show_cards_bt);
+        startBt = (Button) rootView.findViewById(R.id.start_round_bt);
         rv = (RecyclerView) rootView.findViewById(R.id.fragmetn_show_cards_rv);
 
 
@@ -53,13 +55,13 @@ public class Fragment_Show_Cards extends Fragment {
         rv.setAdapter(adapter);
         reloadLoop();
         if (host){
-            bt.setEnabled(true);
+            changeBt.setEnabled(true);
             startBt.setEnabled(true);
         }else {
-            bt.setEnabled(false);
+            changeBt.setEnabled(false);
             startBt.setEnabled(false);
         }
-        bt.setOnClickListener(new View.OnClickListener() {
+        changeBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ShowCards.class);
@@ -67,23 +69,21 @@ public class Fragment_Show_Cards extends Fragment {
 
             }
         });
-        startBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start();
-            }
-        });
         return rootView;
     }
 
     private void start(){
         persons = addPlayer.getPlayerlist();
-        ArrayList<Integer> cardsInGame = getSelectedCards();
+        numberOfRoles = persons.size() * addPlayer.host().getSettingsLives();
+        ArrayList<Integer> cardsInGame = new ArrayList<>();
+        cardsInGame.clear();
+        cardsInGame.addAll(getSelectedCards());
+        System.out.println("cardsInGame: "+cardsInGame);
         if (AbleToStart(cardsInGame)) {
             resetALLButHost(); //and not selectedCardsInt
             ArrayList<Integer> finalCards = new ArrayList<>();
             finalCards.clear();
-            finalCards = selectCards(cardsInGame);
+            finalCards.addAll(selectCards(cardsInGame));
             assigneCardsToPlayer(finalCards);
             setGameStart();
         }else {
@@ -96,7 +96,7 @@ public class Fragment_Show_Cards extends Fragment {
 
     public boolean AbleToStart(ArrayList<Integer> selectedCards){
         boolean startable = false;
-        if (persons.size() <= selectedCards.size()){
+        if (numberOfRoles <= selectedCards.size()){
             startable = true;
         }else {
             Integer Werwolf = (R.string.string_werewolf_role);
@@ -115,7 +115,7 @@ public class Fragment_Show_Cards extends Fragment {
     private ArrayList<Integer> selectCards(ArrayList<Integer> cardsInGame){
         ArrayList<Integer> cardsSecected = new ArrayList<>();
         cardsSecected.clear();
-        for (int i = 0; i < persons.size(); i++ ){
+        for (int i = 0; i < numberOfRoles; i++ ){
             int powerLevel = getPowerLevl(cardsSecected);
             Integer newCard = getCard(cardsInGame, powerLevel, cardsSecected);
             cardsSecected.add(newCard);
@@ -125,6 +125,7 @@ public class Fragment_Show_Cards extends Fragment {
 
     private Integer getCard(ArrayList<Integer> cardsInGame, int powerLevel, ArrayList<Integer> currentCards){
         Integer card;
+        System.out.println(cardsInGame);
         boolean done = false;
         ArrayList<Integer> exeption = new ArrayList<Integer>();
         exeption.clear();
@@ -150,8 +151,8 @@ public class Fragment_Show_Cards extends Fragment {
             if (! done){exeption.add(x);}
         }
         card = cardsInGame.get(x);
-        if (!(card.equals(getString(R.string.string_villager_role)) //if no villager or Werwolf
-                || card.equals(getString(R.string.string_werewolf_role)))) {
+        if (!(card.equals((R.string.string_villager_role)) //if no villager or Werwolf
+                || card.equals((R.string.string_werewolf_role)))) {
             cardsInGame.remove(x);
         }
         return card;
@@ -182,16 +183,30 @@ public class Fragment_Show_Cards extends Fragment {
         SharedPreferences card_evil = getContext().getSharedPreferences("card_evil", MODE_PRIVATE);
         SharedPreferences card_perma_skill = getContext().getSharedPreferences("card_perma_skill", MODE_PRIVATE);
         for (int i = 0; i < persons.size(); i++) {
-            Random r = new Random();
-            int x = r.nextInt((persons.size()-i));
-            Integer card = finalCards.get(x);
             persons.get(i).setPlayerNR(i); //assingne playerNR
             persons.get(i).setAlive(1);
-            persons.get(i).setEvil(card_evil.getInt(getString(card), 0));
-            persons.get(i).setRole(card);
             persons.get(i).setSkillUsable(true);
-            persons.get(i).setPermaSkill(card_perma_skill.getBoolean(getString(card), false));
             persons.get(i).setUsedOnPlayer(-1);
+        }
+        for (int i = 0 ; i<numberOfRoles;i++){ //assinge roles
+            int nr = i % persons.size();
+            Random r = new Random();
+            int x = r.nextInt((numberOfRoles-i));
+            player_model he = persons.get(nr);
+            Integer card = finalCards.get(x);
+            if (he.role1 == -1){
+                he.setRole1(card);
+                he.setEvil(card_evil.getInt(getString(card), 0));
+                he.setRole(card);
+                he.setPermaSkill(card_perma_skill.getBoolean(getString(card), false));
+                he.setLives(1);
+            }else if (he.role2 == -1){
+                he.setRole2(card);
+                he.setLives(2);
+            }else if (he.role3 == -1){
+                he.setRole3(card);
+                he.setLives(3);
+            }
             finalCards.remove(x);
         }
     }
@@ -221,16 +236,10 @@ public class Fragment_Show_Cards extends Fragment {
     }
 
     private void resetALLButHost(){
+        persons = addPlayer.getPlayerlist();
         for (int i = 0; i < persons.size(); i++){
             persons.get(i).resetAllButHost();
         }
-        SharedPreferences.Editor editor = getContext().getSharedPreferences("bools", MODE_PRIVATE).edit();
-        SharedPreferences.Editor editor2 = getContext().getSharedPreferences("game", MODE_PRIVATE).edit();
-        editor.putBoolean("gameRunning", false);
-        editor2.putInt("nightCount", 0);
-        editor2.putInt("nightState", 0);
-        editor.apply();
-        editor2.apply();
     }
 
     public void reloadLoop(){
@@ -247,10 +256,72 @@ public class Fragment_Show_Cards extends Fragment {
                     rv.setAdapter(adapter2);
                     addPlayer.host().setPlaygroundCreated(1);
                 }
+                if (addPlayer.host().getGameRunning()){
+                    if (host) {
+                        changeBt.setEnabled(false);
+                        startBt.setText("End current Game");
+                        startBt.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                endGame();
+                                startBt.setEnabled(false);
+                                startBt.setText("4");
+                                countDown();
+                            }
+                        });
+                    }
+                }else {
+                    if (host) {
+                        changeBt.setEnabled(true);
+                        startBt.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                start();
+                            }
+                        });
+                    }else { //if game not running and not host
+                        if (getMe().getRole()!=-1) {
+                            endGame();
+                        }
+                    }
+                }
                 reloadLoop();
             }
         },500);
     }
+
+    private void countDown(){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startBt.setText("3");
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startBt.setText("2");
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startBt.setText("1");
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startBt.setEnabled(true);
+                                        startBt.setText(getActivity().getString(R.string.startRoundBt));
+                                    }
+                                },1000);
+                            }
+                        },1000);
+                    }
+                },1000);
+            }
+        },1000);
+    }
+
     private ArrayList<card_model> getHistCards(){
         ArrayList<card_model> result = new ArrayList<>();
         result.clear();
@@ -277,6 +348,13 @@ public class Fragment_Show_Cards extends Fragment {
         if (role==(R.string.string_hunter_role)        ) { return (R.string.string_hunter_desc);        }
         if (role==(R.string.string_idiot_role)         ) { return (R.string.string_idiot_desc);         }
         return 0;
+    }
+    private void endGame(){
+        if (host) {
+            addPlayer.host().setGameRunning(false);
+            sendArrayToAll();
+        }
+        resetALLButHost();
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +31,7 @@ public class addPlayer {
         if (playerlist == null) {
             playerlist = new ArrayList<>();
         }
+        Collections.sort(playerlist, new PersonsPlayerNrComparator());
         return playerlist;
     }
     public static void addPlayer(String name, String img, int alive, int playerNR, String uniqueKEy, Activity mActivety){

@@ -121,4 +121,7 @@
     <string name="voting_equal">"Unentschieden zwischen "</string>
     <string name="dies">stierbt</string>
     <string name="win">" gewinnen!"</string>
+    <string name="settings_role_desc">Du kannst wählen ob die Rollen der Toten geziegt werden oder nicht.</string>
+    <string name="settings_wolvesSee_desc">Du kannst entscheiden ob die Wölfe sich untereinander in der Nacht sehen oder nicht.</string>
+    <string name="settings_lives_desc">"Du kannst entscheiden wieviel Leben jeder Spieler hat. Für jedes Leben bekommt dieser Spieler eine Rolle. Sobalt ein Spieler stirbt, spielt er seine nächte rolle. "</string>
 </resources>

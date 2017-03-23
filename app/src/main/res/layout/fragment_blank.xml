@@ -9,7 +9,15 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/blank_fragment_linearLayout">
+
+        <Button
+            android:text="I am rdy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/blank_fragment_bt"
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"

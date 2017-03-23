@@ -1,5 +1,7 @@
 package layout;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -76,25 +78,23 @@ public class MyClient {
             } catch (UnknownHostException e) {
                 e.printStackTrace();
                 final String eString = e.toString();
-                mClient.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        Toast.makeText(mClient, eString, Toast.LENGTH_LONG).show();
-                    }
-
-                });
+                //mClient.runOnUiThread(new Runnable() {
+                //
+                //    @Override
+                //    public void run() {
+                //        Toast.makeText(mClient, eString, Toast.LENGTH_LONG).show();
+                //    }
+                //
+                //});
             } catch (IOException e) {
                 e.printStackTrace();
                 final String eString = e.toString();
-                mClient.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        Toast.makeText(mClient, eString, Toast.LENGTH_LONG).show();
-                    }
-
-                });
+                //mClient.runOnUiThread(new Runnable() {
+                //    @Override
+                //    public void run() {
+                //        Toast.makeText(mClient, "Searcing for Host...", Toast.LENGTH_SHORT).show();
+                //    }
+                //});
             } finally {
                 if (socket != null) {
                     try {
@@ -154,6 +154,16 @@ public class MyClient {
             }
         }
         public void resiveMsg(String msg){
+
+            if (msg.matches("[0-9]+")) {
+                System.out.println("Resived only numbers: " +msg);
+                Integer myNr = Integer.parseInt(msg);
+                SharedPreferences pref = mClient.getSharedPreferences("profil", Context.MODE_PRIVATE);
+                String key = pref.getString("uniqueKEy", "None");
+                addPlayer.me(key).setPlayerNR(myNr);
+                return;
+            }
+
             String first = msg.substring(0,1);
             System.out.println("First:" +first);
             String newMsg;
@@ -164,6 +174,7 @@ public class MyClient {
                 newMsg = msg;
             }
             displayInfo("I resived something");
+            playground.resived = true;
             try {
                 System.out.println(msg);
                 System.out.println(newMsg);
@@ -179,10 +190,11 @@ public class MyClient {
             mClient.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mClient.playerAdapter.notifyDataSetChanged();
-                    mClient.onResume();
+                    if (mClient.playerAdapter != null) {
+                        mClient.playerAdapter.notifyDataSetChanged();
+                        mClient.onResume();
+                    }
                 }
-
             });
         }
 
