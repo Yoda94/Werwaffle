@@ -73,25 +73,35 @@ public class Fragment_Show_Cards extends Fragment {
     }
 
     private void start(){
-        persons = addPlayer.getPlayerlist();
-        numberOfRoles = persons.size() * addPlayer.host().getSettingsLives();
-        ArrayList<Integer> cardsInGame = new ArrayList<>();
-        cardsInGame.clear();
-        cardsInGame.addAll(getSelectedCards());
-        System.out.println("cardsInGame: "+cardsInGame);
-        if (AbleToStart(cardsInGame)) {
-            resetALLButHost(); //and not selectedCardsInt
-            ArrayList<Integer> finalCards = new ArrayList<>();
-            finalCards.clear();
-            finalCards.addAll(selectCards(cardsInGame));
-            assigneCardsToPlayer(finalCards);
-            setGameStart();
-        }else {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(getString(R.string.not_enouth_cards_title))
-                    .setMessage(getString(R.string.not_enouth_cards_desc))
-                    .create().show();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                persons = addPlayer.getPlayerlist();
+                numberOfRoles = persons.size() * addPlayer.host().getSettingsLives();
+                ArrayList<Integer> cardsInGame = new ArrayList<>();
+                cardsInGame.clear();
+                cardsInGame.addAll(getSelectedCards());
+                System.out.println("cardsInGame: "+cardsInGame);
+                if (AbleToStart(cardsInGame)) {
+                    resetALLButHost(); //and not selectedCardsInt
+                    ArrayList<Integer> finalCards = new ArrayList<>();
+                    finalCards.clear();
+                    finalCards.addAll(selectCards(cardsInGame));
+                    assigneCardsToPlayer(finalCards);
+                    setGameStart();
+                }else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle(getString(R.string.not_enouth_cards_title))
+                                    .setMessage(getString(R.string.not_enouth_cards_desc))
+                                    .create().show();
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     public boolean AbleToStart(ArrayList<Integer> selectedCards){
@@ -196,7 +206,7 @@ public class Fragment_Show_Cards extends Fragment {
             persons.get(i).setPlayerNR(i); //assingne playerNR
             persons.get(i).setAlive(1);
             persons.get(i).setSkillUsable(true);
-            persons.get(i).setUsedOnPlayer(-1);
+            persons.get(i).setUsedOnPlayer(null);
         }
         for (int i = 0 ; i<numberOfRoles;i++){ //assinge roles
             int nr = i % persons.size();

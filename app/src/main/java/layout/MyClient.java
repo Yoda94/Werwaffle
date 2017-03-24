@@ -173,7 +173,7 @@ public class MyClient {
             else {
                 newMsg = msg;
             }
-            displayInfo("I resived something");
+            //displayInfo("I resived something");
             playground.resived = true;
             try {
                 System.out.println(msg);

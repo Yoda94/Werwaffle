@@ -212,7 +212,7 @@ public class MyServer {
             else {
                 newMsg = msg;
             }
-            displayInfo("I resived this something");
+            //displayInfo("I resived this something");
             playground.resived = true;
             System.out.println(msg);
             System.out.println(newMsg);

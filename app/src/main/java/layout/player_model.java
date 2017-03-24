@@ -45,11 +45,11 @@ public class player_model {
     Boolean skill2Usable;
     Integer votes;
     Boolean didIVote;
-    Integer usedOnPlayer;
+    player_model usedOnPlayer;
     Boolean killAble;
     Boolean diedThisNight;
     Boolean permaSkill;
-    Integer votedFor;
+    player_model votedFor;
     Boolean iAmRdy;
     Boolean votesVisible;
     Boolean killHim;
@@ -91,13 +91,13 @@ public class player_model {
         skill2Usable = true;
         votes = 0;
         didIVote = false;
-        usedOnPlayer = -1;
+        usedOnPlayer = null;
         hint = "";
         killHim = false;
         killAble = true;
         diedThisNight = false;
         permaSkill = false;
-        votedFor = -1;
+        votedFor = null;
         iAmRdy = false;
         votesVisible = false;
         nightCount = 0;
@@ -159,12 +159,12 @@ public class player_model {
     public Boolean getSkill2Usable(){return this.skill2Usable;}
     public Boolean isButtonEnabled (){return this.enable;}
     public Boolean getDidIVote(){return this.didIVote;}
-    public Integer getUsedOnPlayer(){return this.usedOnPlayer;}
+    public player_model getUsedOnPlayer(){return this.usedOnPlayer;}
     public String getHint(){return this.hint;}
     public Boolean getKillAble(){return this.killAble;}
     public Boolean getDiedThisNight(){return this.diedThisNight;}
     public Boolean getPermaSkill(){return this.permaSkill;}
-    public Integer getVotedFor(){return this.votedFor;}
+    public player_model getVotedFor(){return this.votedFor;}
     public Boolean getiAmRdy(){return this.iAmRdy;}
     public Boolean getvotesVisible(){return this.votesVisible;}
     public Integer getNightStat(){return this.nightStat;}
@@ -180,24 +180,24 @@ public class player_model {
     public Boolean getCanIVote(){return this.canIVote;}
     public Boolean getJustJoind(){return this.justJoind;}
     public Boolean nextRoleExistsAndSet(){
-        if (role.equals(role1) && role2 != -1){
-            role=role2;
+        if (getRole().equals(getRole1()) && getRole2() != -1){
+            role=getRole2();
             lives -= 1;
             return true;
         }
-        else if (role.equals(role2) && role3 != -1){
-            role=role3;
+        else if (getRole().equals(getRole2()) && getRole3() != -1){
+            role=getRole3();
             lives -= 1;
             return true;
         }
         //if Magd
-        else if (role1.equals(R.string.string_maged_role) && role2 != -1){
-            role=role2;
+        else if (getRole1().equals(R.string.string_maged_role) && getRole2() != -1){
+            role=getRole2();
             lives -= 1;
             return true;
         }
-        else if (role2.equals(R.string.string_maged_role) && role3 != -1){
-            role=role3;
+        else if (getRole2().equals(R.string.string_maged_role) && getRole3() != -1){
+            role=getRole3();
             lives -= 1;
             return true;
         }
@@ -231,12 +231,12 @@ public class player_model {
     public void setVotes(int newVotes){votes = newVotes;}
     public void resetVotes(){votes = 0;}
     public void setDidIVote(boolean bool){didIVote = bool;}
-    public void setUsedOnPlayer(int x){usedOnPlayer = x;}
+    public void setUsedOnPlayer(player_model x){usedOnPlayer = x;}
     public void setHint(String newHint){hint = newHint;}
     public void setKillAble(boolean kill){killAble = kill;}
     public void setDiedThisNight(boolean bool){diedThisNight = bool;}
     public void setPermaSkill(boolean bool){permaSkill = bool;}
-    public void setVotedFor(Integer integer){votedFor = integer;}
+    public void setVotedFor(player_model integer){votedFor = integer;}
     public void setIAmRdy(boolean bool){iAmRdy = bool;}
     public void setvotesVisible(boolean bool){votesVisible = bool;}
     public void setHost(boolean bool){host = bool;}
@@ -265,11 +265,11 @@ public class player_model {
         skill2Usable = true;
         votes = 0;
         didIVote = false;
-        usedOnPlayer = -1;
+        usedOnPlayer = null;
         killAble = true;
         diedThisNight = false;
         permaSkill = false;
-        votedFor = -1;
+        votedFor = null;
         iAmRdy = false;
         alive = 2;
         killHim = false;
@@ -295,12 +295,12 @@ public class player_model {
         votes = 0;
         capture = "";
         didIVote = false;
-        usedOnPlayer = -1;
+        usedOnPlayer = null;
         hint = "";
         killAble = true;
         diedThisNight = false;
         permaSkill = false;
-        votedFor = -1;
+        votedFor = null;
         killHim =false;
         iAmRdy = false;
         alive = 2;
@@ -381,8 +381,12 @@ public class player_model {
             obj.put("killAble", killAble);
             obj.put("diedThisNight", diedThisNight);
             obj.put("permaSkill", permaSkill);
-            obj.put("votedFor", votedFor);
-            obj.put("usedOnPlayer", usedOnPlayer);
+            if (votedFor!=null) {
+                obj.put("votedFor", votedFor.getUniqueKEy());
+            }
+            if (usedOnPlayer!=null) {
+                obj.put("usedOnPlayer", usedOnPlayer.getUniqueKEy());
+            }
             obj.put("iAmRdy", iAmRdy);
             obj.put("votesVisible", votesVisible);
             obj.put("canIVote", canIVote);
@@ -481,13 +485,15 @@ public class player_model {
                 role3            = json.getInt("role3");
             }
             if (json.has("usedOnPlayer")) {
-                usedOnPlayer    = json.getInt("usedOnPlayer");
+                String hisKey = json.getString("usedOnPlayer");
+                usedOnPlayer  = getPlayer(hisKey);
             } //else {usedOnPlayer =null;}
             if (json.has("votes")) {
                 votes           = json.getInt("votes");
             } //else {votes =null;}
             if (json.has("votedFor")) {
-                votedFor        = json.getInt("votedFor");
+                String hisKey   = json.getString("votedFor");
+                votedFor      = getPlayer(hisKey);
             } //else {votedFor =null;}
             if (json.has("evil")) {
                 evil            = json.getInt("evil");
@@ -559,7 +565,15 @@ public class player_model {
             Log.e("MYAPP", "unexpected JSON exception", e);
         }
     }
-
+    public player_model getPlayer(String uniqKey){
+        ArrayList<player_model> allPlayers=addPlayer.getPlayerlist();
+        for (player_model he:allPlayers){
+            if (he.getUniqueKEy().equals(uniqKey)){
+                return he;
+            }
+        }
+        return null;
+    }
 
 
 }
