@@ -53,6 +53,7 @@ public class player_model {
     Boolean iAmRdy;
     Boolean votesVisible;
     Boolean killHim;
+    Boolean justJoind;
 
     Integer nightCount;
     Integer nightStat;
@@ -108,6 +109,7 @@ public class player_model {
         selectedCardsInt = new ArrayList<>();
         deletMe = false;
         notifyData = true;
+        justJoind = true;
         playgroundCreated = 0;
         if (activity != null) {
             SharedPreferences pref = activity.getSharedPreferences("settings", MODE_PRIVATE);
@@ -146,6 +148,9 @@ public class player_model {
     public String getCapture(){return this.capture;}
     public String getUniqueKEy(){return this.uniqueKEy;}
     public Integer getRole(){return this.role;}
+    public Integer getRole1(){return this.role1;}
+    public Integer getRole2(){return this.role2;}
+    public Integer getRole3(){return this.role3;}
     public Integer getEvil(){return this.evil;}
     public Integer getPlayerNR(){return this.playerNR;}
     public Integer getVotes(){return this.votes;}
@@ -173,6 +178,7 @@ public class player_model {
     public Boolean getNotifyData(){return this.notifyData;}
     public Integer getPlaygroundCreated(){return this.playgroundCreated;}
     public Boolean getCanIVote(){return this.canIVote;}
+    public Boolean getJustJoind(){return this.justJoind;}
     public Boolean nextRoleExistsAndSet(){
         if (role.equals(role1) && role2 != -1){
             role=role2;
@@ -180,6 +186,17 @@ public class player_model {
             return true;
         }
         else if (role.equals(role2) && role3 != -1){
+            role=role3;
+            lives -= 1;
+            return true;
+        }
+        //if Magd
+        else if (role1.equals(R.string.string_maged_role) && role2 != -1){
+            role=role2;
+            lives -= 1;
+            return true;
+        }
+        else if (role2.equals(R.string.string_maged_role) && role3 != -1){
             role=role3;
             lives -= 1;
             return true;
@@ -226,6 +243,7 @@ public class player_model {
     public void setNightStat(int i){nightStat = i;}
     public void setNightCount(int i){nightCount = i;}
     public void setGameRunning(boolean bool){gameRunning = bool;}
+    public void setJustJoind(boolean bool){justJoind = bool;}
     public void setSelectedCardsInt(ArrayList<Integer> selection){selectedCardsInt = selection;}
     public void setDeletMe(boolean bool){deletMe = bool;}
     public void setNotifyData(boolean bool){notifyData = bool;}
@@ -294,6 +312,7 @@ public class player_model {
         deletMe = false;
         playgroundCreated = 1;
         canIVote = true;
+        justJoind = false;
     }
     public void resetNightStuff(){
         votes = 0;
@@ -368,6 +387,7 @@ public class player_model {
             obj.put("votesVisible", votesVisible);
             obj.put("canIVote", canIVote);
             obj.put("lives", lives);
+            obj.put("justJoind", justJoind);
 
 
             obj.put("nightCount",nightCount);
@@ -495,6 +515,9 @@ public class player_model {
             } //else {victim =null;}
             if (json.has("canIVote")) {
                 canIVote         = json.getBoolean("canIVote");
+            } //else {victim =null;}
+            if (json.has("justJoind")) {
+                justJoind         = json.getBoolean("justJoind");
             } //else {victim =null;}
             if (json.has("selectedCardsInt")) {
                 selectedCardsInt = new ArrayList<>();

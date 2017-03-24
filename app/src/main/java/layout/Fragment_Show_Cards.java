@@ -131,7 +131,12 @@ public class Fragment_Show_Cards extends Fragment {
         exeption.clear();
         SharedPreferences pref2 = getContext().getSharedPreferences("card_power", MODE_PRIVATE);
         int x = 0;
+        int cnt = 20;
         while (!done) {
+            if (cnt < -1){
+                done = true;
+            }
+            cnt -= 1;
             if (-2 < powerLevel && powerLevel < 2) {
                 Random r = new Random();
                 x = r.nextInt((cardsInGame.size()));
@@ -147,8 +152,13 @@ public class Fragment_Show_Cards extends Fragment {
                     }
                 }
             }
-            done = canCardBeChosen(cardsInGame.get(x), currentCards);
-            if (! done){exeption.add(x);}
+            if (cnt > 0) {
+                done = canCardBeChosen(cardsInGame.get(x), currentCards);
+                if (!done) {
+                    exeption.add(x);
+                }
+            }
+            if (cnt <= 0){exeption.clear();}
         }
         card = cardsInGame.get(x);
         if (!(card.equals((R.string.string_villager_role)) //if no villager or Werwolf

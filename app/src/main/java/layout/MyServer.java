@@ -160,7 +160,7 @@ public class MyServer {
                         e.printStackTrace();
                     }
                 }
-
+                cnt -= 1;
                 userList.remove(connectClient);
             }
 

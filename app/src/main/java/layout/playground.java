@@ -24,6 +24,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -66,8 +67,9 @@ public class playground extends AppCompatActivity {
     private int nightCount = 0;
     private boolean firstNight = true;
     Boolean firstTime;
-    public Activity mActivity = this;
+    public Activity mActivity;
     public RecyclerView rv;
+    public int voteTimes;
 
     //new server
     static MyServer server;
@@ -78,13 +80,15 @@ public class playground extends AppCompatActivity {
     public Thread gameThread;
     public Thread waitForHostThread;
     private volatile boolean stopwaitForHostThread;
+    private volatile boolean stopGameThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playground);
-
+        mActivity = playground.this;
         stopwaitForHostThread = false;
+        stopGameThread = false;
         Bundle b = getIntent().getExtras();
         host = b.getBoolean("host");
         persons = addPlayer.getPlayerlist();
@@ -117,10 +121,16 @@ public class playground extends AppCompatActivity {
     private void setAdapter(){
         rv = (RecyclerView) findViewById(R.id.fragment_blenk_reclyV);
         while (rv == null){
+            if (stopGameThread){
+                return;
+            }
             sleep(1000);
             rv = (RecyclerView) findViewById(R.id.fragment_blenk_reclyV);
         }
         while (playerAdapter == null){
+            if (stopGameThread){
+                return;
+            }
             sleep(1000);
         }
         mActivity.runOnUiThread(new Runnable() {
@@ -234,9 +244,12 @@ public class playground extends AppCompatActivity {
     }
     private void gameLoop(){
         System.out.println("On Thread: "+Thread.currentThread().getName());
-        while (addPlayer.host()!=null) {
+        if (addPlayer.host()!=null) {
             while (!addPlayer.host().getGameRunning()) {
                 sleep(1000);
+                if (stopGameThread){
+                    return;
+                }
             }
 
             System.out.println("gameLoop()");
@@ -248,11 +261,9 @@ public class playground extends AppCompatActivity {
                     //nightState = addPlayer.host().getNightStat(); //-1=day,0=nothing,1=night
                     nightCount = addPlayer.host().getNightCount(); //first night = 0
                     System.out.println("nightCount=" + nightCount);
-                    if (nightCount == 0) { //if first night
-                        setup(); //startNight1() will be started if allrdy
-                    } else { //if nor first night
-                        startNight1();
-                    }
+                    nightAnimation();
+                    sleep(3000);
+                    setup(); //startNight1() will be started if allrdy
                 }
 
             } else {
@@ -332,14 +343,18 @@ public class playground extends AppCompatActivity {
         }).start();
 
     }
+    private void nightAnimation(){
+
+    }
 
     private void setup(){ //only in first night
         System.out.println("setup()");
         setAllNotRdy();
         setAllWithNoSkillRdy(0);
-        waitForAllToBeRdy();
         Integer myRole = persons.get(getMyNummber()).getRole();
         reWriteButtensFirstNight(myRole);
+        sleep(4000);
+        waitForAllToBeRdy();
     }
     private void setAllNotRdy(){
         ArrayList<Integer> alivePlayers = getPositionsPlayersAlive();
@@ -365,10 +380,9 @@ public class playground extends AppCompatActivity {
 
     private void setAllWithNoSkillRdy(Integer nightStat){
         System.out.println("setAllWithNoSkillRdy()");
-        ArrayList<Integer> noSkillPlayers = getPlayersWithNoSkill(nightStat); //night State 0 for night nigt only here
-        for (int i=0;i<noSkillPlayers.size();i++){
-            int nr = noSkillPlayers.get(i);
-            persons.get(nr).setIAmRdy(true);
+        ArrayList<Integer> noSkillPlayers = getPlayersWithNoSkill(nightStat);
+        for (int i:noSkillPlayers){
+            persons.get(i).setIAmRdy(true);
         }
         if (nightStat < 2){
             return;
@@ -397,19 +411,15 @@ public class playground extends AppCompatActivity {
             }
         });
     }
-    private void setAllButWolvesRdy(){
-        for (int i=0;i<persons.size();i++){
-            if (persons.get(i).getEvil()<10) {
-                persons.get(i).setIAmRdy(true);
-            }
-        }
-    }
 
 
 
     private void waitForAllToBeRdy(){
         System.out.println("waitForAllToBeRdy()");
         while (!allRdy()){
+            if (stopGameThread){
+                return;
+            }
             if (!addPlayer.host().getGameRunning()){
                 endGame();
                 return;
@@ -426,7 +436,7 @@ public class playground extends AppCompatActivity {
         int me = getMyNummber();
         String capture = getCaptureFirstNight(myRole);
         Boolean useOnMySelf = getUseOnMySelfFirstNight(myRole);
-        for (int i=0;i<persons.size();i++){
+        for (int i:allPlayerNrs()){
             if (!(!useOnMySelf && me==i)){
                 persons.get(i).setButtonState(true);
                 persons.get(i).setButton(capture);
@@ -447,7 +457,7 @@ public class playground extends AppCompatActivity {
         }
         int myRole = persons.get(me).getRole();
         String capture = getCaptureNight1(myRole);
-        for (int i=0;i<persons.size();i++){
+        for (int i:allPlayerNrs()){
             player_model person = persons.get(i);
             if (isPersonAlive(person)) {
                 if (persons.get(me).getEvil() >= 10) { //if im wolf
@@ -477,7 +487,7 @@ public class playground extends AppCompatActivity {
             return;
         }
         int myRole = persons.get(me).getRole();
-        for (int i=0;i<persons.size();i++){
+        for (int i:allPlayerNrs()){
             player_model person = persons.get(i);
             if (isPersonAlive(person)) {
                 person.setButtonState(true);
@@ -506,7 +516,7 @@ public class playground extends AppCompatActivity {
         }
         if (!persons.get(me).getCanIVote()){
             sendImRedyToAll();
-            for (int i = 0; i < persons.size(); i++) {
+            for (int i:allPlayerNrs()) {
                 player_model person = persons.get(i);
                 if (isPersonAlive(person)) {
                     person.resetVotes();
@@ -527,7 +537,7 @@ public class playground extends AppCompatActivity {
 
         String capture = getString(R.string.ready);
 
-        for (int i = 0; i < persons.size(); i++) {
+        for (int i:allPlayerNrs()) {
             player_model person = persons.get(i);
             if (isPersonAlive(person)) {
                 person.resetVotes();
@@ -547,14 +557,14 @@ public class playground extends AppCompatActivity {
         });
     }
     private void reWriteButtensDayVote(){
-        System.out.println("reWriteButtensDayAgain()");
+        System.out.println("reWriteButtensDayVote()");
         int me = getMyNummber();
         if (persons.get(me).alive==0 || !persons.get(me).getCanIVote()){
             return;
         }
-        if (!persons.get(me).getCanIVote()){
+        if (!persons.get(me).getCanIVote()){ //if i cant vote
             sendImRedyToAll();
-            for (int i = 0; i < persons.size(); i++) {
+            for (int i:allPlayerNrs()) {
                 player_model person = persons.get(i);
                 if (isPersonAlive(person)) {
                     person.resetVotes();
@@ -572,26 +582,36 @@ public class playground extends AppCompatActivity {
             });
             return;
         }
-
+        //if i can vote
         Boolean sameTime = addPlayer.host().getSettingsVoteSameTime();
         ArrayList<Integer> alive = getPositionsPlayersAlive();
         if (sameTime){
-            for (int i:alive) {
+            for (int i:allPlayerNrs()) {
                 player_model person = persons.get(i);
-                person.resetVotes();
-                person.setHint("");
-                person.setvotesVisible(false);
+                if (alive.contains(i)) {
+                    person.resetVotes();
+                    person.setHint("");
+                    person.setvotesVisible(false);
+                }else {
+                    person.setButtonState(false);
+                    person.setButton("He is Dead");
+                }
             }
             contDownToVote();
         } else {
             String capture = getString(R.string.string_button_vote);
-            for (int i:alive) {
+            for (int i:allPlayerNrs()) {
                 player_model person = persons.get(i);
-                person.resetVotes();
-                person.setButtonState(true);
-                person.setButton(capture);
-                person.setHint("");
-                person.setvotesVisible(false);
+                if (alive.contains(i)) {
+                    person.resetVotes();
+                    person.setButtonState(true);
+                    person.setButton(capture);
+                    person.setHint("");
+                    person.setvotesVisible(false);
+                }else {
+                    person.setButtonState(false);
+                    person.setButton("He is Dead");
+                }
             }
         }
         mActivity.runOnUiThread(new Runnable() {
@@ -605,7 +625,7 @@ public class playground extends AppCompatActivity {
         player_model me = persons.get(getMyNummber());
         if (me.getRole().equals(R.string.string_hunter_role)){
             String capture = "Shoot";
-            for (int i=0;i<persons.size();i++){
+            for (int i:allPlayerNrs()){
                 player_model person = persons.get(i);
                 if (isPersonAlive(person)) {
                     person.setButtonState(true);
@@ -784,7 +804,9 @@ public class playground extends AppCompatActivity {
         if (role==R.string.string_bigbadwolf_role)      {stuff = "eat";}
         if (role==R.string.string_urwolf_role)          {stuff = "eat";}
         if (role==R.string.string_white_werewolf_role)  {stuff = "eat";}
-        //if (role==R.string.string_mogli_role)           {stuff = "nothing";} //TODO
+        if (role==R.string.string_mogli_role) {
+            if (persons.get(getMyNummber()).getEvil()==10){stuff = "eat";} else {stuff = "nothing";}
+        }
         if (role==R.string.string_witch_role)           {stuff = "kill";}
         if (role==R.string.string_seer_role)            {stuff = "see";}
         if (role==R.string.string_doctor_role)          {stuff = "heal";}
@@ -839,8 +861,8 @@ public class playground extends AppCompatActivity {
             if (role==(R.string.string_bigbadwolf_role)){stuff = true;}
             if (role==(R.string.string_urwolf_role)){stuff = true;}
             if (role==(R.string.string_white_werewolf_role)){stuff = true;}
-            //if (role==(R.string.string_mogli_role)){stuff = idk;} //TODO
-            if (role==(R.string.string_witch_role)){stuff = true;}
+            if (role==(R.string.string_mogli_role)){
+                    if (getPlayer(R.string.string_mogli_role).getEvil()==10){stuff = true;}}
             if (role==(R.string.string_seer_role)){stuff = true;}
             if (role==(R.string.string_doctor_role)){stuff = true;}
             return stuff;
@@ -877,6 +899,9 @@ public class playground extends AppCompatActivity {
 
     private void checkNightState1Loop(){
         while (!(allRdy() && wolvesHaveChoosen())){
+            if (stopGameThread){
+                return;
+            }
             if (!addPlayer.host().getGameRunning()){
                 endGame();
                 return;
@@ -901,6 +926,9 @@ public class playground extends AppCompatActivity {
 
     private void checkNightState2Loop(){
         while (! allRdy()){
+            if (stopGameThread){
+                return;
+            }
             if (!addPlayer.host().getGameRunning()){
                 endGame();
                 return;
@@ -911,6 +939,7 @@ public class playground extends AppCompatActivity {
     }
     private void startDay(){
         System.out.println("startDay()");
+        voteTimes = 0;
         hideRdyBut();
         showNightresults();
         addPlayer.host().setNightStat(-1);
@@ -924,13 +953,16 @@ public class playground extends AppCompatActivity {
                 setAllNotRdy();
                 reWriteButtensDayRdy();
             } else {
-                reWriteButtensDayVote();
+                //reWriteButtensDayVote();
             }
             checkDayLoop(sameTimeVote);
         }
     }
     private void checkDayLoop(final Boolean sameTimeVote){
         while (! allRdy()){
+            if (stopGameThread){
+                return;
+            }
             if (!addPlayer.host().getGameRunning()){
                 endGame();
                 return;
@@ -942,6 +974,9 @@ public class playground extends AppCompatActivity {
             sleep(8000);
         }else { //wait for all to vote
             while (!allVoted()) {
+                if (stopGameThread){
+                    return;
+                }
                 if (!addPlayer.host().getGameRunning()){
                     endGame();
                     return;
@@ -952,6 +987,7 @@ public class playground extends AppCompatActivity {
         if (maidExists()){
             setMaidNotRdy();
         }
+        voteTimes += 1;
         if (dayResultsDone()) { //also kills
 
             if (someOneWin()) {
@@ -975,6 +1011,9 @@ public class playground extends AppCompatActivity {
             maidSkill(he.getPlayerNR());
         }
         while (!allRdy()){
+            if (stopGameThread){
+                return;
+            }
             if (!addPlayer.host().getGameRunning()){
                 endGame();
                 return;
@@ -1006,6 +1045,7 @@ public class playground extends AppCompatActivity {
         System.out.println("dayResultsDone()");
         ArrayList<Integer> personsMostVotes = personsWithMostVotes();
         String info = getWhoVotedForWho();
+        displayInfo(info);
         if (personsMostVotes.size()==1){
             int nr = getPersonWithMostVotes();
             if (allRdy()){
@@ -1024,10 +1064,24 @@ public class playground extends AppCompatActivity {
         } else {
             if (suendenBock()){ //also kills
             }else {
-                voteAgain(); //TODO nur zwei mal
+                if (voteTimes == 1) {
+                    voteAgain(); //TODO nur zwei mal
+                }else { //no more voting
+                    String info2 = "No more Voting for today!";
+                    displayInfo(info2);
+                    if (someOneWin()) {
+                        showWinners();
+                    } else {
+                        resetDayDate();
+                        nightCount = addPlayer.host().getNightCount();
+                        nightCount += 1;
+                        addPlayer.host().setNightCount(nightCount);
+                        addPlayer.host().setNightStat(1);
+                        gameLoop();
+                    }
+                }
             }
         }
-        displayInfo(info);
         System.out.println("it returns: " +result);
         if (persons.get(getMyNummber()).isAlive() == 0){
             everyThingIfIamDead();
@@ -1081,6 +1135,36 @@ public class playground extends AppCompatActivity {
         endGame();
     }
     private void endGame(){
+        for (int i:allPlayerNrs()){
+            player_model he = persons.get(i);
+            String roles="";
+            Integer maxLives = addPlayer.host().getSettingsLives();
+
+            if (he.getRole1()!=-1) {
+                if (he.getLives().equals(maxLives)) {
+                    roles += mActivity.getString(he.getRole1()).toUpperCase();
+                } else {
+                    roles += mActivity.getString(he.getRole1());
+                }
+                roles += " ";
+            }
+            if (he.getRole2()!=-1) {
+                if (he.getLives().equals(maxLives-1)) {
+                    roles += mActivity.getString(he.getRole2()).toUpperCase();
+                } else {
+                    roles += mActivity.getString(he.getRole2());
+                }
+                roles += " ";
+            }
+            if (he.getRole3()!=-1) {
+                if (he.getLives().equals(maxLives-2)) {
+                    roles += mActivity.getString(he.getRole3()).toUpperCase();
+                } else {
+                    roles += mActivity.getString(he.getRole3());
+                }
+            }
+            he.setHint(roles);
+        }
         resetGameDate();
         mActivity.runOnUiThread(new Runnable() {
             @Override
@@ -1094,22 +1178,20 @@ public class playground extends AppCompatActivity {
     }
     private void resetGameDate(){
         persons = addPlayer.getPlayerlist();
-        for (int i=0;i<persons.size();i++){
+        for (int i:allPlayerNrs()){
             persons.get(i).resetGameDate();
-            Integer role = persons.get(i).getRole();
-            if (role != -1) {
-                persons.get(i).setHint(getString(role));
-            }
         }
     }
 
 
     private void setKillabyletys(){
         persons = addPlayer.getPlayerlist();
-        for (int i=0;i<persons.size();i++){
+        for (int i:allPlayerNrs()){
             player_model he = persons.get(i);
             if (he.getRole()==R.string.string_idiot_role) {
                 he.setKillAble(false);
+            } else {
+                he.setKillAble(true);
             }
         }
     }
@@ -1117,26 +1199,28 @@ public class playground extends AppCompatActivity {
     private void resetDayDate(){
         int me = getMyNummber();
         if (persons.get(me).isAlive()==0){
-            for (int i=0;i<persons.size();i++){
+            for (int i:allPlayerNrs()){
                 persons.get(i).resetVotes();
             }
         }
         ArrayList<Integer> alive = getPositionsPlayersAlive();
+        System.out.println("in reset day the alive players: " +alive);
         for (int i:alive){
             persons.get(i).setVotes(0);
             persons.get(i).setVotedFor(-1);
             persons.get(i).setDidIVote(false);
-            if (persons.get(me).isAlive() != 0) {
+            if (persons.get(i).isAlive() != 0) {
                 persons.get(i).setHint("");
             }
         }
+        System.out.println("NOW my list is: "+displayJsonPersons());
     }
     private void resetNightStuff(){
         int me = getMyNummber();
         if (persons.get(me).isAlive()==0){
             return;
         }
-        for (int i=0;i<persons.size();i++){
+        for (int i:allPlayerNrs()){
             persons.get(i).resetNightStuff();
             if (persons.get(i).getEvil()>=10){
                 persons.get(i).setUsedOnPlayer(-1);
@@ -1145,6 +1229,7 @@ public class playground extends AppCompatActivity {
                 persons.get(i).setSkillUsable(true);
             }
         }
+        System.out.println("NOW MY LIST IS (resti nightstuff): "+displayJsonPersons());
     }
 
 
@@ -1172,6 +1257,9 @@ public class playground extends AppCompatActivity {
         System.out.println("For dem while!");
         System.out.println("For dem while!");
         while (!allRdy()){
+            if (stopGameThread){
+                return;
+            }
             if (!addPlayer.host().getGameRunning()){
                 endGame();
                 return;
@@ -1180,12 +1268,22 @@ public class playground extends AppCompatActivity {
         }
         System.out.println("Nach dem while!");
         System.out.println("Nach dem while!");
+        if (mogliExists()){
+            System.out.println("Mogli Exists");
+            player_model mogli = getPlayer(R.string.string_mogli_role);
+            int mogliTarget = mogli.getUsedOnPlayer();
+            if (persons.get(mogliTarget) == he){
+                System.out.println("Transforming him");
+                mogli.setEvil(10);
+                mogli.setUsedOnPlayer(-1);
+            }
+        }
         if (he.nextRoleExistsAndSet()) {
-            SharedPreferences card_evil = getSharedPreferences("card_evil", MODE_PRIVATE);
-            SharedPreferences card_perma_skill = getSharedPreferences("card_perma_skill", MODE_PRIVATE);
+            SharedPreferences card_evil = mActivity.getSharedPreferences("card_evil", MODE_PRIVATE);
+            SharedPreferences card_perma_skill = mActivity.getSharedPreferences("card_perma_skill", MODE_PRIVATE);
             Integer card = he.getRole();
-            he.setEvil(card_evil.getInt(getString(card), 0));
-            he.setPermaSkill(card_perma_skill.getBoolean(getString(card), false));
+            he.setEvil(card_evil.getInt(mActivity.getString(card), 0));
+            he.setPermaSkill(card_perma_skill.getBoolean(mActivity.getString(card), false));
             he.setAlive(1);
         } else {
             //if next role not exists
@@ -1203,6 +1301,9 @@ public class playground extends AppCompatActivity {
             @Override
             public void run() {
                 while (true){
+                    if (stopGameThread){
+                        return;
+                    }
                     sleep(500);
                     if (resived){
                         resived = false;
@@ -1280,7 +1381,7 @@ public class playground extends AppCompatActivity {
     }
 
     private void everyThingIfIamDead(){
-        for (int i=0;i<persons.size();i++){
+        for (int i:allPlayerNrs()){
             player_model he = persons.get(i);
             he.setHint(getString(he.getRole()));
             he.setButtonState(false);
@@ -1355,15 +1456,16 @@ public class playground extends AppCompatActivity {
 
     private void voteAgain(){
         System.out.println("voteAgain()");
+        voteTimes = 2;
         resetDayDate();
         Boolean sameTimeVote = addPlayer.host().getSettingsVoteSameTime();
-        checkDayLoop(sameTimeVote);
         if (sameTimeVote) {
             setAllNotRdy();
             reWriteButtensDayRdy();
         } else {
-            reWriteButtensDayVote();
+            //reWriteButtensDayVote();
         }
+        checkDayLoop(sameTimeVote);
     }
 
     private String getWhoVotedForWho(){
@@ -1398,7 +1500,7 @@ public class playground extends AppCompatActivity {
     private void mogliSkill(Integer target){
         System.out.println("mogliSkill()");
         if (notUsedSkill1Yet()) {
-            popUp("Vorbild", "Soll diese person ein vorbild sein", target, 2);
+            mogliSkillUse(target);
         }
     }
     private void mogliSkillUse(Integer target){
@@ -1407,6 +1509,9 @@ public class playground extends AppCompatActivity {
         persons.get(me).setUsedOnPlayer(target);
         persons.get(me).setSkillUsable(false);
         persons.get(me).setIAmRdy(true);
+        sendOneChangeToAll(me, "usedOnPlayer", target.toString());
+        String info = persons.get(target).getName()+" ist now your Vorbild. If he dies you will become a werwolf!";
+        displayInfo(info);
         sendImRedyToAll();
     }
     private void eatSkill(Integer target){
@@ -1452,6 +1557,7 @@ public class playground extends AppCompatActivity {
         sendImRedyToAll();
         kill(persons.get(target));
         sendOneChangeToAll(target, "killHim", "true");
+        sendImRedyToAll();
     }
 
     private void killSkill(Integer target){
@@ -1469,7 +1575,9 @@ public class playground extends AppCompatActivity {
         //send on change
         String value = persons.get(target).isAlive().toString();
         sendOneChangeToAll(target, "alive", value);
-        sendImRedyToAll();
+        if (persons.get(me).getPermaSkill()) {
+            sendImRedyToAll();
+        }
     }
 
     private void seeSkill(Integer target){
@@ -1499,7 +1607,7 @@ public class playground extends AppCompatActivity {
                 persons.get(me).setIAmRdy(true);
                 persons.get(me).setUsedOnPlayer(target);
                 persons.get(me).setSkillUsable(false);
-                persons.get(target).setKillAble(false); //TODO reset next night
+                persons.get(target).setKillAble(false);
                 sendOneChangeToAll(target, "killAble", "false");
             }else {
                 displayInfo("Choose a different Target!");
@@ -1544,7 +1652,7 @@ public class playground extends AppCompatActivity {
         String value = persons.get(target).getRole().toString();
         sendOneChangeToAll(target, "role", value);
         sendOneChangeToAll(target, "alive", "1");
-
+        sendImRedyToAll();
     }
     private void saveSkill(Integer target){
         System.out.println("saveSkill()");
@@ -1589,7 +1697,7 @@ public class playground extends AppCompatActivity {
         persons.get(me).setSkill2Usable(true);
         SharedPreferences card_evil = mActivity.getSharedPreferences("card_evil", MODE_PRIVATE);
         persons.get(me).setEvil(card_evil.getInt(getString(newRole), 0));
-        persons.get(me).setRole(newRole); //TODO mit mehr leben gibts probleme
+        persons.get(me).setRole(newRole);
         persons.get(victim).setHint("Maid used Skill");
         sendOneChangeToAll(victim, "hint", "Maid used Skill");
         sendOneChangeToAll(me, "role", newRole.toString());
@@ -1619,19 +1727,18 @@ public class playground extends AppCompatActivity {
         System.out.println("voteSkill()");
         Boolean sameTimeVote = addPlayer.host().getSettingsVoteSameTime();
         int me = getMyNummber();
-        persons.get(me).setVotedFor(target);
-        persons.get(me).setHint("Voted");
 
         if (sameTimeVote){
+            System.out.println("Same TIme VOte!");
+            System.out.println("Same TIme VOte!");
             persons.get(me).setDidIVote(true);
             persons.get(target).setVotesAdd(1);
-            for (int i=0;i<persons.size();i++) {
+            for (int i:allPlayerNrs()) {
                 disableButtens(i);
             }
         }
         else {
             if (!persons.get(me).getDidIVote()) { //not voted yet
-                persons.get(me).setDidIVote(true);
                 persons.get(target).setVotesAdd(1);
             } else {
                 int oldTarget = persons.get(me).getVotedFor();
@@ -1642,6 +1749,7 @@ public class playground extends AppCompatActivity {
                     String value = persons.get(oldTarget).getVotes().toString();
                     sendOneChangeToAll(oldTarget, "votes", value);
                 }
+                System.out.println("---------ERROR in voteSKill() oldTarget was -1");
             }
         }
         //sending target to all
@@ -1649,6 +1757,8 @@ public class playground extends AppCompatActivity {
         sendOneChangeToAll(target, "votes", value);
 
         //sending me to all
+        persons.get(me).setVotedFor(target);
+        persons.get(me).setHint("Voted");
         sendOneChangeToAll(me, "votedFor", target.toString());
         sendOneChangeToAll(me, "didIVote", "true");
         persons.get(me).setDidIVote(true);
@@ -1671,14 +1781,9 @@ public class playground extends AppCompatActivity {
             public void run() {
                 String negativButten;
                 String positivButten;
-                if (target != -1) {
+
                     negativButten = mActivity.getString(R.string.no_use);
                     positivButten = mActivity.getString(R.string.use);
-                }
-                else {
-                    negativButten = "Wait!";
-                    positivButten = "Ok";
-                }
                 final int me = getMyNummber();
                 final AlertDialog.Builder dialog = new AlertDialog.Builder(mActivity);
                 dialog
@@ -1686,27 +1791,15 @@ public class playground extends AppCompatActivity {
                         .setMessage(subtext)
                         .setNegativeButton(negativButten,  new DialogInterface.OnClickListener(){
                             public void onClick(DialogInterface arg0, int arg1) {
-                                if (target == -1){
-                                    sendOneChangeToAll(me, "iAmRdy", "false");
-                                    persons.get(me).setIAmRdy(false);
-                                    sleep(1000);
-                                    sendOneChangeToAll(me, "didIVote", "true");
-                                    persons.get(me).setDidIVote(true);
-                                }else {
-                                    sendImRedyToAll();
-                                }
+                                sendImRedyToAll();
+
                             }
                         })
                         .setPositiveButton(positivButten, new DialogInterface.OnClickListener(){
                             public void onClick(DialogInterface arg0, int arg1){
-                                if (target != -1) {
-                                    sendImRedyToAll();
+
                                     if (functionNR == 0) {
                                         noSkillUse(target);
-                                    }
-                                    if (functionNR == 2) {
-                                        mogliSkillUse(target);
-                                        persons.get(me).setIAmRdy(false); //TODO might get rdy to early
                                     }
                                     if (functionNR == 4) {
                                         saveSkillUse(target);
@@ -1720,28 +1813,15 @@ public class playground extends AppCompatActivity {
                                     if (functionNR == 7) {
                                         maidSkillUse(target);
                                     }
-                                }
-                                else {
-                                    sendImRedyToAll();
-                                    sleep(1000);
-                                    sendOneChangeToAll(me, "didIVote", "true");
-                                    persons.get(me).setDidIVote(true);
-                                }
+
                             }
                         })
                         .setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialog) {
-                                if (target == -1) {
-                                    sendImRedyToAll();
-                                    sleep(1000);
-                                    sendOneChangeToAll(me, "didIVote", "true");
-                                    persons.get(me).setDidIVote(true);
 
-                                }
-                                else {
                                     sendImRedyToAll();
-                                }
+
                             }
                         })
                         .create().show();
@@ -1767,10 +1847,28 @@ public class playground extends AppCompatActivity {
             }
         }
     }
+    private player_model getPlayer(Integer role){
+        ArrayList<Integer> playerAlive = getPositionsPlayersAlive();
+        for (int i:playerAlive){
+            if (persons.get(i).getRole().equals(role)){
+                return persons.get(i);
+            }
+        }
+        return null;
+    }
     private Boolean maidExists(){
         ArrayList<Integer> playerAlive = getPositionsPlayersAlive();
         for (int i:playerAlive){
             if (persons.get(i).getRole().equals(R.string.string_maged_role)){
+                return true;
+            }
+        }
+        return false;
+    }
+    private Boolean mogliExists(){
+        ArrayList<Integer> playerAlive = getPositionsPlayersAlive();
+        for (int i:playerAlive){
+            if (persons.get(i).getRole().equals(R.string.string_mogli_role)){
                 return true;
             }
         }
@@ -1804,9 +1902,11 @@ public class playground extends AppCompatActivity {
     private Boolean allVoted(){
         ArrayList<Integer> playerAlive = getPositionsPlayersAlive();
         for (int i:playerAlive){
-            if (!persons.get(i).getDidIVote() && persons.get(i).getCanIVote()){
-                System.out.println("allVoted() return false");
-                return false;
+            if (!persons.get(i).getDidIVote()){
+                if (persons.get(i).getCanIVote()) {
+                    System.out.println("allVoted() return false");
+                    return false;
+                }
             }
         }
         System.out.println("allVoted() return true");
@@ -1821,6 +1921,15 @@ public class playground extends AppCompatActivity {
         }
         return state;
     }
+    public ArrayList<Integer> allPlayerNrs(){ //not inclue new joind players
+        ArrayList<Integer> result = new ArrayList<>();
+        result.clear();
+        for (int i=0;i<persons.size();i++){
+            if (!persons.get(i).getJustJoind()){result.add(persons.get(i).getPlayerNR());}
+        }
+        return result;
+    }
+
     public Integer getNrOfAliveWolves(){
         Integer nrOfAliveWolves = 0;
         ArrayList<Integer> alive = getPositionsPlayersAlive();
@@ -1843,12 +1952,13 @@ public class playground extends AppCompatActivity {
         ArrayList<Integer> playerAlive = getPositionsPlayersAlive();
         ArrayList<Integer> resultList = new ArrayList<>();
         resultList.clear();
+        player_model me = persons.get(getMyNummber());
         for (int i=0; i<playerAlive.size();i++){
             int nr = playerAlive.get(i);
             resultList.add(nr); //Adding all and then remove spesific ons
             int lastEntry = resultList.size() -1;
             if (nightStat==0){
-                if (persons.get(nr).getRole() == R.string.string_mogli_role){
+                if (persons.get(nr).getRole() == R.string.string_mogli_role && me.getSkillUsable()){
                     resultList.remove(lastEntry);
                 }
             }
@@ -1972,7 +2082,7 @@ public class playground extends AppCompatActivity {
         sleep(300);
     }
 
-    public void sendArrayToAll(ArrayList<Integer> changePlayerList){//TODO client geht, server nicht, oder auch nicht
+    public void sendArrayToAll(ArrayList<Integer> changePlayerList){
         if (host){
             String msg = addPlayer.getJsonArray(changePlayerList).toString();
             if (msg != null) {
@@ -1992,25 +2102,6 @@ public class playground extends AppCompatActivity {
         sleep(300);
     }
 
-    public void sendArrayToWolves(ArrayList<Integer> changePlayerList){//TODO client geht, server nicht, oder auch nicht
-        if (host){
-            String msg = addPlayer.getJsonArray(changePlayerList).toString();
-            if (msg != null) {
-                playground.server.sendFromServer(msg, true);
-                System.out.println("sendArrayToWolves() as server with: "+changePlayerList);
-            }
-        }else {
-            if (playground.client.chatClientThread == null) {
-                return;
-            }
-            String msg = addPlayer.getJsonArray(changePlayerList).toString();
-            if (msg != null) {
-                playground.client.chatClientThread.sendMsg(msg, true);
-                System.out.println("sendArrayToWolves() as client with: "+changePlayerList);
-            }
-        }
-        sleep(300);
-    }
     public void sendOneChangeToAll(Integer personPosition, String key, String value){
         String uniqKey = persons.get(personPosition).getUniqueKEy();
         String msg = "[{\"uniqueKEy\":\"" + uniqKey + "\",\"" + key + "\":" + value + "}]";
@@ -2059,6 +2150,7 @@ public class playground extends AppCompatActivity {
         super.onDestroy();
         //Stop all Handler
         stopwaitForHostThread = true;
+        stopGameThread = true;
         if (host) { //Close Server
             if (server.serverSocket != null) {
                 try {
