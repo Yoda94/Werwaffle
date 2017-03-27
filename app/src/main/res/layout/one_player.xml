@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/one_player_bt"
-                style="@android:style/Widget.Material.Light.Button.Inset"
+                style="@android:style/Widget.Material.Button.Inset"
                 android:elevation="0dp"
                 android:layout_weight="0.13"
                 android:layout_centerVertical="true"

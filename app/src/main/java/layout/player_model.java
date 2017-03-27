@@ -179,25 +179,14 @@ public class player_model {
     public Integer getPlaygroundCreated(){return this.playgroundCreated;}
     public Boolean getCanIVote(){return this.canIVote;}
     public Boolean getJustJoind(){return this.justJoind;}
-    public Boolean nextRoleExistsAndSet(){
-        if (getRole().equals(getRole1()) && getRole2() != -1){
-            role=getRole2();
+    public Boolean nextRoleExistsAndSet(Integer maxLives){
+        if (lives.equals(maxLives) && getRole2()!=-1){
+            setRole(getRole2());
             lives -= 1;
             return true;
         }
-        else if (getRole().equals(getRole2()) && getRole3() != -1){
-            role=getRole3();
-            lives -= 1;
-            return true;
-        }
-        //if Magd
-        else if (getRole1().equals(R.string.string_maged_role) && getRole2() != -1){
-            role=getRole2();
-            lives -= 1;
-            return true;
-        }
-        else if (getRole2().equals(R.string.string_maged_role) && getRole3() != -1){
-            role=getRole3();
+        else if (lives.equals(maxLives-1) && getRole3()!=-1){
+            setRole(getRole3());
             lives -= 1;
             return true;
         }
@@ -383,9 +372,13 @@ public class player_model {
             obj.put("permaSkill", permaSkill);
             if (votedFor!=null) {
                 obj.put("votedFor", votedFor.getUniqueKEy());
+            }else {
+                obj.put("votedFor", "NUll");
             }
             if (usedOnPlayer!=null) {
                 obj.put("usedOnPlayer", usedOnPlayer.getUniqueKEy());
+            }else {
+                obj.put("usedOnPlayer", "NUll");
             }
             obj.put("iAmRdy", iAmRdy);
             obj.put("votesVisible", votesVisible);
@@ -486,14 +479,22 @@ public class player_model {
             }
             if (json.has("usedOnPlayer")) {
                 String hisKey = json.getString("usedOnPlayer");
-                usedOnPlayer  = getPlayer(hisKey);
+                if (hisKey.equals("NULL")){
+                    usedOnPlayer = null;
+                }else {
+                    usedOnPlayer = getPlayer(hisKey);
+                }
             } //else {usedOnPlayer =null;}
             if (json.has("votes")) {
                 votes           = json.getInt("votes");
             } //else {votes =null;}
             if (json.has("votedFor")) {
                 String hisKey   = json.getString("votedFor");
-                votedFor      = getPlayer(hisKey);
+                if (hisKey.equals("NULL")){
+                    votedFor = null;
+                }else {
+                    votedFor = getPlayer(hisKey);
+                }
             } //else {votedFor =null;}
             if (json.has("evil")) {
                 evil            = json.getInt("evil");

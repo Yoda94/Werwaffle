@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.philip.werwaffle.R;
 
+import java.io.FileOutputStream;
 
 
 public class EditProfil extends AppCompatActivity {
@@ -93,6 +94,10 @@ public class EditProfil extends AppCompatActivity {
 
                 imgView.setImageBitmap(com.example.philip.werwaffle.activity.RoundedImageView.getCroppedBitmap(
                         BitmapFactory.decodeFile(imgDecodableString),2000 ));
+
+
+
+
 
             } else {
                 Toast.makeText(this, getString(R.string.havent_picked_img), Toast.LENGTH_LONG).show();

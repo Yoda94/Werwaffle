@@ -226,11 +226,11 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 if (ApManager.isApOn(MainActivity.this)) { //if hotspot is on
                     //DO server stuff
-                    Intent intent = new Intent(MainActivity.this, Settings.class);
+                    Intent intent = new Intent(MainActivity.this, test.class);
                     startActivity(intent);
                 } else {
                     //DO Client stuff
-                    Intent intent = new Intent(MainActivity.this, Settings.class);
+                    Intent intent = new Intent(MainActivity.this, test.class);
                     startActivity(intent);
                 }
             }

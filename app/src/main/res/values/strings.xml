@@ -1,10 +1,78 @@
 <resources>
+    <string name="see">see</string>
+    <string name="heal">heal</string>
+    <string name="nothing">nothing</string>
+    <string name="transform">transform</string>
+    <string name="save">save</string>
+    <string name="shoot">shoot</string>
+    <string name="error_no_caputre">error to be changed (no capture)</string>
+    <string name="night_animation">It\'s dawns! Get ready!</string>
+    <string name="day_animation">It will be day soon! Hope you\'r ready.</string>
+    <string name="role_model">role model</string>
+    <string name="eat">eat</string>
+    <string name="victim">victim</string>
+    <string name="cant_vote">cant\'t vote</string>
+    <string name="he_is_dead">He is dead</string>
+    <string name="no_more_voteing_today">No more voting for today!</string>
+    <string name="all_players_are_dead">Good Job! All players are Dead... I guess you need to play again to determine a Winner</string>
+    <string name="won">won</string>
+    <string name="the">The</string>
+    <string name="died_but_hunter">died! But he was the </string>
+    <string name="now_he_shoot_someone">" Now he will going to shoot someone!"</string>
+    <string name="got_his_role_now"> got his role now</string>
+    <string name="dies_but_the"> dies but the </string>
+    <string name="want_his_role">) wants got his Role. So i will not show his Role.</string>
+    <string name="dies_he_was"> dies! He was </string>
+    <string name="dident_die_because_he_is_the"> did not die because he is the </string>
+    <string name="dident_die"> did not die!</string>
+    <string name="maid_used_skill">Maid used skill</string>
+    <string name="role_not_showen">role not shown</string>
+    <string name="vote_again">Now you can vote a second Time. But if it\'s a draw again no one will die today!</string>
+    <string name="voting_results">Voting results:</string>
+    <string name="got_most_votes"> got most votes.</string>
+    <string name="you_already_choose">You already choose </string>
+    <string name="as_your_role_model"> as your role model.</string>
+    <string name="he_your_rolemodel"> ist now your role model. If he dies you will become a Werwolf!</string>
+    <string name="try_to_eat">You are trying to eat </string>
+    <string name="try_to_eat2"></string>
+    <string name="congrats_you_killed">Congratulations! You killed </string>
+    <string name="congrats_you_killed2"></string>
+    <string name="you_just_killed">You just killed </string>
+    <string name="you_just_killed2"> ... you are so dam evil!</string>
+    <string name="allrdy_saw">... You already saw the role of </string>
+    <string name="allrdy_saw2"></string>
+    <string name="choose_different_target">Choose a different Player to heal.</string>
+    <string name="allready_heald">You already healed </string>
+    <string name="this_night"> this night...</string>
+    <string name="transform_ask">Do you really want to transform </string>
+    <string name="transform_ask2"> into an evil Werwolf? \n Remember you can only transform a Player once!</string>
+    <string name="already_transformed_player">Dude! You already used your power to transform a Player. \n I told you: You can only use it once!</string>
+    <string name="good_job">Good job </string>
+    <string name="is_now_wolf"> is now a Werwolf.</string>
+    <string name="save_ask">Do you really want to use you saving powers to save </string>
+    <string name="save_ask2"> from his death? \n Remember you can only save one Player!</string>
+    <string name="alredy_saved_someone">Sorry but we both know: You already saved a Player.</string>
+    <string name="you_just_saved">You are so friendly to </string>
+    <string name="you_just_saved2"> you just saved him from his death :)</string>
+    <string name="kill_ask">Do you really want to became a murder and kill </string>
+    <string name="kill_ask2"> \? \n Remember you can only used this power once!</string>
+    <string name="alrdy_killed">You already used your power to kill </string>
+    <string name="alrdy_killed2"></string>
+    <string name="want_to_get">Do you really want to become </string>
+    <string name="role"> role? Meaning you will no longer be the Maid.</string>
+    <string name="you_no_longer">OK. You are no longer the Maid! Now you are a </string>
+    <string name="you_no_longer2">. Hope you like it ;)</string>
+    <string name="you_voted_for">You voted for </string>
+    <string name="you_voted_for2"> to die.</string>
+
+
     <string name="app_name">Werwaffle</string>
     <string name="string_you_host">You are the Host.</string>
     <string name="settings_show_cards_switch">Show all Cards that are used in a round</string>
     <string name="string_connected_to">You are connected to:</string>
     <string name="havent_picked_img">You didn\'t pick a image.</string>
     <string name="went_wrong">Something went wrong.</string>
+    <string name="now_your_wolf">You are now a Werwolf!</string>
     <string name="settings_show_cards_help_title">Show Cards</string>
     <string name="settings_show_cards_help_desc">You can choos if you and your playmats can see the cards the computer choose.</string>
     <string name="settings_role_desc">If you check it you\'ll be able to the roles of dead players.</string>
@@ -13,7 +81,7 @@
     <string name="connected_to_no_wifi">You are not connected to a Wifi.</string>
     <string name="join_lobby_info">In order to join a Room you need to connect to it\'s Wifi.</string>
     <string name="exit">Exit Game</string>
-    <string name="kill">Kill</string>
+    <string name="kill">kill</string>
     <string name="infect">Infect</string>
     <string name="use">use</string>
     <string name="and">and</string>
@@ -201,7 +269,7 @@
     <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
     <string name="title_activity_gamee2" translatable="false">gamee2</string>
     <string name="section_format" translatable="false">Hello World from section: %1$d</string>
-    <string name="title_activity_playground">playground</string>
+    <string name="title_activity_playground" translatable="false">playground</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
@@ -210,17 +278,17 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+    <string name="pref_header_general" translatable="false">General</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
+    <string name="pref_title_social_recommendations" translatable="false">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations" translatable="false">Recommendations for people to contact
         based on your message history
     </string>
 
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
+    <string name="pref_title_display_name" translatable="false">Display name</string>
+    <string name="pref_default_display_name" translatable="false">John Smith</string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string name="pref_title_add_friends_to_messages" translatable="false">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
         <item>When possible</item>
@@ -233,9 +301,9 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_data_sync" translatable="false">Data &amp; sync</string>
 
-    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string name="pref_title_sync_frequency" translatable="false">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>15 minutes</item>
         <item>30 minutes</item>
@@ -267,16 +335,16 @@
 
     <string-array name="multi_select_list_preference_default_value" />
 
-    <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="pref_title_system_sync_settings" translatable="false">System sync settings</string>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_header_notifications" translatable="false">Notifications</string>
 
-    <string name="pref_title_new_message_notifications">New message notifications</string>
+    <string name="pref_title_new_message_notifications" translatable="false">New message notifications</string>
 
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_ringtone" translatable="false">Ringtone</string>
+    <string name="pref_ringtone_silent" translatable="false">Silent</string>
 
-    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="pref_title_vibrate" translatable="false">Vibrate</string>
 
 </resources>

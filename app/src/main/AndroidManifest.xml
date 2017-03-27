@@ -44,12 +44,14 @@
         <activity
             android:name="layout.playground"
             android:label="@string/title_activity_playground"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name="layout.Settings" />
         <activity android:name="layout.test"></activity>
+
     </application>
 
 </manifest>

@@ -232,6 +232,7 @@ public class Fragment_Show_Cards extends Fragment {
     }
     private void setGameStart(){
         getMe().setGameRunning(true);
+        getMe().setNightStat(0);
         sendArrayToAll();
 
     }
@@ -372,6 +373,7 @@ public class Fragment_Show_Cards extends Fragment {
     private void endGame(){
         if (host) {
             addPlayer.host().setGameRunning(false);
+            addPlayer.host().setNightStat(-1);
             sendArrayToAll();
         }
         resetALLButHost();

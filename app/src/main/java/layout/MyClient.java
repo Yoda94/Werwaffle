@@ -192,7 +192,6 @@ public class MyClient {
                 public void run() {
                     if (mClient.playerAdapter != null) {
                         mClient.playerAdapter.notifyDataSetChanged();
-                        mClient.onResume();
                     }
                 }
             });
