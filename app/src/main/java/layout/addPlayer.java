@@ -26,6 +26,16 @@ public class addPlayer {
     public static ArrayList<player_model> playerlist;
     public static Boolean playerExists;
 
+    public static void cleanList(Activity activity){
+        playerlist.clear();
+        playerlist = new ArrayList<>();
+
+        //Create me
+        SharedPreferences pref = activity.getSharedPreferences("profil", activity.MODE_PRIVATE);
+        String uniqueKEy = pref.getString("uniqueKEy", "None");
+        String name = pref.getString("name", "None");
+        playerlist.add(new player_model(name, "none", 0, 0, uniqueKEy, activity));
+    }
 
     public static ArrayList<player_model> getPlayerlist(){
         if (playerlist == null) {

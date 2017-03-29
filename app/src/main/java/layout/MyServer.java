@@ -136,7 +136,7 @@ public class MyServer {
                 String uniqKey = pref.getString("uniqueKEy", "None");
                 String key = "name";
                 String value = "\"connecting...\"";
-                String msg = "0[{\"uniqueKEy\":\"" + uniqKey + "\",\"" + key + "\":" + value + "}]";
+                String msg = "0[{\"uniqueKEy\":\"" + uniqKey + "\",\"" + key + "\":" + value + ",\"doneLoading\":false}]";
                 dataOutputStream.writeUTF(msg);
                 dataOutputStream.flush();
 
@@ -149,7 +149,7 @@ public class MyServer {
 
                 //sending one change (Done)
                 String value2 = "\""+addPlayer.host().getName()+"\"";
-                String msg2 = "0[{\"uniqueKEy\":\"" + uniqKey + "\",\"" + key + "\":" + value2 + "}]";
+                String msg2 = "0[{\"uniqueKEy\":\"" + uniqKey + "\",\"" + key + "\":" + value2 + ",\"doneLoading\":true}]";
                 dataOutputStream.writeUTF(msg2);
                 dataOutputStream.flush();
 
@@ -396,7 +396,7 @@ public class MyServer {
         for (int i = 0; i < userList.size(); i++) {
             if (userList.get(i).name != from) {
                 ConnectThread connectThread = userList.get(i).chatThread;
-                String msg = "0[{\"uniqueKEy\":\"" + fileName + "\",\"" + key + "\":" + value + "}]";
+                String msg = "0[{\"uniqueKEy\":\"" + fileName + "\",\"" + key + "\":" + value + ",\"doneLoading\":false}]";
                 broadcastMsg(msg, from, false);
                 sleep(300);
                 boradCastDeletFile(fileName, connectThread);
@@ -405,7 +405,7 @@ public class MyServer {
                 sleep(300);
                 player_model he = getPerson(fileName);
                 String value2 = "\"" + he.getName() + "\"";
-                String msg2 = "0[{\"uniqueKEy\":\"" + fileName + "\",\"" + key + "\":" + value2 + "}]";
+                String msg2 = "0[{\"uniqueKEy\":\"" + fileName + "\",\"" + key + "\":" + value2 + ",\"doneLoading\":true}]";
                 broadcastMsg(msg2, from, false);
                 sleep(300);
                 boradCastReloadNow(fileName, connectThread);

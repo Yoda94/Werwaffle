@@ -97,6 +97,7 @@ public class playground extends AppCompatActivity {
         dialog = new AlertDialog.Builder(mActivity).create();
         stopwaitForHostThread = false;
         stopGameThread = false;
+        addPlayer.cleanList(playground.this);
         persons = addPlayer.getPlayerlist();
         resived = false;
         if (addPlayer.host()==null) {
@@ -2247,12 +2248,16 @@ public class playground extends AppCompatActivity {
                 }
                 sendOneChangeToAll(persons.get(getMyNummber()),"name","\"connecting...\"");
                 sleep(300);
+                sendOneChangeToAll(persons.get(getMyNummber()),"doneLoading","false");
+                sleep(300);
                 sendDeletFile(myKey);
                 sleep(300);
                 readFromFileAndSend(myKey, playground.this);
                 sleep(300);
                 String name = "\""+persons.get(getMyNummber()).getName()+"\"";
                 sendOneChangeToAll(persons.get(getMyNummber()),"name",name);
+                sleep(300);
+                sendOneChangeToAll(persons.get(getMyNummber()),"doneLoading","true");
                 sleep(300);
                 sendReloadNow(myKey);
             }

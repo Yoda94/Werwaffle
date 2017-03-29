@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -45,6 +46,7 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
         Button but;
         RelativeLayout layout;
         ImageView imgView;
+        ProgressBar progressBar;
 
         PersonViewHolder(View itemView) {
             super(itemView);
@@ -56,6 +58,7 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
             voteCount = (TextView) itemView.findViewById(R.id.one_player_vote_count);
             hint = (TextView) itemView.findViewById(R.id.one_player_hint);
             lives = (TextView) itemView.findViewById(R.id.one_player_lives);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.one_player_progressbar);
 
         }
     }
@@ -111,6 +114,12 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
         personViewHolder.lives.setText("Lives: "+persons.get(i).getLives().toString());
 
 
+        if (!persons.get(i).getdoneLoading()){
+            personViewHolder.progressBar.setVisibility(View.VISIBLE);
+            personViewHolder.progressBar.setProgress(0);
+        }else {
+            personViewHolder.progressBar.setVisibility(View.GONE);
+        }
 
         try {
             //IMG
@@ -124,6 +133,9 @@ public class player_adapter2 extends RecyclerView.Adapter<player_adapter2.Person
         }catch (Exception e){
             System.out.println("There is no ImgFile: "+e);
         }
+
+
+
     }
 
     @Override

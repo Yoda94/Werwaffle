@@ -54,6 +54,7 @@ public class player_model {
     Boolean votesVisible;
     Boolean killHim;
     Boolean justJoind;
+    Boolean doneLoading;
 
     Integer nightCount;
     Integer nightStat;
@@ -98,6 +99,7 @@ public class player_model {
         diedThisNight = false;
         permaSkill = false;
         votedFor = null;
+        doneLoading = true;
         iAmRdy = true;
         votesVisible = false;
         nightCount = 0;
@@ -164,6 +166,7 @@ public class player_model {
     public Boolean getKillAble(){return this.killAble;}
     public Boolean getDiedThisNight(){return this.diedThisNight;}
     public Boolean getPermaSkill(){return this.permaSkill;}
+    public Boolean getdoneLoading(){return this.doneLoading;}
     public player_model getVotedFor(){return this.votedFor;}
     public Boolean getiAmRdy(){return this.iAmRdy;}
     public Boolean getvotesVisible(){return this.votesVisible;}
@@ -227,6 +230,7 @@ public class player_model {
     public void setPermaSkill(boolean bool){permaSkill = bool;}
     public void setVotedFor(player_model integer){votedFor = integer;}
     public void setIAmRdy(boolean bool){iAmRdy = bool;}
+    public void setdoneLoading(boolean in){doneLoading=in;}
     public void setvotesVisible(boolean bool){votesVisible = bool;}
     public void setHost(boolean bool){host = bool;}
     public void setNightStat(int i){nightStat = i;}
@@ -351,6 +355,7 @@ public class player_model {
         try {
             obj.put("name", name);
             obj.put("img", img);
+            obj.put("doneLoading", doneLoading);
             obj.put("alive", alive);
             obj.put("playerNR", playerNR);
             obj.put("uniqueKEy", uniqueKEy);
@@ -425,7 +430,9 @@ public class player_model {
             if (json.has("hint")) {
                 hint = json.getString("hint");
             } //else {hint =null;}
-
+            if (json.has("doneLoading")) {
+                doneLoading = json.getBoolean("doneLoading");
+            } //else {hint =null;}
             if (json.has("enable")) {
                 enable          = json.getBoolean("enable");
             } //else {enable =null;}
