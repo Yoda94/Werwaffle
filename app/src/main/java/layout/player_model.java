@@ -98,7 +98,7 @@ public class player_model {
         diedThisNight = false;
         permaSkill = false;
         votedFor = null;
-        iAmRdy = false;
+        iAmRdy = true;
         votesVisible = false;
         nightCount = 0;
         nightStat = 0;

@@ -192,4 +192,10 @@
     <string name="you_voted_for">"Du hast für "</string>
     <string name="you_voted_for2">" gestimmt."</string>
     <string name="all_players_are_dead">Super! Alle Spieler sind Tot... Schätze ihr müsst nochmal Spielen ^^</string>
+    <string name="cardpower_title">Card Power</string>
+    <string name="cardpower_desc">Wenn du ein Spiel startest wählt der Computer sich Karten, aus den Karten die du ausewählt hast, aus. Er versucht das Spiel mithifle der Power jeder Karte aus zu balancieren. Du kannst dieses Auswahlverfahren beeinflussen, indem du die Power einer Karte veränderst.</string>
+    <string name="cardpower_but">Card Power zurücksetzen</string>
+    <string name="this_night_died">"Diese Nacht ist "</string>
+    <string name="this_night_died2">" gestorben"</string>
+    <string name="image_to_lange">Dieses Bild ist zugroß. (Max. 300KB)</string>
 </resources>

@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.example.philip.werwaffle.R;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,11 +32,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class test extends AppCompatActivity {
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
     ImageView img;
+    SharedPreferences pref;
+    String fileName;
+    TextView tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,68 +48,22 @@ public class test extends AppCompatActivity {
         setContentView(R.layout.activity_test4);
         Button save = (Button)findViewById(R.id.test_bt);
         Button load = (Button)findViewById(R.id.test_bt2);
+        tv = (TextView)findViewById(R.id.test_tv);
         img = (ImageView) findViewById(R.id.test_imgView);
-        final EditText input = (EditText) findViewById(R.id.test_edit);
-        final TextView tv = (TextView) findViewById(R.id.test_tv);
+        pref = getSharedPreferences("profil", MODE_PRIVATE);
+        fileName = pref.getString("uniqueKEy", "None");
 
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tv.setText(readFromFile("god229k5vj2rd21nq890ok3fq7", test.this));
 
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
 
-                try {
-                    String FILENAME = "hello_file";
-                    String string = input.getText().toString();
-                    FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-                    fos.write(string.getBytes());
-                    fos.close();
-                }catch (Exception e){
-                    System.out.println(e);
-                }
             }
         });
 
-        load.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tv.setText(readFromFile(test.this));
-            }
-        });
 
-    }
-    private String readFromFile(Context context) {
-
-        String ret = "";
-        String FILENAME = "hello_file";
-
-        try {
-            InputStream inputStream = context.openFileInput(FILENAME);
-
-            if ( inputStream != null ) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
-                    stringBuilder.append(receiveString);
-                }
-
-                inputStream.close();
-                ret = stringBuilder.toString();
-            }
-        }
-        catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
-        }
-
-        return ret;
     }
 
 
@@ -116,11 +76,6 @@ public class test extends AppCompatActivity {
                 // Get the Image from data
 
                 Uri selectedImage = data.getData();
-
-                String idk = data.getDataString();
-                System.out.println("here*; "+ selectedImage);
-                System.out.println("here*; "+ idk);
-                savebitmap(idk);
 
                 String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -135,17 +90,12 @@ public class test extends AppCompatActivity {
                 imgDecodableString = cursor.getString(columnIndex);
                 cursor.close();
 
-                //saveImg
-                //ImageView imgView = (ImageView) findViewById(R.id.imageProfile);
-                //SharedPreferences.Editor prefEditor = getSharedPreferences("profil", MODE_PRIVATE).edit();
-                //prefEditor.putString("img", imgDecodableString);
-                //prefEditor.apply();
+                String endoe = convertToBase64(imgDecodableString);
+                writeToFile(fileName, endoe);
+                Bitmap bitmap = decodeBase64(endoe);
 
                 img.setImageBitmap(com.example.philip.werwaffle.activity.RoundedImageView.getCroppedBitmap(
-                        BitmapFactory.decodeFile(imgDecodableString),2000 ));
-
-
-
+                        bitmap,2000 ));
 
 
             } else {
@@ -157,30 +107,62 @@ public class test extends AppCompatActivity {
         }
 
     }
-    private File savebitmap(String filename) {
-        String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-        OutputStream outStream = null;
 
-        File file = new File(filename + ".png");
-        if (file.exists()) {
-            file.delete();
-            file = new File(extStorageDirectory, filename + ".png");
-            Log.e("file exist", "" + file + ",Bitmap= " + filename);
-        }
+
+    private String convertToBase64(String path){
+        //Convert to ByteArray
+        Bitmap bm = BitmapFactory.decodeFile(path);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        byte[] b = baos.toByteArray();
+
+        return Base64.encodeToString(b, Base64.DEFAULT);
+    }
+
+    private Bitmap decodeBase64(String encodedImage){
+        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
+    private void writeToFile(String FILENAME, String text){
         try {
-            // make a new bitmap from your file
-            Bitmap bitmap = BitmapFactory.decodeFile(file.getName());
-
-            outStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
-            outStream.flush();
-            outStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            fos.write(text.getBytes());
+            fos.close();
+        }catch (Exception e){
+            System.out.println(e);
+            System.out.println("Error in writeToFile");
         }
-        Log.e("file", "" + file);
-        return file;
+    }
+    private String readFromFile(String FILENAME, Context context) {
 
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput(FILENAME);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    System.out.println(receiveString);
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return ret;
     }
 
 }

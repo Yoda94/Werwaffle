@@ -81,6 +81,12 @@
     <string name="connected_to_no_wifi">You are not connected to a Wifi.</string>
     <string name="join_lobby_info">In order to join a Room you need to connect to it\'s Wifi.</string>
     <string name="exit">Exit Game</string>
+    <string name="this_night_died">This night died </string>
+    <string name="this_night_died2"></string>
+    <string name="image_to_lange">The Image is to large.(Max. 300KB)</string>
+    <string name="cardpower_but">Reset Card Power\'s to default</string>
+    <string name="cardpower_title">Card Power</string>
+    <string name="cardpower_desc">When you start a game the Computer chooses Cards from the Cards that you selected that fits best. He always trys to balance the power. You can adjust the choosing of the Computer by changing the Power of a Card. </string>
     <string name="kill">kill</string>
     <string name="infect">Infect</string>
     <string name="use">use</string>

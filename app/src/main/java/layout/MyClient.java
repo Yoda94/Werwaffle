@@ -11,6 +11,8 @@ import org.json.JSONException;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -154,7 +156,6 @@ public class MyClient {
             }
         }
         public void resiveMsg(String msg){
-
             if (msg.matches("[0-9]+")) {
                 System.out.println("Resived only numbers: " +msg);
                 Integer myNr = Integer.parseInt(msg);
@@ -163,30 +164,53 @@ public class MyClient {
                 addPlayer.me(key).setPlayerNR(myNr);
                 return;
             }
-
-            String first = msg.substring(0,1);
-            System.out.println("First:" +first);
-            String newMsg;
-            if (first != "["){
-                newMsg = msg.substring(1);
+            //System.out.println("I resived: "+msg);
+            String preFix = msg.substring(0,3);
+            if (preFix.contains("img")){
+                //System.out.println("True");
+                String fileName = msg.substring(3,29);
+                //System.out.println("the key: "+fileName);
+                String text = msg.substring(29, msg.length());
+                //System.out.println("the text: "+text);
+                addToFile(fileName, text);
+                //saveToArray(text);
+            }
+            else if (preFix.contains("del")){
+                String fileName = msg.substring(3,29);
+                deleteFile(fileName);
+            }
+            else if (preFix.contains("reL")){
+                //String fileName = msg.substring(4,30);
+                //writeToFile(fileName);
+                reloade();
             }
             else {
-                newMsg = msg;
-            }
-            //displayInfo("I resived something");
-            playground.resived = true;
-            try {
-                System.out.println(msg);
-                System.out.println(newMsg);
-                JSONArray jsonArray = new JSONArray(newMsg); //convert string to JsonArray
-                addPlayer.JsonArrayToArrayList(jsonArray); //JsonArray to player_model
-                reloade();
-            } catch (JSONException e) {
-                //trace("DefaultListItem.toString JSONException: "+e.getMessage());
-                Log.e("MYAPP", "unexpected JSON exception", e);
+
+                String first = msg.substring(0, 1);
+                System.out.println("First:" + first);
+                String newMsg;
+                if (first != "[") {
+                    newMsg = msg.substring(1);
+                } else {
+                    newMsg = msg;
+                }
+                //displayInfo("I resived something");
+                playground.resived = true;
+                try {
+                    System.out.println(msg);
+                    System.out.println(newMsg);
+                    JSONArray jsonArray = new JSONArray(newMsg); //convert string to JsonArray
+                    addPlayer.JsonArrayToArrayList(jsonArray); //JsonArray to player_model
+                    reloade();
+                } catch (JSONException e) {
+                    //trace("DefaultListItem.toString JSONException: "+e.getMessage());
+                    Log.e("MYAPP", "unexpected JSON exception", e);
+                }
             }
         }
+
         public void reloade(){
+            addPlayer.getPlayerlist();
             mClient.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -206,6 +230,24 @@ public class MyClient {
                 }
 
             });
+        }
+        private void addToFile(String fileName, String text){
+            try {
+                String path2 = mClient.getFilesDir().getPath()+"/"+fileName;
+                FileOutputStream fos = new FileOutputStream(path2, true);
+                fos.write(text.getBytes());
+                fos.close();
+            } catch (Exception e) {
+                System.out.println(e);
+                System.out.println("Error in writeToFile");
+            }
+        }
+        private void deleteFile(String fileName){
+            File dir = mClient.getFilesDir();
+            File file = new File(dir, fileName);
+            boolean deleted = file.delete();
+            MyServer.arrayList = new ArrayList<>();
+            MyServer.arrayList.clear();
         }
     }
 

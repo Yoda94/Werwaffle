@@ -1,22 +1,30 @@
 package layout;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.example.philip.werwaffle.R;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ShowCards extends AppCompatActivity {
     RecyclerView rv;
     public static ArrayList<card_model> cards;
     player_model personMe;
     ArrayList<card_model> myCards;
+    Button reset;
+    ImageButton help;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,14 +33,43 @@ public class ShowCards extends AppCompatActivity {
         checkPrefs();
         myCards = MainActivity.getMyCardList();
 
-        card_adapter2 adapter = new card_adapter2(myCards, this);
+        final card_adapter2 adapter = new card_adapter2(myCards, this);
         rv = (RecyclerView) findViewById(R.id.show_cards_rv);
+        reset = (Button) findViewById(R.id.show_cards_bt);
+        help = (ImageButton) findViewById(R.id.show_cards_imgbut);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
         rv.setAdapter(adapter);
 
-        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        final SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
         personMe = addPlayer.me(pref.getString("uniqueKEy", "None"));
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences prefs = getSharedPreferences("card_power", MODE_PRIVATE);
+                SharedPreferences prefsBase = getSharedPreferences("card_power_base", MODE_PRIVATE);
+                SharedPreferences.Editor edit = getSharedPreferences("card_power", MODE_PRIVATE).edit();
+                Map<String,?> keys = prefs.getAll();
+
+                for(Map.Entry<String,?> entry : keys.entrySet()){
+                    Log.d("map values",entry.getKey() + ": " +
+                            entry.getValue().toString());
+                    Integer basePower = prefsBase.getInt(entry.getKey(),1);
+                    edit.putInt(entry.getKey(),basePower);
+                }
+                edit.apply();
+                adapter.notifyDataSetChanged();
+            }
+        });
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(ShowCards.this)
+                        .setTitle(getString(R.string.cardpower_title))
+                        .setMessage(getString(R.string.cardpower_desc)).create().show();
+            }
+        });
     }
     public static ArrayList<card_model> getCardslist(){
         if (cards == null) {

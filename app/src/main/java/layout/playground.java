@@ -21,6 +21,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +40,11 @@ import com.example.philip.werwaffle.R;
 
 import org.json.JSONArray;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -238,7 +243,11 @@ public class playground extends AppCompatActivity {
                 }
             }
         });
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        String uniqKey = pref.getString("uniqueKEy", "None");
         sendArrayToAll(getMeArray());
+        sleep(200);
+        sendMyPictureToAll();
         System.out.println("On Thread: "+Thread.currentThread().getName());
         gameThread = new Thread(new Runnable() {
             @Override
@@ -1503,8 +1512,14 @@ public class playground extends AppCompatActivity {
         for (int i:diedThisNight){
             names.add(persons.get(i).getName());
         }
-        String info = names.toString();
-        displayInfo("Died this night: "+info);
+        String info;
+        if (names.isEmpty()){
+            info = mActivity.getString(R.string.no_one);
+        }else {
+            info = names.toString();
+        }
+        displayInfo(mActivity.getString(R.string.this_night_died)+info
+                +mActivity.getString(R.string.this_night_died2));
         for (int i:diedThisNight){
             kill(persons.get(i), false);
         }
@@ -2185,19 +2200,6 @@ public class playground extends AppCompatActivity {
         persons.get(getMyNummber()).setIAmRdy(true);
         sleep(300);
     }
-    public void sendImNotRedyToAll(){
-        System.out.println("sendImRdyToAll()");
-        SharedPreferences pref = mActivity.getSharedPreferences("profil", MODE_PRIVATE);
-        String uniqKey = pref.getString("uniqueKEy", "None");
-        String msg = "[{\"uniqueKEy\":\"" + uniqKey + "\",\"iAmRdy\":false}]";
-        if (host){
-            playground.server.sendFromServer(msg, false);
-        }
-        else {
-            playground.client.chatClientThread.sendMsg(msg, false);
-        }
-        sleep(300);
-    }
 
     public void sendArrayToAll(ArrayList<Integer> changePlayerList){
         if (host){
@@ -2216,7 +2218,7 @@ public class playground extends AppCompatActivity {
                 System.out.println("sendArrayToAll() as client with: "+changePlayerList);
             }
         }
-        sleep(300);
+        sleep(1000);
     }
 
     public void sendOneChangeToAll(player_model who, String key, String value){
@@ -2230,9 +2232,88 @@ public class playground extends AppCompatActivity {
         }
         sleep(300);
     }
+    //Sending IMG
+    private void sendMyPictureToAll(){
+        if (host){
+            return;
+        }
+        SharedPreferences pref = getSharedPreferences("profil", MODE_PRIVATE);
+        final String myKey = pref.getString("uniqueKEy", "None");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (addPlayer.host().getName().contains("connecting")){
+                    sleep(1000);
+                }
+                sendOneChangeToAll(persons.get(getMyNummber()),"name","\"connecting...\"");
+                sleep(300);
+                sendDeletFile(myKey);
+                sleep(300);
+                readFromFileAndSend(myKey, playground.this);
+                sleep(300);
+                String name = "\""+persons.get(getMyNummber()).getName()+"\"";
+                sendOneChangeToAll(persons.get(getMyNummber()),"name",name);
+                sleep(300);
+                sendReloadNow(myKey);
+            }
+        }).start();
+    }
+    private void readFromFileAndSend(String FILENAME, Context context) {
+        try {
+            InputStream inputStream = context.openFileInput(FILENAME);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    System.out.println(receiveString);
+                    sendFilePart(receiveString, FILENAME);
+                    sleep(10);
+                }
+                inputStream.close();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+    }
+    private void sendFilePart(String part, String fileName){
+        String msg = "img"+fileName+part;
+        if (playground.client.chatClientThread == null) {
+            return;
+        }
+        playground.client.chatClientThread.sendMsg(msg, false);
+
+    }
+    private void sendDeletFile(String fileName){
+        String msg = "del"+fileName;
+        if (playground.client.chatClientThread == null) {
+            return;
+        }
+        playground.client.chatClientThread.sendMsg(msg, false);
+    }
+    private void sendReloadNow(String fileName){
+        sleep(300);
+        String msg = "reL"+fileName;
+        if (host){
+            //playground.server.sendFromServer(msg, false);
+        }else {
+            if (playground.client.chatClientThread == null) {
+                return;
+            }
+            playground.client.chatClientThread.sendMsg(msg, false);
+        }
+    }
 
 
 
+
+    //Not mor img stuff
 
     public static boolean isHost(){
         return host;

@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
         editor.putString(getString(R.string.string_idiot_role),getString(R.string.string_idiot_desc));
         editor.apply();
 
-        SharedPreferences.Editor editor2 = getSharedPreferences("card_power", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor2 = getSharedPreferences("card_power_base", MODE_PRIVATE).edit();
         editor2.putInt(getString(R.string.string_witch_role), 4);
         editor2.putInt(getString(R.string.string_werewolf_role), -5);
         editor2.putInt(getString(R.string.string_white_werewolf_role), -3);

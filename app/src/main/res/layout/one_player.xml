@@ -16,11 +16,16 @@
             android:layout_height="match_parent"
             android:id="@+id/one_player_linearLayout">
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></LinearLayout>
+
             <ImageView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@android:drawable/gallery_thumb"
-                android:id="@+id/one_player_img" />
+                android:id="@+id/one_player_img"
+                android:layout_width="70dp" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -29,7 +34,7 @@
 
             <Button
                 android:text="@string/playerBut"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/one_player_bt"
                 style="@android:style/Widget.Material.Button.Inset"
@@ -42,18 +47,17 @@
 
             <TextView
                 android:text="TextView"
-                android:layout_width="100sp"
                 android:id="@+id/one_player_text"
                 android:textSize="24sp"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:layout_weight="1"
-                android:layout_marginLeft="14dp"
+                android:layout_marginLeft="1dp"
                 android:layout_marginStart="14dp"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/one_player_img"
-                android:layout_toEndOf="@+id/one_player_img"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_width="150dp" />
 
             <TextView
                 android:text="TextView"
@@ -72,8 +76,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/one_player_vote_count"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/one_player_text"
-                android:layout_marginLeft="50sp" />
+                android:layout_toEndOf="@+id/one_player_text" />
 
             <LinearLayout
                 android:orientation="vertical"
